@@ -72,7 +72,8 @@ func main() {
 	router.HandleFunc("/status", api.Status)
 	router.HandleFunc("/api/status", api.Status)
 
-	router.PathPrefix("/api/orders").HandlerFunc(api.ordersAPI)
+	// Catch API calls in stanard REST format
+	router.PathPrefix("/api/{service}/{restOfURL:.*}").HandlerFunc(api.daprProxy)
 
 	// Start server
 	log.Printf("### Server listening on %v\n", serverPort)

@@ -1,5 +1,0 @@
-GET http://localhost:9001/healthz
-###
-GET http://localhost:9001/status
-###
-GET http://localhost:9001/foo

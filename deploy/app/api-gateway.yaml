@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  labels:
+    app: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/id: "api-gateway"
+        dapr.io/port: "9000"
+    spec:
+      containers:
+      - name: service
+        image: bcdemo.azurecr.io/dapr-store/api-gateway
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9000        
+        env:
+          - name: DAPR_HTTP_PORT
+            value: "3500"
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200M
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: api-gateway
+  labels:
+    app: api-gateway
+spec:
+  selector:
+    app: api-gateway
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9000
+  type: LoadBalancer

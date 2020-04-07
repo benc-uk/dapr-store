@@ -16,7 +16,7 @@ import (
 func (h API) ordersAPI(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Add("Content-Type", "application/json")
 	var example = make(map[string]string)
-	example["message"] = "Hello from orders service"
+	example["message"] = "Echo from orders service"
 
 	exampleJSON, err := json.Marshal(example)
 	if err != nil {

@@ -1,0 +1,17 @@
+GET http://localhost:9000/healthz
+###
+
+GET http://localhost:9000/status
+###
+
+GET http://localhost:9000/api/orders/6
+###
+GET http://localhost:45949/v1.0/invoke/orders/method/foo
+###
+GET http://localhost:9000/api/forUser/1
+
+
+###
+GET http://localhost:9001/6
+###
+GET http://localhost:9001/forUser/1

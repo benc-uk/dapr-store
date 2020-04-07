@@ -41,12 +41,20 @@ func main() {
 
 	// Port to listen on, change the default as you see fit
 	serverPort := envhelper.GetEnvInt("PORT", port)
+	daprPort := envhelper.GetEnvInt("DAPR_HTTP_PORT", 0)
+	if daprPort != 0 {
+		log.Printf("### Dapr sidecar detected on port %v", daprPort)
+	} else {
+		log.Printf("### Dapr not detected (no DAPR_HTTP_PORT available), this is bad")
+		log.Printf("### Exiting...")
+		os.Exit(1)
+	}
 
 	// Use gorilla/mux for routing
 	router := mux.NewRouter()
 
 	// Add middleware for logging and CORS
-	router.Use(corsMiddleware)
+	//router.Use(corsMiddleware)
 	router.Use(loggingMiddleware)
 
 	// Wrapper type with anonymous inner field
@@ -63,8 +71,8 @@ func main() {
 	router.HandleFunc("/status", api.Status)
 	router.HandleFunc("/api/status", api.Status)
 
-	router.PathPrefix("/api/orders").HandlerFunc(api.ordersAPI)
-	router.PathPrefix("/foo").HandlerFunc(api.ordersAPI)
+	router.HandleFunc("/{id}", api.ordersAPI)
+	router.HandleFunc("/forUser/{user-id}", api.ordersAPI)
 
 	// Start server
 	log.Printf("### Server listening on %v\n", serverPort)
@@ -77,11 +85,11 @@ func main() {
 //
 // Change CORS settings here
 //
-func corsMiddleware(handler http.Handler) http.Handler {
-	corsMethods := handlers.AllowedMethods([]string{"HEAD", "POST", "OPTIONS"})
-	corsOrigins := handlers.AllowedOrigins([]string{"*"})
-	return handlers.CORS(corsOrigins, corsMethods)(handler)
-}
+// func corsMiddleware(handler http.Handler) http.Handler {
+// 	corsMethods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "OPTIONS"})
+// 	corsOrigins := handlers.AllowedOrigins([]string{"*"})
+// 	return handlers.CORS(corsOrigins, corsMethods)(handler)
+// }
 
 //
 // Change request logging here

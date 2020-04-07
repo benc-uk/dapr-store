@@ -7,11 +7,36 @@ import (
 	"runtime"
 )
 
+// API holds a standard set of values for all services & APIs
 type API struct {
 	ServiceName string
 	Healthy     bool
 	Version     string
 	BuildInfo   string
+}
+
+// Problem in RFC-7807 format
+type Problem struct {
+	Type     string `json:"type"`
+	Title    string `json:"title"`
+	Status   int    `json:"status,omitempty"`
+	Detail   string `json:"detail,omitempty"`
+	Instance string `json:"instance,omitempty"`
+}
+
+//
+// NewProblem creates a problem object
+//
+func SendProblem(resp http.ResponseWriter, probtype string, title string, sc int, detail string) {
+	p := Problem{
+		Type:   "https://dapr.io/" + probtype,
+		Title:  title,
+		Status: sc,
+		Detail: detail,
+	}
+	resp.WriteHeader(sc)
+	resp.Header().Add("Content-Type", "application/json")
+	json.NewEncoder(resp).Encode(p)
 }
 
 //

@@ -1,7 +1,0 @@
-GET http://localhost:9000/healthz
-###
-GET http://localhost:9000/status
-###
-GET http://localhost:9000/api/orders/foo
-###
-GET http://localhost:44752/v1.0/invoke/orders/method/foo/bar/cheese

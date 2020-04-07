@@ -1,3 +1,0 @@
-GET http://localhost:8000/api/get
-###
-GET http://localhost:8000/api/set
