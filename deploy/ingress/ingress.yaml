@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-rules
+  annotations:
+    kubernetes.io/ingress.class: api-gateway
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /v1.0
+            backend:
+              serviceName: api-gateway-dapr
+              servicePort: 80
+          - path: /
+            backend:
+              serviceName: frontend-host
+              servicePort: 80

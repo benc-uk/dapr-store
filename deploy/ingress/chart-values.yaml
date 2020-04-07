@@ -1,0 +1,7 @@
+# helm install dapr-ingress stable/nginx-ingress -f ./deploy/ingress/ingress-values.yaml
+controller:
+  ingressClass: "api-gateway"
+  podAnnotations:
+    dapr.io/enabled: "true"
+    dapr.io/id: "api-gateway"
+    dapr.io/port: "80"

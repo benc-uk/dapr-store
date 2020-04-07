@@ -13,5 +13,9 @@ docker build . -f build/service.Dockerfile \
 --build-arg servicePort=9001 \
 -t $ACR_NAME.azurecr.io/dapr-store/orders
 
+docker build . -f build/frontend.Dockerfile \
+-t $ACR_NAME.azurecr.io/dapr-store/frontend-host
+
 docker push $ACR_NAME.azurecr.io/dapr-store/api-gateway
 docker push $ACR_NAME.azurecr.io/dapr-store/orders
+docker push $ACR_NAME.azurecr.io/dapr-store/frontend-host
