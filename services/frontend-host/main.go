@@ -67,8 +67,9 @@ func main() {
 		json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 	})
 
+	staticPath := envhelper.GetEnvString("STATIC_DIR", "./dist")
 	spa := spaHandler{
-		staticPath: "./dist",
+		staticPath: staticPath,
 		indexPath:  "index.html",
 	}
 

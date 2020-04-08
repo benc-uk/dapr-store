@@ -1,3 +1,6 @@
 {
-  "go.useLanguageServer": false
+  "go.useLanguageServer": false,
+  "files.exclude": {
+    "node_modules/": true
+}
 }

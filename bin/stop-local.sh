@@ -3,4 +3,5 @@
 dapr stop --app-id orders
 dapr stop --app-id api-gateway
 pkill orders
-pkill api-gateway
+docker rm -f api-gateway
+pkill frontend-host

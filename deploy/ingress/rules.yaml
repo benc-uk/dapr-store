@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: api-gateway-rules
+  annotations:
+    kubernetes.io/ingress.class: dapr
+spec:
+  rules:
+    - http:
+        paths:
+          # Only expose the Dapr invoke API, lets us call our services and nothing more
+          - path: /v1.0/invoke/
+            backend:
+              serviceName: api-gateway-dapr
+              servicePort: 80                
+          # Everything else falls through to the frontend-host for serving the SPA         
+          - path: /
+            backend:
+              serviceName: frontend-host
+              servicePort: 8000
