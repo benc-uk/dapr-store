@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+
+	"github.com/gorilla/mux"
 )
 
 // API holds a standard set of values for all services & APIs
@@ -15,28 +17,14 @@ type API struct {
 	BuildInfo   string
 }
 
-// Problem in RFC-7807 format
-type Problem struct {
-	Type     string `json:"type"`
-	Title    string `json:"title"`
-	Status   int    `json:"status,omitempty"`
-	Detail   string `json:"detail,omitempty"`
-	Instance string `json:"instance,omitempty"`
-}
-
 //
-// NewProblem creates a problem object
+// AddCommonRoutes is a function
 //
-func SendProblem(resp http.ResponseWriter, probtype string, title string, sc int, detail string) {
-	p := Problem{
-		Type:   "https://dapr.io/" + probtype,
-		Title:  title,
-		Status: sc,
-		Detail: detail,
-	}
-	resp.WriteHeader(sc)
-	resp.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(resp).Encode(p)
+func (api *API) AddCommonRoutes(router *mux.Router) {
+	router.HandleFunc("/healthz", api.HealthCheck)
+	router.HandleFunc("/api/healthz", api.HealthCheck)
+	router.HandleFunc("/status", api.Status)
+	router.HandleFunc("/api/status", api.Status)
 }
 
 //

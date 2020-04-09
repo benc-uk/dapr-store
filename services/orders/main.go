@@ -25,11 +25,12 @@ type API struct {
 }
 
 var (
-	healthy     = true               // Simple health flag
-	version     = "0.0.1"            // App version number, set at build time with -ldflags "-X 'main.version=1.2.3'"
-	buildInfo   = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
-	serviceName = "orders"
-	port        = 9001
+	healthy        = true               // Simple health flag
+	version        = "0.0.1"            // App version number, set at build time with -ldflags "-X 'main.version=1.2.3'"
+	buildInfo      = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
+	serviceName    = "orders"
+	daprPort       int
+	daprStateStore string
 )
 
 //
@@ -40,8 +41,10 @@ func main() {
 	log.Printf("### Dapr Store: %v v%v starting...", serviceName, version)
 
 	// Port to listen on, change the default as you see fit
-	serverPort := envhelper.GetEnvInt("PORT", port)
-	daprPort := envhelper.GetEnvInt("DAPR_HTTP_PORT", 0)
+	serverPort := envhelper.GetEnvInt("PORT", 9001)
+	daprStateStore = envhelper.GetEnvString("DAPR_STORE_NAME", "statestore")
+
+	daprPort = envhelper.GetEnvInt("DAPR_HTTP_PORT", 0)
 	if daprPort != 0 {
 		log.Printf("### Dapr sidecar detected on port %v", daprPort)
 	} else {
@@ -54,7 +57,7 @@ func main() {
 	router := mux.NewRouter()
 
 	// Add middleware for logging and CORS
-	//router.Use(corsMiddleware)
+	router.Use(corsMiddleware)
 	router.Use(loggingMiddleware)
 
 	// Wrapper type with anonymous inner field
@@ -66,15 +69,11 @@ func main() {
 			BuildInfo:   buildInfo,
 		}}
 
-	router.HandleFunc("/healthz", api.HealthCheck)
-	router.HandleFunc("/api/healthz", api.HealthCheck)
-	router.HandleFunc("/status", api.Status)
-	router.HandleFunc("/api/status", api.Status)
-
-	router.HandleFunc("/{id}", api.ordersAPI)
-	router.HandleFunc("/forUser/{user-id}", api.ordersAPI)
+	api.AddCommonRoutes(router)
+	api.addRoutes(router)
 
 	// Start server
+	log.Printf("### Dapr state store: %v\n", daprStateStore)
 	log.Printf("### Server listening on %v\n", serverPort)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", serverPort), router)
 	if err != nil {
@@ -85,11 +84,11 @@ func main() {
 //
 // Change CORS settings here
 //
-// func corsMiddleware(handler http.Handler) http.Handler {
-// 	corsMethods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "OPTIONS"})
-// 	corsOrigins := handlers.AllowedOrigins([]string{"*"})
-// 	return handlers.CORS(corsOrigins, corsMethods)(handler)
-// }
+func corsMiddleware(handler http.Handler) http.Handler {
+	corsMethods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
+	corsOrigins := handlers.AllowedOrigins([]string{"*"})
+	return handlers.CORS(corsOrigins, corsMethods)(handler)
+}
 
 //
 // Change request logging here

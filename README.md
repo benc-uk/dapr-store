@@ -6,7 +6,14 @@ It is written in a mixture of Go and Vue.js
 
 ![architecture diagram](./docs/img/design.png)
 
+
 ## Quick guide local (WSL/Linux only)
+
+### Prereqs
+- Docker
+- Go
+- Realize `go get github.com/oxequa/realize`
+
 Install and init Dapr
 ```
 wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash

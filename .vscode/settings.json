@@ -2,5 +2,6 @@
   "go.useLanguageServer": false,
   "files.exclude": {
     "node_modules/": true
-}
+  },
+  "go.vetFlags": ["-composites=false"]
 }
