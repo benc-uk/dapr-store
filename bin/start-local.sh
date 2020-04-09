@@ -11,3 +11,7 @@ popd
 pushd services/orders
 source ./run.sh &
 popd
+
+pushd services/products
+source ./run.sh &
+popd

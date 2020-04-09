@@ -30,7 +30,7 @@ var (
 	healthy        = true               // Simple health flag
 	version        = "0.0.1"            // App version number, set at build time with -ldflags "-X 'main.version=1.2.3'"
 	buildInfo      = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
-	serviceName    = "__CHANGE__ME__"
+	serviceName    = "products"
 	daprPort       int
 	daprStateStore string
 )
@@ -43,7 +43,7 @@ func main() {
 	log.Printf("### Dapr Store: %v v%v starting...", serviceName, version)
 
 	// Port to listen on, change the default as you see fit
-	serverPort := envhelper.GetEnvInt("PORT", __CHANGE__ME__)
+	serverPort := envhelper.GetEnvInt("PORT", 9002)
 	daprStateStore = envhelper.GetEnvString("DAPR_STORE_NAME", "statestore")
 
 	daprPort = envhelper.GetEnvInt("DAPR_HTTP_PORT", 0)

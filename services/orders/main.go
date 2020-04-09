@@ -1,9 +1,11 @@
-package main
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr compatible REST API service for orders
+// ----------------------------------------------------------------------------
 
-//
-// Basic REST API microservice, template/reference code
-// Ben Coleman, July 2019, v1
-//
+package main
 
 import (
 	"fmt"

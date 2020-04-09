@@ -1,9 +1,11 @@
-package main
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr compatible REST API service for orders
+// ----------------------------------------------------------------------------
 
-//
-// Basic REST API microservice, template/reference code
-// Ben Coleman, July 2019, v1
-//
+package main
 
 import (
 	"encoding/json"
@@ -33,7 +35,7 @@ func (api API) newOrder(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	orderID := makeID(5)
-	order := Order{}
+	order := common.Order{}
 	err := json.NewDecoder(req.Body).Decode(&order)
 
 	// Some basic validation and checking on what we've been posted
@@ -46,6 +48,7 @@ func (api API) newOrder(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 	order.ID = orderID
+	order.Status = common.OrderNew
 
 	err = common.SaveState(resp, daprPort, daprStateStore, serviceName, orderID, order)
 	if err != nil {

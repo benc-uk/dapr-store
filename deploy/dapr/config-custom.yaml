@@ -5,5 +5,5 @@ metadata:
 spec:
   httpPipeline:
     handlers:
-    - name: ratelimit
-      type: middleware.http.ratelimit
+    - name: uppercase
+      type: middleware.http.uppercase
