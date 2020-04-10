@@ -7,20 +7,34 @@ It is written in a mixture of Go and Vue.js
 ![architecture diagram](./docs/img/design.png)
 
 
-## Quick guide local (WSL/Linux only)
+## Run Locally - Quick Guide (WSL/Linux)
 
 ### Prereqs
 - Docker
-- Go
-- Realize `go get github.com/oxequa/realize`
+- Go 1.14+
+- Realize, install with: `go get github.com/oxequa/realize`
 
-Install and init Dapr
+Install and initialize Dapr
 ```
 wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
 sudo dapr init
 ```
 
+Run everything locally.
+From root of project (e.g. `dapr-store` directory)
+```
+find . -name '*.sh' -print0 |xargs -0 chmod +x
+./bin/start-local.sh
+```
+
+To stop Dapr instances and other processes, press Ctrl+C to exit the `start-local.sh` script, then run:
+```
+./bin/stop-local.sh
+```
+# Reference Information
+
 ## Local ports
-9000 - NGINX API gateway
+9000 - NGINX API gateway (reverse proxy)
 9001 - Orders service
+9001 - Products service
 8000 - Frontend host

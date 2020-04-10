@@ -4,9 +4,9 @@ set -e
 ACR_NAME="bcdemo"
 
 docker build . -f build/service.Dockerfile \
---build-arg serviceName=api-gateway \
---build-arg servicePort=9000 \
--t $ACR_NAME.azurecr.io/dapr-store/api-gateway
+--build-arg serviceName=products \
+--build-arg servicePort=9002 \
+-t $ACR_NAME.azurecr.io/dapr-store/products
 
 docker build . -f build/service.Dockerfile \
 --build-arg serviceName=orders \
@@ -16,6 +16,6 @@ docker build . -f build/service.Dockerfile \
 docker build . -f build/frontend.Dockerfile \
 -t $ACR_NAME.azurecr.io/dapr-store/frontend-host
 
-docker push $ACR_NAME.azurecr.io/dapr-store/api-gateway
+docker push $ACR_NAME.azurecr.io/dapr-store/products
 docker push $ACR_NAME.azurecr.io/dapr-store/orders
 docker push $ACR_NAME.azurecr.io/dapr-store/frontend-host

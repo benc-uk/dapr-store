@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: products
+  labels:
+    app: products
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: products
+  template:
+    metadata:
+      labels:
+        app: products
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/id: "products"
+        dapr.io/port: "9002"
+    spec:
+      containers:
+      - name: service
+        image: bcdemo.azurecr.io/dapr-store/products
+        imagePullPolicy: Always
+        env:
+          - name: DAPR_HTTP_PORT
+            value: "3500"
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200M

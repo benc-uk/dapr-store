@@ -1,7 +1,19 @@
 {
   "go.useLanguageServer": false,
   "files.exclude": {
-    "node_modules/": true
+    "**/node_modules/": false
   },
-  "go.vetFlags": ["-composites=false"]
+  "go.vetFlags": [
+    "-composites=false"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.format.enable": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "eslint.workingDirectories": [
+    "./frontend"
+  ]
 }
