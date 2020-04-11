@@ -12,14 +12,16 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/benc-uk/dapr-store/common"
 	"github.com/benc-uk/go-starter/pkg/envhelper"
 
+	"database/sql"
+
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/joho/godotenv/autoload" // Autoloads .env file if it exists
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // API type is a wrap of he common API with local version
@@ -34,7 +36,7 @@ var (
 	serviceName    = "products"
 	daprPort       int
 	daprStateStore string
-	products       map[string]common.Product
+	db             *sql.DB
 )
 
 //
@@ -76,16 +78,17 @@ func main() {
 	api.AddCommonRoutes(router)
 	api.addRoutes(router)
 
-	// Load all state into memory as Dapr state API is really basic
-	time.AfterFunc(3*time.Second, func() {
-		http.Get(fmt.Sprintf("http://localhost:%d/reload", serverPort))
-		log.Printf("### Loaded %d product data items from state into memory\n", len(products))
-	})
+	var err error
+	db, err = sql.Open("sqlite3", "./sqlite.db")
+	if err != nil {
+		log.Panicf("### Failed to open database! %+v\n", err)
+	}
+	defer db.Close()
 
 	// Start server
 	log.Printf("### Dapr state store: %v\n", daprStateStore)
 	log.Printf("### Server listening on %v\n", serverPort)
-	err := http.ListenAndServe(fmt.Sprintf(":%d", serverPort), router)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", serverPort), router)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -106,45 +109,3 @@ func corsMiddleware(handler http.Handler) http.Handler {
 func loggingMiddleware(handler http.Handler) http.Handler {
 	return handlers.CombinedLoggingHandler(os.Stdout, handler)
 }
-
-//
-// Return the product catalog
-//
-// func loadState() {
-// 	fmt.Println("LOOOOOOOOOOOOOAAAAAAAAAADDDDDDDDDDDDDDDDDDD")
-
-// 	// Fake HTTP context
-// 	r := httptest.NewRecorder()
-
-// 	// Load index which is just an array of keys/ids
-// 	data, err := common.GetState(r, daprPort, daprStateStore, serviceName, "index")
-// 	if err != nil {
-// 		fmt.Println("### Error loading product index", err.Error())
-// 		return
-// 	}
-// 	productIds := []int{}
-// 	err = json.Unmarshal(data, &productIds)
-// 	if err != nil {
-// 		fmt.Println("### Error decoding product index", err.Error())
-// 		return
-// 	}
-
-// 	// Load each object, and push into array
-// 	products = make(map[string]common.Product)
-// 	for _, id := range productIds {
-// 		p := common.Product{}
-// 		data, err := common.GetState(r, daprPort, daprStateStore, serviceName, strconv.Itoa(id))
-// 		if err != nil {
-// 			fmt.Printf("### Error loading product '%v' %+v\n", id, err.Error())
-// 			continue
-// 		}
-// 		err = json.Unmarshal(data, &p)
-// 		if err != nil {
-// 			fmt.Printf("### Error decoding product '%v' %+v\n", id, err.Error())
-// 			continue
-// 		}
-// 		products[strconv.Itoa(id)] = p
-// 	}
-
-// 	fmt.Println(products)
-// }

@@ -15,10 +15,6 @@ GET http://{{host}}/v1.0/invoke/products/method/offers
 
 GET http://{{host}}/v1.0/invoke/products/method/get/1
 
-###
-
-GET http://{{host}}/v1.0/invoke/products/method/reload
-
 
 
 # ===================================================================
@@ -26,7 +22,7 @@ GET http://{{host}}/v1.0/invoke/products/method/reload
 # ===================================================================
 
 ### Get an order
-GET http://{{host}}/v1.0/invoke/orders/method/get/CMm0R
+GET http://{{host}}/v1.0/invoke/orders/method/get/u5uGw
 
 ### Create new order
 POST http://{{host}}/v1.0/invoke/orders/method/new

@@ -8,14 +8,13 @@
 package main
 
 import (
-	"encoding/json"
+	"database/sql"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/benc-uk/dapr-store/common"
-
 	"github.com/gorilla/mux"
+	"k8s.io/apimachinery/pkg/util/json"
 )
 
 //
@@ -25,7 +24,6 @@ func (api API) addRoutes(router *mux.Router) {
 	router.HandleFunc("/get/{id}", api.getProduct)
 	router.HandleFunc("/catalog", api.getCatalog)
 	router.HandleFunc("/offers", api.getOffers)
-	router.HandleFunc("/reload", api.reloadProducts)
 }
 
 //
@@ -33,12 +31,21 @@ func (api API) addRoutes(router *mux.Router) {
 //
 func (api API) getProduct(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	id := vars["id"]
-	productJSON := []byte("{}")
-	if _, exists := products[id]; exists {
-		productJSON, _ = json.Marshal(products[id])
+	p := common.Product{}
+	stmt, _ := db.Prepare("SELECT * FROM products WHERE ID = ?")
+	defer stmt.Close()
+	err := stmt.QueryRow(vars["id"]).Scan(&p.ID, &p.Name, &p.Description, &p.Cost, &p.Image, &p.OnOffer)
+	if err == sql.ErrNoRows {
+		common.Problem{"products-db", "Product " + vars["id"] + " not found in DB", 404, err.Error(), serviceName}.HttpSend(resp)
+		return
+	}
+	if err != nil {
+		log.Printf("### Products DB error: %+v\n", err)
+		common.Problem{"products-db", "Products DB error", 500, err.Error(), serviceName}.HttpSend(resp)
+		return
 	}
 
+	productJSON, _ := json.Marshal(p)
 	resp.Header().Set("Content-Type", "application/json")
 	resp.Write(productJSON)
 }
@@ -47,63 +54,45 @@ func (api API) getProduct(resp http.ResponseWriter, req *http.Request) {
 // Return the product catalog
 //
 func (api API) getCatalog(resp http.ResponseWriter, req *http.Request) {
-	productsJSON, _ := json.Marshal(products)
-	resp.Header().Set("Content-Type", "application/json")
-	resp.Write(productsJSON)
+	rows, err := db.Query("SELECT * FROM products")
+	if err != nil {
+		common.Problem{"database", "Error querying products", 500, err.Error(), serviceName}.HttpSend(resp)
+		return
+	}
+
+	returnProducts(rows, resp)
 }
 
 //
 // Return the products on offer
 //
 func (api API) getOffers(resp http.ResponseWriter, req *http.Request) {
-	offers := make(map[string]common.Product)
-
-	for id, prod := range products {
-		if prod.OnOffer == true {
-			offers[id] = prod
-		}
+	rows, err := db.Query("SELECT * FROM products WHERE onoffer = true")
+	if err != nil {
+		common.Problem{"database", "Error querying products", 500, err.Error(), serviceName}.HttpSend(resp)
+		return
 	}
 
-	offersJSON, _ := json.Marshal(offers)
-	resp.Header().Set("Content-Type", "application/json")
-	resp.Write(offersJSON)
+	returnProducts(rows, resp)
 }
 
 //
-// Return the products on offer
 //
-func (api API) reloadProducts(resp http.ResponseWriter, req *http.Request) {
-	// Load index which is just an array of keys/ids
-	data, err := common.GetState(resp, daprPort, daprStateStore, serviceName, "index")
-	if err != nil {
-		return
-	}
-
-	productIds := []int{}
-	err = json.Unmarshal(data, &productIds)
-	if err != nil {
-		common.Problem{"json-error", "Error loading product index", 500, err.Error(), serviceName}.HttpSend(resp)
-		return
-	}
-
-	// Load each object, and push into array
-	products = make(map[string]common.Product)
-	for _, id := range productIds {
+//
+func returnProducts(rows *sql.Rows, resp http.ResponseWriter) {
+	products := []common.Product{}
+	defer rows.Close()
+	for rows.Next() {
 		p := common.Product{}
-		data, err := common.GetState(resp, daprPort, daprStateStore, serviceName, strconv.Itoa(id))
+		err := rows.Scan(&p.ID, &p.Name, &p.Description, &p.Cost, &p.Image, &p.OnOffer)
 		if err != nil {
-			log.Printf("### Error loading product '%v' %+v\n", id, err.Error())
-			continue
+			common.Problem{"database", "Error reading row", 500, err.Error(), serviceName}.HttpSend(resp)
+			return
 		}
-		err = json.Unmarshal(data, &p)
-		if err != nil {
-			log.Printf("### Error decoding product '%v' %+v\n", id, err.Error())
-			continue
-		}
-		products[strconv.Itoa(id)] = p
+		products = append(products, p)
 	}
 
-	//log.Printf("%+v", products)
+	productsJSON, _ := json.Marshal(products)
 	resp.Header().Set("Content-Type", "application/json")
-	resp.Write([]byte(`{"message": "done", "count": "blah"}`))
+	resp.Write(productsJSON)
 }

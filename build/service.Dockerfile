@@ -24,7 +24,7 @@ COPY services/common/ ./common
 # Now run the build
 # Disabling cgo results in a fully static binary that can run without C libs
 # Also inject version and build details 
-RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build \
+RUN GO111MODULE=on CGO_ENABLED=1 GOOS=linux go build \
     -ldflags "-X main.version=$version -X 'main.buildInfo=$buildInfo'" \
     -o server ./service
 
@@ -34,6 +34,7 @@ RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build \
 FROM alpine
 WORKDIR /app 
 
+ARG serviceName="SET_ON_COMMAND_LINE"
 ARG servicePort=9000
 
 # Copy the Go server binary
@@ -42,7 +43,9 @@ COPY --from=go-build /build/server .
 EXPOSE $servicePort
 ENV PORT=$servicePort
 
-RUN apk add curl
+# This is a trick, we don't really need run.sh
+# But some services might have .db files, some don't
+COPY services/$serviceName/run.sh services/$serviceName/*.db ./
 
 # That's it! Just run the server 
 CMD [ "./server"]
