@@ -13,6 +13,7 @@ type Product struct {
 	Cost        float32 `json:"cost"`
 	Description string  `json:"description"`
 	Image       string  `json:"image"`
+	OnOffer     bool    `json:"onOffer"`
 }
 
 // Order holds information about a customer order

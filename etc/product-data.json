@@ -1,0 +1,37 @@
+[
+  {
+    "key": "index",
+    "value": [1, 2, 3]
+  },
+  {
+    "key": "1",
+    "value": {
+      "id": "1",
+      "name": "Shiny Top Hat",
+      "cost": 34.99,
+      "description": "Its shiny and black",
+      "image": "tophat.png"
+    }
+  },
+  {
+    "key": "2",
+    "value": {
+      "id": "2",
+      "name": "Grey Cloth Cap",
+      "cost": 1.99,
+      "description": "Its ugly",
+      "image": "cap.png",
+      "onOffer": true
+    }
+  },
+  {
+    "key": "3",
+    "value": {
+      "id": "3",
+      "name": "Baseball cap",
+      "cost": 4.99,
+      "description": "Its green",
+      "image": "baseball.png"
+    }
+  }
+]

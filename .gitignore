@@ -1,3 +1,4 @@
 **/.env
 services/frontend-host/frontend-host
 services/frontend-host/main
+**/components/**

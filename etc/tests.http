@@ -1,17 +1,39 @@
-GET http://localhost:9000/healthz
-###
+#@host = localhost:9000
+@host = daprstore.benco.io
 
-GET http://localhost:9000/status
-###
+# ===================================================================
+# Products API
+# ===================================================================
 
-GET http://localhost:9000/api/orders/6
-###
-GET http://localhost:45949/v1.0/invoke/orders/method/foo
-###
-GET http://localhost:9000/api/forUser/1
-
+GET http://{{host}}/v1.0/invoke/products/method/catalog
 
 ###
-GET http://localhost:9001/6
+
+GET http://{{host}}/v1.0/invoke/products/method/offers
+
 ###
-GET http://localhost:9001/forUser/1
+
+GET http://{{host}}/v1.0/invoke/products/method/get/1
+
+###
+
+GET http://{{host}}/v1.0/invoke/products/method/reload
+
+
+
+# ===================================================================
+# Orders API
+# ===================================================================
+
+### Get an order
+GET http://{{host}}/v1.0/invoke/orders/method/get/CMm0R
+
+### Create new order
+POST http://{{host}}/v1.0/invoke/orders/method/new
+content-type: application/json
+
+{
+  "productId": "1",
+  "amount": 34.7
+}
+ 

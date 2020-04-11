@@ -18,7 +18,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// All routes we need should be here
+//
+// All routes we need should be registered here
+//
 func (api API) addRoutes(router *mux.Router) {
 	router.HandleFunc("/new", api.newOrder).Methods("POST")
 	router.HandleFunc("/get/{id}", api.getOrder)

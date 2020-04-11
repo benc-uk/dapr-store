@@ -42,5 +42,7 @@ COPY --from=go-build /build/server .
 EXPOSE $servicePort
 ENV PORT=$servicePort
 
+RUN apk add curl
+
 # That's it! Just run the server 
 CMD [ "./server"]

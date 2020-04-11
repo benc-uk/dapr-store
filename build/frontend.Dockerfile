@@ -28,7 +28,6 @@ RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build \
 # === Stage 2: Build and bundle the Vue.js app with Vue CLI 3 ====================================
 # ================================================================================================
 FROM node:12-alpine as frontend-build
-ARG sourceDir="web/client"
 
 WORKDIR /build
 
@@ -37,7 +36,7 @@ COPY frontend/package*.json ./
 RUN npm install --silent
 
 # Copy in the Vue.js app source
-#COPY frontend/.env.production .
+COPY frontend/.eslintrc.js .
 COPY frontend/public ./public
 COPY frontend/src ./src
 
