@@ -26,7 +26,12 @@ export default {
       return this._apiRawCall('v1.0/invoke/products/method/offers')
     },
 
-
+    //
+    // ===== Orders =====
+    //
+    apiOrderSubmit: function(order) {
+      return this._apiRawCall('v1.0/invoke/orders/method/new', 'POST', order)
+    },
 
 
     _apiRawCall: function(apiPath, method = 'get', data = null) {

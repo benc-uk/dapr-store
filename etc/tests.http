@@ -22,7 +22,7 @@ GET http://{{host}}/v1.0/invoke/products/method/get/1
 # ===================================================================
 
 ### Get an order
-GET http://{{host}}/v1.0/invoke/orders/method/get/uopvz
+GET http://{{host}}/v1.0/invoke/orders/method/get/fo6zn
 
 ### Create new order
 POST http://{{host}}/v1.0/invoke/orders/method/new

@@ -140,4 +140,12 @@ export default {
     border-top: 2px solid lightgray;
     margin-top: 3rem;
   }
+  .alert {
+    font-size: 140% !important;
+  }
+  .alert h4 {
+    color: #222;
+    padding-bottom: 0.3rem;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+  }
 </style>

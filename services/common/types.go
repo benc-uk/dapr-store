@@ -18,10 +18,11 @@ type Product struct {
 
 // Order holds information about a customer order
 type Order struct {
-	ID     string      `json:"id"`
-	Amount float32     `json:"amount"`
-	Items  []string    `json:"items"` // List of Product.ID
-	Status OrderStatus `json:"status"`
+	ID      string      `json:"id"`
+	Amount  float32     `json:"amount"`
+	Items   []string    `json:"items"` // List of Product.ID
+	Status  OrderStatus `json:"status"`
+	ForUser string      `json:"forUser"` // Ref to User.Username
 }
 
 // User holds information about a registered user

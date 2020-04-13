@@ -60,7 +60,6 @@ export default {
         localStorage.setItem('user', userProfile.userName)
         this.$router.replace({ path: '/' })
       } catch (err) {
-        this.failed = true
         this.error = this.apiDecodeError(err)
       }
     },
@@ -78,7 +77,6 @@ export default {
           localStorage.setItem('user', userProfile.userName)
           this.$router.replace({ path: '/' })
         } catch (err) {
-          this.failed = true
           this.error = this.apiDecodeError(err)
         }
       }
@@ -118,11 +116,8 @@ export default {
         console.log(`### MSAL user ${authUser.userName} has authenticated`)
         return authUser
       } catch (err) {
-        //if (!user.token) {
         console.error(`### MSAL error! ${err.toString()}`)
-        this.failed = true
         this.error = this.apiDecodeError(err)
-        //}
       }
     }
   }
