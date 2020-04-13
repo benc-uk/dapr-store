@@ -1,15 +1,15 @@
 <template>
   <div>
-    <h1>Special Offers!</h1>
+    <h1>On Sale</h1>
     <product-list view-type="offers" />
   </div>
 </template>
 
 <script>
-import ProductList from './ProductList'
+import ProductList from '../components/ProductList'
 
 export default {
-  name: 'ProductCatalog',
+  name: 'ProductOffers',
 
   components: {
     'product-list': ProductList

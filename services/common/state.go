@@ -14,7 +14,7 @@ import (
 //
 func GetState(resp http.ResponseWriter, port int, store string, service string, key string) (data []byte, err error) {
 	daprURL := fmt.Sprintf("http://localhost:%d/v1.0/state/%s/%s", port, store, key)
-	//fmt.Println(daprURL)
+	fmt.Println(daprURL)
 
 	daprResp, err := http.Get(daprURL)
 	if err != nil || (daprResp.StatusCode < 200 || daprResp.StatusCode > 299) {
@@ -43,6 +43,7 @@ func SaveState(resp http.ResponseWriter, port int, store string, service string,
 	}
 
 	daprURL := fmt.Sprintf("http://localhost:%d/v1.0/state/%s", port, store)
+	fmt.Println(daprURL)
 	daprResp, err := http.Post(daprURL, "application/json", bytes.NewBuffer(jsonPayload))
 	if err != nil || (daprResp.StatusCode < 200 || daprResp.StatusCode > 299) {
 		SendDaprProblem(daprURL, resp, daprResp, err, service)

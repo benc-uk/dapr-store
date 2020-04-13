@@ -1,5 +1,5 @@
-#@host = localhost:9000
-@host = daprstore.benco.io
+@host = localhost:9000
+#@host = daprstore.benco.io
 
 # ===================================================================
 # Products API
@@ -22,14 +22,32 @@ GET http://{{host}}/v1.0/invoke/products/method/get/1
 # ===================================================================
 
 ### Get an order
-GET http://{{host}}/v1.0/invoke/orders/method/get/u5uGw
+GET http://{{host}}/v1.0/invoke/orders/method/get/uopvz
 
 ### Create new order
 POST http://{{host}}/v1.0/invoke/orders/method/new
 content-type: application/json
 
 {
-  "productId": "1",
+  "items": ["1","3"],
   "amount": 34.7
+}
+
+
+
+# ===================================================================
+# Users API
+# ===================================================================
+
+### Get a user
+GET http://{{host}}/v1.0/invoke/users/method/get/becolem@microsoft.com
+
+### Register new user
+POST http://{{host}}/v1.0/invoke/users/method/register
+content-type: application/json
+
+{
+  "username": "bobby@example.com",
+  "displayName": "Dave McTestman"
 }
  

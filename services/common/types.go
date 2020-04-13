@@ -18,10 +18,18 @@ type Product struct {
 
 // Order holds information about a customer order
 type Order struct {
-	ID        string      `json:"id"`
-	Amount    float32     `json:"amount"`
-	ProductID string      `json:"productId"` // ref to a Product.ID
-	Status    OrderStatus `json:"status"`
+	ID     string      `json:"id"`
+	Amount float32     `json:"amount"`
+	Items  []string    `json:"items"` // List of Product.ID
+	Status OrderStatus `json:"status"`
+}
+
+// User holds information about a registered user
+type User struct {
+	Username     string   `json:"username"`
+	DisplayName  string   `json:"displayName"`
+	ProfileImage string   `json:"profileImage"`
+	Orders       []string `json:"orders"` // List of Order.IDs
 }
 
 // OrderStatus enum

@@ -45,7 +45,7 @@ func (api API) newOrder(resp http.ResponseWriter, req *http.Request) {
 		common.Problem{"json-error", "JSON decoding error", 400, err.Error(), serviceName}.HttpSend(resp)
 		return
 	}
-	if order.Amount <= 0 || len(order.ProductID) == 0 {
+	if order.Amount <= 0 || len(order.Items) == 0 {
 		common.Problem{"json-error", "Malformed orders JSON", 400, "Validation failed, check orders schema", serviceName}.HttpSend(resp)
 		return
 	}

@@ -1,12 +1,12 @@
 <template>
   <div>
     <h1>All Products</h1>
-    <product-list view-type="main" />
+    <product-list view-type="all" />
   </div>
 </template>
 
 <script>
-import ProductList from './ProductList'
+import ProductList from '../components/ProductList'
 
 export default {
   name: 'ProductCatalog',

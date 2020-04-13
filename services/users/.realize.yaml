@@ -1,0 +1,20 @@
+settings:
+  legacy:
+    force: false
+    interval: 0s
+schema:
+- name: users
+  path: .
+  commands: 
+    run:
+      status: true
+  watcher:
+    extensions:
+    - go
+    paths:
+    - .
+    - ../common
+    ignored_paths:
+    - .git
+    - .realize
+    - vendor

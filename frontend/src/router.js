@@ -1,10 +1,15 @@
 import VueRouter from 'vue-router'
 
-import ProductCatalog from './components/ProductCatalog'
-import ProductOffers from './components/ProductOffers'
-import Home from './components/Home'
+import ProductCatalog from './views/ProductCatalog'
+import ProductOffers from './views/ProductOffers'
+import Login from './views/Login'
+import Account from './views/Account'
+import Home from './views/Home'
+import Error from './views/Error'
+import Cart from './views/Cart'
 
 const router = new VueRouter({
+  mode: 'history',
   routes: [
     {
       path: '/catalog',
@@ -16,8 +21,27 @@ const router = new VueRouter({
     },
     {
       path: '/',
-      component: Home
-    }
+      component: Home,
+      name: 'home'
+    },
+    {
+      path: '/login',
+      component: Login
+    },
+    {
+      path: '/account',
+      component: Account
+    },
+    {
+      path: '/cart',
+      component: Cart
+    },
+    {
+      path: '/error',
+      name: 'error',
+      component: Error,
+      props: true
+    },
   ]
 })
 

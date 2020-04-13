@@ -8,37 +8,88 @@
       <b-navbar-toggle target="nav-collapse" />
 
       <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav>
+        <!-- <b-navbar-nav>
           <b-nav-item to="/catalog" active-class="active">
             <fa icon="shopping-basket" /> &nbsp; Catalog
           </b-nav-item>
           <b-nav-item to="/offers" active-class="active">
             <fa icon="trophy" /> &nbsp; Offers
           </b-nav-item>
+        </b-navbar-nav> -->
+
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item v-if="!user.userName" to="/login" variant="info">
+            <fa icon="user" /> &nbsp; Login
+          </b-nav-item>
+          <b-nav-item v-if="user.userName" to="/cart" variant="info" active-class="active">
+            <fa icon="shopping-cart" /> &nbsp; Cart
+          </b-nav-item>
+          <b-nav-item v-if="user.userName" to="/account" variant="info" active-class="active">
+            <fa icon="id-card" /> &nbsp; Account
+          </b-nav-item>
         </b-navbar-nav>
       </b-collapse>
-      <b-navbar-nav class="ml-auto">
-        <b-nav-item to="/orders" active-class="active" variant="info">
-          <fa icon="user-circle" /> &nbsp; My Orders
-        </b-nav-item>
-      </b-navbar-nav>
     </b-navbar>
+
 
     <div class="container">
       <router-view />
+
+      <footer>Dapr eShop v{{ version }} - (C) Ben Coleman, 2020</footer>
     </div>
   </div>
 </template>
 
 <script>
+import { userProfile, msalApp, accessTokenRequest } from './main'
+import User from './user'
+
 export default {
   name: 'App',
 
   data() {
     return {
-      version: require('../package.json').version
+      user: userProfile,
+      version: require('../package.json').version,
     }
   },
+
+  async mounted() {
+    // Try to refresh the token for the stored user
+    // If it works great, if not we remove the stored local user
+    // and the user will need to login again
+    let storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        let tokenResp = await msalApp.acquireTokenSilent(accessTokenRequest)
+
+        if (tokenResp) {
+          Object.assign(userProfile, new User(tokenResp.accessToken, msalApp.getAccount(), msalApp.getAccount().userName || msalApp.getAccount().preferred_username))
+          console.log(`### App.vue: MSAL user ${userProfile.userName} is logged & has token`)
+          localStorage.setItem('user', userProfile.userName)
+          userProfile.cart = []
+
+          try {
+            if (localStorage.getItem('cart')) {
+              userProfile.cart = JSON.parse(localStorage.getItem('cart'))
+            }
+          } catch (err) {
+            userProfile.cart = []
+          }
+        } else {
+          console.log('### acquireTokenSilent returned no token, removing stored user')
+          Object.assign(userProfile, new User())
+          localStorage.removeItem('user')
+          localStorage.removeItem('cart')
+        }
+      } catch (err) {
+        console.log(`### Error acquireTokenSilent ${err}, removing stored user`)
+        Object.assign(userProfile, new User())
+        localStorage.removeItem('user')
+        localStorage.removeItem('cart')
+      }
+    }
+  }
 }
 </script>
 
@@ -65,7 +116,7 @@ export default {
     margin-bottom: 2rem;
   }
   .nav-item {
-    width: 10rem;
+    width: 8rem;
     text-align: center;
     font-size: 1.3rem;
     border-radius: 10px;
@@ -79,5 +130,14 @@ export default {
   .active {
     background-color:rgba(255, 255, 255, 0.1);
     border-radius: 10px;
+  }
+  .card-header {
+    font-size: 150% !important;
+  }
+  footer {
+    width: 100%;
+    text-align: right;
+    border-top: 2px solid lightgray;
+    margin-top: 3rem;
   }
 </style>
