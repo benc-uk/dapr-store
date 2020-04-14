@@ -23,7 +23,7 @@ import (
 func (api API) addRoutes(router *mux.Router) {
 	router.HandleFunc("/dapr/subscribe", api.subscribeTopic)
 	router.HandleFunc("/"+daprTopicName, api.receiveOrders)
-	router.HandleFunc("/get/{id}", api.getOrder)
+	router.HandleFunc("/get/{id}", common.AuthMiddleware(api.getOrder))
 }
 
 //

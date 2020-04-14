@@ -24,8 +24,7 @@ import (
 // All routes we need should be registered here
 //
 func (api API) addRoutes(router *mux.Router) {
-	router.HandleFunc("/submit", api.submitOrder).Methods("POST")
-	// router.HandleFunc("/get/{id}", api.getOrder)
+	router.HandleFunc("/submit", common.AuthMiddleware(api.submitOrder)).Methods("POST")
 }
 
 //

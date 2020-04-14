@@ -67,12 +67,16 @@ export default {
       }
 
       try {
+        // Moved in front of apiUserRegister call so we have a bearer token
+        Object.assign(userProfile, authUser)
+        localStorage.setItem('user', userProfile.userName)
+
         // Sidetracked by getting user's photo, resulted in Base64 encoding hell
         // let graphTokenResp = await msalApp.acquireTokenSilent({ scopes: [ 'user.read' ] })
         // let graphPhoto = await axios.get('https://graph.microsoft.com/beta/me/photo/$value', { headers: { Authorization: `Bearer ${graphTokenResp.accessToken}` } })
         await this.apiUserRegister(regUserRequest)
-        Object.assign(userProfile, authUser)
-        localStorage.setItem('user', userProfile.userName)
+        // Object.assign(userProfile, authUser)
+        // localStorage.setItem('user', userProfile.userName)
         this.$router.replace({ path: '/' })
       } catch (err) {
         this.error = this.apiDecodeError(err)
@@ -86,13 +90,13 @@ export default {
 
       if (authUser && authUser.userName) {
         try {
-          let userCheck = await this.apiUserGet(authUser.userName)
-          if (!userCheck && !userCheck.userName) {
+          let userCheck = await this.apiUserCheckReg(authUser.userName)
+          if (userCheck.status != 204) {
             throw new Error('Please register first')
           }
           Object.assign(userProfile, authUser)
           localStorage.setItem('user', userProfile.userName)
-          console.log(userProfile.token)
+          //  console.log(userProfile.token)
 
           this.$router.replace({ path: '/' })
         } catch (err) {

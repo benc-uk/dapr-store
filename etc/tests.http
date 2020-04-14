@@ -46,8 +46,12 @@ GET http://{{host}}/v1.0/invoke/orders/method/get/WK728
 # Users API
 # ===================================================================
 
+### Check a user
+GET http://{{host}}/v1.0/invoke/users/method/isregistered/benc.uk@outlook.com
+
 ### Get a user
 GET http://{{host}}/v1.0/invoke/users/method/get/benc.uk@outlook.com
+
 
 ### Register new user
 POST http://{{host}}/v1.0/invoke/users/method/register

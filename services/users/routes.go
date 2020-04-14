@@ -22,9 +22,10 @@ import (
 // All routes we need should be registered here
 //
 func (api API) addRoutes(router *mux.Router) {
-	router.HandleFunc("/register", api.registerUser).Methods("POST")
-	router.HandleFunc("/get/{username}", api.getUser)
-	router.HandleFunc("/addorder/{username}/{orderId}", api.addOrderToUser).Methods("PUT")
+	router.HandleFunc("/register", common.AuthMiddleware(api.registerUser)).Methods("POST")
+	router.HandleFunc("/get/{username}", common.AuthMiddleware(api.getUser))
+	router.HandleFunc("/isregistered/{username}", api.checkRegistered)
+	router.HandleFunc("/addorder/{username}/{orderId}", common.AuthMiddleware(api.addOrderToUser)).Methods("PUT")
 }
 
 //
@@ -96,7 +97,6 @@ func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 // Add orderId to user - !TODO! secure this so only callable from inside
 //
 func (api API) addOrderToUser(resp http.ResponseWriter, req *http.Request) {
-	fmt.Printf("############################## HHHHHHHHHH\n\n\n")
 	vars := mux.Vars(req)
 	data, err := common.GetState(resp, daprPort, daprStoreName, serviceName, vars["username"])
 	if err != nil {
@@ -110,9 +110,6 @@ func (api API) addOrderToUser(resp http.ResponseWriter, req *http.Request) {
 
 	user := common.User{}
 	err = json.Unmarshal(data, &user)
-	fmt.Printf("#### orderId %+v\n", vars["orderId"])
-	fmt.Printf("#### username %+v\n", vars["username"])
-	fmt.Printf("#### addOrderToUser %+v\n", user)
 	orderID := vars["orderId"]
 	alreadyExists := false
 	for _, oid := range user.Orders {
@@ -135,4 +132,22 @@ func (api API) addOrderToUser(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(200)
+}
+
+//
+// Returns 204 if registered and 404 if not
+//
+func (api API) checkRegistered(resp http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	data, err := common.GetState(resp, daprPort, daprStoreName, serviceName, vars["username"])
+	if err != nil {
+		return // Error will have already been written to resp
+	}
+
+	if len(data) <= 0 {
+		resp.WriteHeader(404)
+		return
+	}
+
+	resp.WriteHeader(204)
 }

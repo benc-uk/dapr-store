@@ -36,10 +36,17 @@ To stop Dapr instances and other processes, press Ctrl+C to exit the `start-loca
 
 # Reference Information
 
+## Config - Environmental Variables
+- `PORT`
+- `AUTH_CLIENT_ID`
+- `DAPR_STORE_NAME`
+- `DAPR_ORDERS_TOPIC`
+- `STATIC_DIR` (Front host only)
+
 ## Local & default ports
-9000 - NGINX API gateway (reverse proxy)
-9001 - Orders service
-9002 - Products service
-9003 - Users service
-9004 - Order processing service
-8000 - Frontend host
+- 9000 - NGINX API gateway (reverse proxy)
+- 9001 - Cart service
+- 9002 - Products service
+- 9003 - Users service
+- 9004 - Order processing service
+- 8000 - Frontend host

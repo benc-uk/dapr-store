@@ -15,6 +15,10 @@ export default {
       return this._apiRawCall(`v1.0/invoke/users/method/get/${username}`)
     },
 
+    apiUserCheckReg: function(username) {
+      return this._apiRawCall(`v1.0/invoke/users/method/isregistered/${username}`)
+    },
+
     //
     // ===== Products =====
     //
@@ -41,6 +45,9 @@ export default {
       return this._apiRawCall(`v1.0/invoke/orders/method/get/${orderId}`)
     },
 
+    //
+    // ===== Base Axios wrapper =====
+    //
     _apiRawCall: function(apiPath, method = 'get', data = null) {
       let apiUrl = `/${apiPath}`
       console.log(`### API CALL ${method} ${apiUrl}`)

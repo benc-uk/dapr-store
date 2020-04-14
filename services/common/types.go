@@ -1,6 +1,6 @@
 package common
 
-// DaprState is a struct
+// DaprState is the payload for the Dapr state API
 type DaprState struct {
 	Key   string      `json:"key"`
 	Value interface{} `json:"value"`
@@ -37,7 +37,7 @@ type User struct {
 // OrderStatus enum
 type OrderStatus string
 
-// OrderNew blah blah
+// This is a enum of Order statuses
 const (
 	OrderNew        OrderStatus = "new"
 	OrderReceived   OrderStatus = "received"
@@ -45,7 +45,7 @@ const (
 	OrderComplete   OrderStatus = "complete"
 )
 
-// CloudEventOrder is hfhfhfh
+// CloudEventOrder is probably no longer used
 type CloudEventOrder struct {
 	ID          string      `json:"id"`
 	Source      string      `json:"source"`
@@ -55,21 +55,3 @@ type CloudEventOrder struct {
 	Data        interface{} `json:"data"`
 	Subject     string      `json:"subject"`
 }
-
-// "id": "3335bd0a-f47d-4188-af61-962a057d8698",
-// "source": "cart",
-// "type": "com.dapr.event.sent",
-// "specversion": "0.3",
-// "datacontenttype": "application/json",
-// "data": {
-// 	"items": [
-// 		"1",
-// 		"3"
-// 	],
-// 	"status": "new",
-// 	"forUser": "",
-// 	"id": "M2lBI",
-// 	"amount": 34.7
-// },
-// "subject": ""
-// }

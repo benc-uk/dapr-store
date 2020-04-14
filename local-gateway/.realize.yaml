@@ -3,18 +3,14 @@ settings:
     force: false
     interval: 0s
 schema:
-- name: products
+- name: local-gateway
   path: .
-  commands: 
-    run:
-      status: true
+  commands: {}
   watcher:
     extensions:
     - go
-    - env
     paths:
-    - .
-    - ../common
+    - /
     ignored_paths:
     - .git
     - .realize
