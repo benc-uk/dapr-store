@@ -1,5 +1,5 @@
 @host = localhost:9000
-#@host = daprstore.benco.io
+#@host = daprstore.kube.benco.io
 
 # ===================================================================
 # Products API
@@ -18,20 +18,27 @@ GET http://{{host}}/v1.0/invoke/products/method/get/1
 
 
 # ===================================================================
-# Orders API
+# Cart API
 # ===================================================================
 
-### Get an order
-GET http://{{host}}/v1.0/invoke/orders/method/get/fo6zn
-
 ### Create new order
-POST http://{{host}}/v1.0/invoke/orders/method/new
+POST http://{{host}}/v1.0/invoke/cart/method/submit
 content-type: application/json
 
 {
   "items": ["1","3"],
-  "amount": 34.7
+  "amount": 34.7,
+  "forUser": "dave"
 }
+
+
+
+# ===================================================================
+# Orders API
+# ===================================================================
+
+### Get existing order
+GET http://{{host}}/v1.0/invoke/orders/method/get/WK728
 
 
 
@@ -40,14 +47,18 @@ content-type: application/json
 # ===================================================================
 
 ### Get a user
-GET http://{{host}}/v1.0/invoke/users/method/get/becolem@microsoft.com
+GET http://{{host}}/v1.0/invoke/users/method/get/benc.uk@outlook.com
 
 ### Register new user
 POST http://{{host}}/v1.0/invoke/users/method/register
 content-type: application/json
 
 {
-  "username": "bobby@example.com",
-  "displayName": "Dave McTestman"
+  "username": "becolem@microsoft.com",
+  "displayName": "Ben API TEST"
 }
+ 
+### Add order to user
+PUT http://{{host}}/v1.0/invoke/users/method/addorder/benc.uk@outlook.com/3GBSh
+
  

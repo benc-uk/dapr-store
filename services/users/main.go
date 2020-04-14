@@ -27,12 +27,13 @@ type API struct {
 }
 
 var (
-	healthy        = true               // Simple health flag
-	version        = "0.0.1"            // App version number, set at build time with -ldflags "-X 'main.version=1.2.3'"
-	buildInfo      = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
-	serviceName    = "users"
-	daprPort       int
-	daprStateStore string
+	healthy       = true               // Simple health flag
+	version       = "0.0.1"            // App version number, set at build time with -ldflags "-X 'main.version=1.2.3'"
+	buildInfo     = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
+	serviceName   = "users"
+	defaultPort   = 9003
+	daprPort      int
+	daprStoreName string
 )
 
 //
@@ -43,8 +44,10 @@ func main() {
 	log.Printf("### Dapr Store: %v v%v starting...", serviceName, version)
 
 	// Port to listen on, change the default as you see fit
-	serverPort := envhelper.GetEnvInt("PORT", 9003)
-	daprStateStore = envhelper.GetEnvString("DAPR_STORE_NAME", "statestore")
+	serverPort := envhelper.GetEnvInt("PORT", defaultPort)
+
+	// Use the given Dapr component name to use with the state API
+	daprStoreName = envhelper.GetEnvString("DAPR_STORE_NAME", "statestore")
 
 	daprPort = envhelper.GetEnvInt("DAPR_HTTP_PORT", 0)
 	if daprPort != 0 {
@@ -75,7 +78,7 @@ func main() {
 	api.addRoutes(router)
 
 	// Start server
-	log.Printf("### Dapr state store: %v\n", daprStateStore)
+	log.Printf("### Dapr state store: %v\n", daprStoreName)
 	log.Printf("### Server listening on %v\n", serverPort)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", serverPort), router)
 	if err != nil {

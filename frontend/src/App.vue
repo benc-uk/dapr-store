@@ -95,7 +95,7 @@ export default {
 
 <style>
   * {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Josefin Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
   body, html, .app {
     margin: 0;
@@ -107,7 +107,7 @@ export default {
     padding-right: 1rem;
   }
   .logo-text {
-    font-family: 'Garamond', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Cinzel Decorative', cursive;
     font-size: 2rem;
     padding-right: 3rem;
   }

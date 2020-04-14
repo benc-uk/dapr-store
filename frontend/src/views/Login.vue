@@ -1,25 +1,36 @@
 <template>
-  <div>
+  <b-container>
     <error-box :error="error" />
-
-    <b-card header="🙍‍♂️ Existing User - Sign In">
-      <b-card-body class="text-center">
-        <b-button size="lg" variant="dark" @click="login">
-          <img src="../assets/img/ms-tiny-logo.png"> &nbsp; Sign in with Microsoft Account
-        </b-button>
-      </b-card-body>
-    </b-card>
-
-    <br>
-
-    <b-card header="🚩 New Users - Register">
-      <b-card-body class="text-center">
-        <b-button size="lg" variant="dark" @click="register">
-          <img src="../assets/img/ms-tiny-logo.png"> &nbsp; Register with Microsoft Account
-        </b-button>
-      </b-card-body>
-    </b-card>
-  </div>
+    <b-overlay :show="inprogress && !error" rounded="sm">
+      <b-row class="m-1">
+        <b-col>
+          <b-card header="🙍‍♂️ Existing User - Sign In">
+            <b-card-body class="d-flex flex-column" style="height: 100%">
+              <div class="flex-grow-1 text-center">
+                If you have already registered, sign into your account using your Microsoft indentity
+              </div>
+              <b-button size="lg" variant="dark" @click="login">
+                <img src="../assets/img/ms-tiny-logo.png"> &nbsp; Sign in with Microsoft
+              </b-button>
+            </b-card-body>
+          </b-card>
+          <br>
+        </b-col>
+        <b-col>
+          <b-card header="🚩 New Users - Register">
+            <b-card-body class="d-flex flex-column" style="height: 100%">
+              <div class="flex-grow-1 text-center">
+                If you do not have an account, register using your Microsoft indentity
+              </div>
+              <b-button size="lg" variant="dark" @click="register">
+                <img src="../assets/img/ms-tiny-logo.png"> &nbsp; Register with Microsoft
+              </b-button>
+            </b-card-body>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-overlay>
+  </b-container>
 </template>
 
 <script>
@@ -39,16 +50,20 @@ export default {
 
   data() {
     return {
-      error: null
+      error: null,
+      inprogress: false
     }
   },
 
   methods: {
     async register() {
+      this.error = null
+      this.inprogress = true
       let authUser = await this.authenicateUser()
       let regUserRequest = {
         'username': authUser.userName,
-        'displayName': authUser.account.name || 'New User'
+        'displayName': authUser.account.name || 'New User',
+        'profileImage': 'img/placeholder-profile.jpg'
       }
 
       try {
@@ -65,6 +80,8 @@ export default {
     },
 
     async login() {
+      this.inprogress = true
+      this.error = null
       let authUser = await this.authenicateUser()
 
       if (authUser && authUser.userName) {
@@ -75,6 +92,8 @@ export default {
           }
           Object.assign(userProfile, authUser)
           localStorage.setItem('user', userProfile.userName)
+          console.log(userProfile.token)
+
           this.$router.replace({ path: '/' })
         } catch (err) {
           this.error = this.apiDecodeError(err)
@@ -83,7 +102,7 @@ export default {
     },
 
     async authenicateUser() {
-      this.loginFailed = false
+      this.error = null
 
       let loginRequest = { scopes: [ 'user.read' ], prompt: 'select_account' }
 
@@ -122,6 +141,16 @@ export default {
     }
   }
 }
-
-
 </script>
+
+<style scoped>
+.card {
+  height: 350px;
+}
+.card-body {
+  font-size: 20px;
+}
+.btn {
+  height: 80px
+}
+</style>

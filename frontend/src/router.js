@@ -5,7 +5,8 @@ import ProductOffers from './views/ProductOffers'
 import Login from './views/Login'
 import Account from './views/Account'
 import Home from './views/Home'
-import Error from './views/Error'
+//import Error from './views/Error'
+import About from './views/About'
 import Cart from './views/Cart'
 
 const router = new VueRouter({
@@ -37,11 +38,15 @@ const router = new VueRouter({
       component: Cart
     },
     {
-      path: '/error',
-      name: 'error',
-      component: Error,
-      props: true
+      path: '/about',
+      component: About
     },
+    // {
+    //   path: '/error',
+    //   name: 'error',
+    //   component: Error,
+    //   props: true
+    // },
   ]
 })
 

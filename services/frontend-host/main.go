@@ -13,6 +13,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Defaults, can be modified with env variables
+var (
+	defaultStaticPath = "./dist" // Change with env: STATIC_DIR
+	defaultPort       = 8000     // Change with env: PORT
+)
+
 // spaHandler implements the http.Handler interface, so we can use it
 // to respond to HTTP requests. The path to the static directory and
 // path to the index file within that static directory are used to
@@ -67,7 +73,7 @@ func main() {
 		json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 	})
 
-	staticPath := envhelper.GetEnvString("STATIC_DIR", "./dist")
+	staticPath := envhelper.GetEnvString("STATIC_DIR", defaultStaticPath)
 	spa := spaHandler{
 		staticPath: staticPath,
 		indexPath:  "index.html",
@@ -75,7 +81,7 @@ func main() {
 
 	router.PathPrefix("/").Handler(spa)
 
-	serverPort := envhelper.GetEnvInt("PORT", 8000)
+	serverPort := envhelper.GetEnvInt("PORT", defaultPort)
 
 	srv := &http.Server{
 		Handler: router,

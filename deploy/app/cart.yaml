@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: orders
+  name: cart
   labels:
-    app: orders
+    app: cart
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: orders
+      app: cart
   template:
     metadata:
       labels:
-        app: orders
+        app: cart
       annotations:
         dapr.io/enabled: "true"
-        dapr.io/id: "orders"
-        dapr.io/port: "9004"
+        dapr.io/id: "cart"
+        dapr.io/port: "9001"
     spec:
       containers:
       - name: service
-        image: bcdemo.azurecr.io/dapr-store/orders
+        image: bcdemo.azurecr.io/dapr-store/cart
         imagePullPolicy: Always
         env:
           - name: DAPR_HTTP_PORT

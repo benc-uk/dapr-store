@@ -26,13 +26,20 @@ export default {
       return this._apiRawCall('v1.0/invoke/products/method/offers')
     },
 
+    apiProductGet: function(productId) {
+      return this._apiRawCall(`v1.0/invoke/products/method/get/${productId}`)
+    },
+
     //
     // ===== Orders =====
     //
     apiOrderSubmit: function(order) {
-      return this._apiRawCall('v1.0/invoke/orders/method/new', 'POST', order)
+      return this._apiRawCall('v1.0/invoke/cart/method/submit', 'POST', order)
     },
 
+    apiOrderGet: function(orderId) {
+      return this._apiRawCall(`v1.0/invoke/orders/method/get/${orderId}`)
+    },
 
     _apiRawCall: function(apiPath, method = 'get', data = null) {
       let apiUrl = `/${apiPath}`

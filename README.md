@@ -14,12 +14,13 @@ It is written in a mixture of Go and Vue.js
 - Go 1.14+
 - Realize, install with: `go get github.com/oxequa/realize`
 
+### Setup
 Install and initialize Dapr
 ```
 wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
 sudo dapr init
 ```
-
+### Run
 Run everything locally.
 From root of project (e.g. `dapr-store` directory)
 ```
@@ -31,10 +32,14 @@ To stop Dapr instances and other processes, press Ctrl+C to exit the `start-loca
 ```
 ./bin/stop-local.sh
 ```
+
+
 # Reference Information
 
-## Local ports
+## Local & default ports
 9000 - NGINX API gateway (reverse proxy)
 9001 - Orders service
-9001 - Products service
+9002 - Products service
+9003 - Users service
+9004 - Order processing service
 8000 - Frontend host

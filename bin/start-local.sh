@@ -1,14 +1,18 @@
 #!/bin/bash
 
-pushd frontend
-npm run serve &
-popd
+# pushd frontend
+# npm run serve &
+# popd
 
 # pushd services/frontend-host
 # source ./run.sh &
 # popd
 
 pushd services/orders
+source ./run.sh &
+popd
+
+pushd services/cart
 source ./run.sh &
 popd
 
@@ -19,6 +23,8 @@ popd
 pushd services/users
 source ./run.sh &
 popd
+
+sleep 5
 
 pushd local-gateway
 source ./run.sh &

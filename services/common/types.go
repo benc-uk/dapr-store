@@ -19,6 +19,7 @@ type Product struct {
 // Order holds information about a customer order
 type Order struct {
 	ID      string      `json:"id"`
+	Title   string      `json:"title"`
 	Amount  float32     `json:"amount"`
 	Items   []string    `json:"items"` // List of Product.ID
 	Status  OrderStatus `json:"status"`
@@ -43,3 +44,32 @@ const (
 	OrderProcessing OrderStatus = "processing"
 	OrderComplete   OrderStatus = "complete"
 )
+
+// CloudEventOrder is hfhfhfh
+type CloudEventOrder struct {
+	ID          string      `json:"id"`
+	Source      string      `json:"source"`
+	Type        string      `json:"type"`
+	Version     string      `json:"specversion"`
+	ContentType string      `json:"datacontenttype"`
+	Data        interface{} `json:"data"`
+	Subject     string      `json:"subject"`
+}
+
+// "id": "3335bd0a-f47d-4188-af61-962a057d8698",
+// "source": "cart",
+// "type": "com.dapr.event.sent",
+// "specversion": "0.3",
+// "datacontenttype": "application/json",
+// "data": {
+// 	"items": [
+// 		"1",
+// 		"3"
+// 	],
+// 	"status": "new",
+// 	"forUser": "",
+// 	"id": "M2lBI",
+// 	"amount": 34.7
+// },
+// "subject": ""
+// }

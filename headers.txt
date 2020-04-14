@@ -1,0 +1,32 @@
+== APP == [10:02:00][ORDERS] : User-Agent vscode-restclient
+
+== APP == [10:02:00][ORDERS] : Accept-Encoding gzip, deflate
+
+== APP == [10:02:00][ORDERS] : X-Forwarded-For 127.0.0.1:60494
+
+== APP == [10:02:00][ORDERS] : Connection close
+
+== APP == [10:02:00][ORDERS] : Content-Type application/json
+
+== APP == [10:02:00][ORDERS] : Content-Length 0
+
+== APP == [10:02:00][ORDERS] : Forwarded by=127.0.0.1:35681;for=127.0.0.1:60494;host=localhost;proto=http
+
+== APP == [10:02:00][ORDERS] : X-Forwarded-Host localhost
+
+== APP == [10:02:00][ORDERS] : X-Forwarded-Proto http
+
+
+
+X-Forwarded-Proto http
+Accept-Encoding gzip, deflate
+User-Agent vscode-restclient
+Content-Length 0
+X-Request-Id 423753def76336672ebe17fee075181a
+X-Forwarded-Port 443
+X-Forwarded-Host daprstore.kube.benco.io
+X-Scheme https
+Forwarded by=10.240.0.64:3500;for=10.240.0.64:52496;host=daprstore.kube.benco.io;proto=http
+Content-Type application/json
+X-Real-Ip 10.240.0.66
+X-Forwarded-For 10.240.0.64:52496

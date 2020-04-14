@@ -5,8 +5,13 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: dapr
 spec:
+  tls:
+  - hosts:
+    - daprstore.kube.benco.io
+    secretName: kube-benco-io-cert
   rules:
-    - http:
+    - host: daprstore.kube.benco.io
+      http:
         paths:
           # Only expose the Dapr invoke API, lets us call our services and nothing more
           - path: /v1.0/invoke/

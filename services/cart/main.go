@@ -30,10 +30,9 @@ var (
 	healthy       = true               // Simple health flag
 	version       = "0.0.1"            // App version number, set at build time with -ldflags "-X 'main.version=1.2.3'"
 	buildInfo     = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
-	serviceName   = "orders"
-	defaultPort   = 9004
+	serviceName   = "cart"
+	defaultPort   = 9001
 	daprPort      int
-	daprStoreName string
 	daprTopicName string
 )
 
@@ -46,9 +45,6 @@ func main() {
 
 	// Port to listen on, change the default as you see fit
 	serverPort := envhelper.GetEnvInt("PORT", defaultPort)
-
-	// Use the given Dapr component name to use with the state & pub-sub APIs
-	daprStoreName = envhelper.GetEnvString("DAPR_STORE_NAME", "statestore")
 	daprTopicName = envhelper.GetEnvString("DAPR_ORDERS_TOPIC", "orders-queue")
 
 	daprPort = envhelper.GetEnvInt("DAPR_HTTP_PORT", 0)
@@ -80,8 +76,7 @@ func main() {
 	api.addRoutes(router)
 
 	// Start server
-	log.Printf("### Dapr state store: %v\n", daprStoreName)
-	log.Printf("### Dapr topic name: %v\n", daprTopicName)
+	log.Printf("### Dapr orders topic: %v\n", daprTopicName)
 	log.Printf("### Server listening on %v\n", serverPort)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", serverPort), router)
 	if err != nil {

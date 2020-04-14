@@ -13,9 +13,9 @@ import 'bootswatch/dist/materia/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import { library as faIcons } from '@fortawesome/fontawesome-svg-core'
-import { faUser, faUserPlus, faShoppingBasket, faTrophy, faIdCard, faShoppingCart, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faUserPlus, faShoppingBasket, faTrophy, faIdCard, faShoppingCart, faSignOutAlt, faTrashAlt, faRedoAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-faIcons.add(faUser, faUserPlus, faShoppingBasket, faTrophy, faIdCard, faShoppingCart, faSignOutAlt)
+faIcons.add(faUser, faUserPlus, faShoppingBasket, faTrophy, faIdCard, faShoppingCart, faSignOutAlt, faTrashAlt, faRedoAlt)
 Vue.component('fa', FontAwesomeIcon)
 
 Vue.config.productionTip = false
