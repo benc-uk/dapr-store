@@ -1,9 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import * as msal from 'msal'
-
 import App from './App.vue'
-import router from './router'
 import User from './user'
 
 // Use Vue Bootstrap and theme
@@ -12,28 +10,37 @@ Vue.use(BootstrapVue)
 import 'bootswatch/dist/materia/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+// Set up FontAwesome
 import { library as faIcons } from '@fortawesome/fontawesome-svg-core'
 import { faUser, faUserPlus, faShoppingBasket, faTrophy, faIdCard, faShoppingCart, faSignOutAlt, faTrashAlt, faRedoAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 faIcons.add(faUser, faUserPlus, faShoppingBasket, faTrophy, faIdCard, faShoppingCart, faSignOutAlt, faTrashAlt, faRedoAlt)
 Vue.component('fa', FontAwesomeIcon)
 
-Vue.config.productionTip = false
+// And client side routes (held in router.js)
+import router from './router'
 Vue.use(VueRouter)
 
 // Global user & auth details
 let userProfile = new User()
 export { userProfile }
 
-// export { user }
-export const msalApp = new msal.UserAgentApplication({
-  auth: {
-    clientId: '69972365-c1b6-494d-9579-5b9de2790fc3',
-    redirectUri: window.location.origin
+// MSAL config used for signing in users with MS identity platform
+export let msalApp = {}
+export let accessTokenRequest = {}
+if (process.env.VUE_APP_AUTH_CLIENT_ID) {
+  console.log(`### USER SIGN-IN ENABLED. Using clientId: ${process.env.VUE_APP_AUTH_CLIENT_ID}`)
+  msalApp = new msal.UserAgentApplication({
+    auth: {
+      clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
+      redirectUri: window.location.origin
+    }
+  })
+  accessTokenRequest = {
+    scopes: [ `api://${process.env.VUE_APP_AUTH_CLIENT_ID}/store-api` ]
   }
-})
-export const accessTokenRequest = {
-  scopes: [ 'api://69972365-c1b6-494d-9579-5b9de2790fc3/store-api' ]
+} else {
+  console.log('### USER SIGN-IN DISABLED. Will run in demo mode, with dummy users')
 }
 
 new Vue({

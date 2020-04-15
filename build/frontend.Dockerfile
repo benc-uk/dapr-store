@@ -39,11 +39,12 @@ RUN npm install --silent
 COPY frontend/.eslintrc.js .
 COPY frontend/public ./public
 COPY frontend/src ./src
+COPY frontend/.env.production .
 
 # Run ESLint checks
 RUN npm run lint
 # Now main Vue CLI build & bundle, this will output to ./dist
-RUN npm run build
+RUN npm run build -- --mode production
 
 # ================================================================================================
 # === Stage 3: Bundle server exe and Vue dist in runtime image ===================================

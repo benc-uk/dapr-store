@@ -3,6 +3,7 @@ package common
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -20,9 +21,17 @@ var jwkSet *jwk.Set
 //
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Disable if client id is not set
+		// Disable if call is internal from another Dapr service (localhost) or running on dev machine
+		if fwdHost := r.Header.Get("X-Forwarded-Host"); strings.Contains(fwdHost, "localhost") {
+			log.Printf("### Auth (%s): Bypassing validation for host: %s\n", r.URL, fwdHost)
+			next(w, r)
+			return
+		}
+
+		// Disable if client id is not set, this is running in demo / unsecured mode
 		clientID := envhelper.GetEnvString("AUTH_CLIENT_ID", "")
 		if len(clientID) == 0 {
+			log.Printf("### Auth (%s): No validation as AUTH_CLIENT_ID is not set\n", r.URL)
 			next(w, r)
 			return
 		}
@@ -56,12 +65,13 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			w.WriteHeader(401)
 			return
 		}
-		if claims["azp"] != clientID {
+		if claims["aud"] != clientID {
 			w.WriteHeader(401)
 			return
 		}
 
 		// Otherwise, we're all good!
+		log.Printf("### Auth (%s): token passed validation! [scp:%s] [aud:%s]\n", r.URL, claims["scp"], claims["aud"])
 		next(w, r)
 	}
 }

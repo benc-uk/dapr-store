@@ -9,6 +9,7 @@ package common
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -25,6 +26,7 @@ type Problem struct {
 // HttpSend sends a RFC 7807 problem object as HTTP response
 //
 func (p Problem) HttpSend(resp http.ResponseWriter) {
+	log.Printf("### Sending API problem to client: %+v", p)
 	resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(p.Status)
 	json.NewEncoder(resp).Encode(p)

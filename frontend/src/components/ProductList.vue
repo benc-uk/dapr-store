@@ -16,7 +16,7 @@
         £{{ product.cost }}
       </b-card-text>
 
-      <b-button :disabled="!user.token" href="#" variant="primary" @click="addToCart(product)">
+      <b-button :disabled="!user.userName" href="#" variant="primary" @click="addToCart(product)">
         <fa icon="shopping-cart" />
         &nbsp; Add to Cart
       </b-button>

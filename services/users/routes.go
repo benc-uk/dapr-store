@@ -32,7 +32,6 @@ func (api API) addRoutes(router *mux.Router) {
 // Register new user
 //
 func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
-
 	cl, _ := strconv.Atoi(req.Header.Get("content-length"))
 	if cl <= 0 {
 		common.Problem{"json-error", "Zero length body", 400, "Body is required", serviceName}.HttpSend(resp)

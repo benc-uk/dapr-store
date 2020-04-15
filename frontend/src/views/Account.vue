@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { userProfile } from '../main'
+import { userProfile, msalApp } from '../main'
 import api from '../mixins/api'
 import User from '../user'
 import ErrorBox from '../components/ErrorBox'
@@ -77,7 +77,7 @@ export default {
   },
 
   async created() {
-    if (!userProfile.token) {
+    if (!userProfile.userName) {
       this.$router.replace({ path: '/' })
       return
     }
@@ -99,7 +99,7 @@ export default {
       Object.assign(userProfile, new User())
       localStorage.removeItem('user')
       localStorage.removeItem('cart')
-      //await msalApp.logout()
+      await msalApp.logout()
 
       this.$router.push({ name: 'home' })
     },

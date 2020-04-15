@@ -25,6 +25,8 @@ spec:
         env:
           - name: DAPR_HTTP_PORT
             value: "3500"
+          - name: AUTH_CLIENT_ID
+            value: "69972365-c1b6-494d-9579-5b9de2790fc3"                  
         resources:
           limits:
             cpu: 200m

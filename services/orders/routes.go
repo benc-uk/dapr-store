@@ -10,6 +10,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -50,6 +51,8 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		common.Problem{"json-error", "JSON decoding error", 500, err.Error(), serviceName}.HttpSend(resp)
 		return
+	} else {
+		log.Printf("### Received event from pub/sub topic: %s\n", daprTopicName)
 	}
 
 	// Save order in state with received status
@@ -58,16 +61,24 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	err = common.SaveState(resp, daprPort, daprStoreName, serviceName, order.ID, order)
 	if err != nil {
 		return // Error will have already been written to resp
+	} else {
+		log.Printf("### Order %s was saved to state store\n", order.ID)
 	}
 
 	// Update the user adding the orderId to their list of owned orders
 	client := &http.Client{}
 	addorderPutReq, err := http.NewRequest("PUT", fmt.Sprintf(`http://localhost:%d/v1.0/invoke/users/method/addorder/%s/%s`, daprPort, order.ForUser, order.ID), nil)
 	if err == nil {
-		_, err := client.Do(addorderPutReq)
+		addorderResp, err := client.Do(addorderPutReq)
 		if err != nil {
 			resp.WriteHeader(500)
 			return
+		} else if addorderResp.StatusCode != 200 {
+			log.Printf("### ERROR! Failed to add order %s to user %s\n", order.ID, order.ForUser)
+			resp.WriteHeader(500)
+			return
+		} else {
+			log.Printf("### Order %s was added to user %s\n", order.ID, order.ForUser)
 		}
 	}
 
@@ -75,12 +86,14 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	time.AfterFunc(30*time.Second, func() {
 		order.Status = common.OrderProcessing
 		err = common.SaveState(resp, daprPort, daprStoreName, serviceName, order.ID, order)
+		log.Printf("### Order %s was moved to status: %s", order.ID, order.Status)
 	})
 
 	// Fake background order completion
 	time.AfterFunc(120*time.Second, func() {
 		order.Status = common.OrderComplete
 		err = common.SaveState(resp, daprPort, daprStoreName, serviceName, order.ID, order)
+		log.Printf("### Order %s was moved to status: %s", order.ID, order.Status)
 	})
 
 	// Send success
