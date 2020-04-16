@@ -28,7 +28,7 @@ content-type: application/json
 {
   "items": ["1","3"],
   "amount": 34.7,
-  "forUser": "dave"
+  "forUser": "becolem@microsoft.com"
 }
 
 

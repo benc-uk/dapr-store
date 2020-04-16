@@ -1,12 +1,8 @@
 #!/bin/bash
 
-# pushd frontend
-# npm run serve &
-# popd
-
-# pushd services/frontend-host
-# source ./run.sh &
-# popd
+pushd services/frontend-host
+source ./run.sh &
+popd
 
 pushd services/orders
 source ./run.sh &

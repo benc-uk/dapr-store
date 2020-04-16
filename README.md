@@ -7,7 +7,7 @@ It is written in a mixture of Go and Vue.js
 ![architecture diagram](./docs/img/design.png)
 
 
-## Run Locally - Quick Guide (WSL/Linux)
+## Run Locally - Quick Guide (WSL 2/Linux/MacOS)
 
 ### Prereqs
 - Docker
@@ -20,7 +20,8 @@ Install and initialize Dapr
 wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
 sudo dapr init
 ```
-### Run
+
+### Run All Services
 Run everything locally.
 From root of project (e.g. `dapr-store` directory)
 ```
@@ -28,12 +29,10 @@ find . -name '*.sh' -print0 |xargs -0 chmod +x
 ./bin/start-local.sh
 ```
 
-To stop Dapr instances and other processes, press Ctrl+C to exit the `start-local.sh` script, then run:
+To stop Dapr instances and other processes, run the `start-local.sh` script:
 ```
 ./bin/stop-local.sh
 ```
-
-
 # Reference Information
 
 ## Config - Environmental Variables
