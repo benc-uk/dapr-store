@@ -2,3 +2,8 @@
 services/frontend-host/frontend-host
 services/frontend-host/main
 **/components/**
+cmd/cart/cart
+cmd/orders/orders
+cmd/users/users
+cmd/products/products
+cmd/frontend-host/frontend-host
