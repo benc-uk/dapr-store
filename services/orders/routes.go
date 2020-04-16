@@ -25,6 +25,7 @@ func (api API) addRoutes(router *mux.Router) {
 	router.HandleFunc("/dapr/subscribe", api.subscribeTopic)
 	router.HandleFunc("/"+daprTopicName, api.receiveOrders)
 	router.HandleFunc("/get/{id}", common.AuthMiddleware(api.getOrder))
+	router.HandleFunc("/getForUser/{username}", common.AuthMiddleware(api.getOrdersForUser))
 }
 
 //
@@ -61,25 +62,35 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	err = common.SaveState(resp, daprPort, daprStoreName, serviceName, order.ID, order)
 	if err != nil {
 		return // Error will have already been written to resp
-	} else {
-		log.Printf("### Order %s was saved to state store\n", order.ID)
+	}
+	log.Printf("### Order %s was saved to state store\n", order.ID)
+
+	// Now create or update the user's orders index, which is keyed on their username
+	// And is simply an array of orderIds (strings)
+	userOrders := []string{}
+	// !NOTE! We use the username as a key in the orders state set, to hold an index of orders
+	data, err := common.GetState(resp, daprPort, daprStoreName, serviceName, order.ForUser)
+	// Ignore error, it's possible it doesn't exist yet (user's first order)
+	err = json.Unmarshal(data, &userOrders)
+
+	alreadyExists := false
+	log.Printf("### userOrders is %v", userOrders)
+	for _, oid := range userOrders {
+		if order.ID == oid {
+			alreadyExists = true
+		}
 	}
 
-	// Update the user adding the orderId to their list of owned orders
-	client := &http.Client{}
-	addorderPutReq, err := http.NewRequest("PUT", fmt.Sprintf(`http://localhost:%d/v1.0/invoke/users/method/addorder/%s/%s`, daprPort, order.ForUser, order.ID), nil)
-	if err == nil {
-		addorderResp, err := client.Do(addorderPutReq)
-		if err != nil {
-			resp.WriteHeader(500)
-			return
-		} else if addorderResp.StatusCode != 200 {
-			log.Printf("### ERROR! Failed to add order %s to user %s\n", order.ID, order.ForUser)
-			resp.WriteHeader(500)
-			return
-		} else {
-			log.Printf("### Order %s was added to user %s\n", order.ID, order.ForUser)
-		}
+	if !alreadyExists {
+		userOrders = append(userOrders, order.ID)
+	} else {
+		log.Printf("### Warning, duplicate order '%s' for user '%s' detected", order.ID, order.ForUser)
+	}
+
+	// Save new list back
+	err = common.SaveState(resp, daprPort, daprStoreName, serviceName, order.ForUser, userOrders)
+	if err != nil {
+		log.Printf("### Error!, unable to save order list for user '%s'", order.ForUser)
 	}
 
 	// Fake background order processing
@@ -114,6 +125,28 @@ func (api API) getOrder(resp http.ResponseWriter, req *http.Request) {
 
 	if err != nil {
 		return // Error will have already been written to resp
+	}
+
+	resp.Header().Set("Content-Type", "application/json")
+	resp.Write(data)
+}
+
+//
+// Fetch all orders for a given user
+//
+func (api API) getOrdersForUser(resp http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	// !NOTE! We use the username as a key in the orders state set, to hold an index of orders
+	data, err := common.GetState(resp, daprPort, daprStoreName, serviceName, vars["username"])
+	if err != nil {
+		return // Error will have already been written to resp
+	}
+
+	// If no data, just return an empty JSON array
+	if len(data) <= 0 {
+		resp.Header().Set("Content-Type", "application/json")
+		resp.Write([]byte(`[]`))
+		return
 	}
 
 	resp.Header().Set("Content-Type", "application/json")

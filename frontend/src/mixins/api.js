@@ -45,6 +45,10 @@ export default {
       return this._apiRawCall(`v1.0/invoke/orders/method/get/${orderId}`)
     },
 
+    apiOrdersForUser: function(username) {
+      return this._apiRawCall(`v1.0/invoke/orders/method/getForUser/${username}`)
+    },
+
     //
     // ===== Base Axios wrapper =====
     //

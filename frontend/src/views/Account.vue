@@ -43,7 +43,7 @@
         </li>
         <li>Items:</li>
         <ul>
-          <li v-for="item in order.itemsHydrated" :key="item.id">
+          <li v-for="(item, index) in order.itemsHydrated" :key="index">
             {{ item.name }} &mdash; £{{ item.cost }}
           </li>
         </ul>
@@ -86,11 +86,12 @@ export default {
       let resp = await this.apiUserGet(userProfile.userName)
       if (resp.data) {
         this.registeredUser = resp.data
-        this.reloadOrders()
       }
     } catch (err) {
       this.error = this.apiDecodeError(err)
     }
+
+    this.reloadOrders()
 
   },
 
@@ -107,15 +108,25 @@ export default {
     async reloadOrders() {
       this.ordersLoaded = false
       this.orders = []
+      let orderList = []
+
+      try {
+        let resp = await this.apiOrdersForUser(userProfile.userName)
+        if (resp.data) {
+          orderList = resp.data
+        }
+      } catch (err) {
+        this.error = this.apiDecodeError(err)
+      }
 
       // If you have no orders, skip it
-      if (!this.registeredUser.orders) {
+      if (!orderList) {
         this.ordersLoaded = true
         return
       }
 
       // Load orders call the API to fetch details
-      for (let orderId of this.registeredUser.orders) {
+      for (let orderId of orderList) {
         try {
           let resp = await this.apiOrderGet(orderId)
 

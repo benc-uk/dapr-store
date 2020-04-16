@@ -25,7 +25,6 @@ func (api API) addRoutes(router *mux.Router) {
 	router.HandleFunc("/register", common.AuthMiddleware(api.registerUser)).Methods("POST")
 	router.HandleFunc("/get/{username}", common.AuthMiddleware(api.getUser))
 	router.HandleFunc("/isregistered/{username}", api.checkRegistered)
-	router.HandleFunc("/addorder/{username}/{orderId}", common.AuthMiddleware(api.addOrderToUser)).Methods("PUT")
 }
 
 //
@@ -90,47 +89,6 @@ func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 	resp.Write(data)
-}
-
-//
-// Add orderId to user - !TODO! secure this so only callable from inside
-//
-func (api API) addOrderToUser(resp http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
-	data, err := common.GetState(resp, daprPort, daprStoreName, serviceName, vars["username"])
-	if err != nil {
-		return // Error will have already been written to resp
-	}
-
-	if len(data) <= 0 {
-		common.Problem{"user-not-found", vars["username"] + " not found", 404, "User is not registered", serviceName}.HttpSend(resp)
-		return
-	}
-
-	user := common.User{}
-	err = json.Unmarshal(data, &user)
-	orderID := vars["orderId"]
-	alreadyExists := false
-	for _, oid := range user.Orders {
-		if orderID == oid {
-			alreadyExists = true
-		}
-	}
-
-	if !alreadyExists {
-		user.Orders = append(user.Orders, orderID)
-	} else {
-		common.Problem{"order-exists", "No duplicate orders", 400, "Order '" + orderID + "' already assigned to user", serviceName}.HttpSend(resp)
-		return
-	}
-
-	err = common.SaveState(resp, daprPort, daprStoreName, serviceName, vars["username"], user)
-	if err != nil {
-		return // Error will have already been written to resp
-	}
-
-	resp.Header().Set("Content-Type", "application/json")
-	resp.WriteHeader(200)
 }
 
 //
