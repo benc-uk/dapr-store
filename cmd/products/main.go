@@ -2,7 +2,7 @@
 // Copyright (c) Ben Coleman, 2020
 // Licensed under the MIT License.
 //
-// Dapr compatible REST API service
+// Main server for products service
 // ----------------------------------------------------------------------------
 
 package main
@@ -105,5 +105,5 @@ func corsMiddleware(handler http.Handler) http.Handler {
 // Change request logging here
 //
 func loggingMiddleware(handler http.Handler) http.Handler {
-	return handlers.CombinedLoggingHandler(os.Stdout, handler)
+	return handlers.LoggingHandler(os.Stdout, handler)
 }

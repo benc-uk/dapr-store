@@ -2,14 +2,13 @@
 // Copyright (c) Ben Coleman, 2020
 // Licensed under the MIT License.
 //
-// Dapr compatible REST API service
+// REST API routes providing services for products
 // ----------------------------------------------------------------------------
 
 package main
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 
 	"github.com/benc-uk/dapr-store/pkg/models"
@@ -25,6 +24,7 @@ func (api API) addRoutes(router *mux.Router) {
 	router.HandleFunc("/get/{id}", api.getProduct)
 	router.HandleFunc("/catalog", api.getCatalog)
 	router.HandleFunc("/offers", api.getOffers)
+	router.HandleFunc("/search/{query}", api.searchProducts)
 }
 
 //
@@ -32,20 +32,21 @@ func (api API) addRoutes(router *mux.Router) {
 //
 func (api API) getProduct(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	p := models.Product{}
-	stmt, _ := db.Prepare("SELECT * FROM products WHERE ID = ?")
-	defer stmt.Close()
-	err := stmt.QueryRow(vars["id"]).Scan(&p.ID, &p.Name, &p.Description, &p.Cost, &p.Image, &p.OnOffer)
-	if err == sql.ErrNoRows {
-		problem.Problem{"products-db", "Product " + vars["id"] + " not found in DB", 404, err.Error(), serviceName}.HttpSend(resp)
+
+	rows, err := db.Query("SELECT * FROM products WHERE ID = ? LIMIT 1", vars["id"])
+	if err != nil {
+		problem.Send("Database query error", "err://products-db", resp, nil, err, serviceName)
 		return
 	}
-	if err != nil {
-		log.Printf("### Products DB error: %+v\n", err)
-		problem.Problem{"products-db", "Products DB error", 500, err.Error(), serviceName}.HttpSend(resp)
+	defer rows.Close()
+	hasRow := rows.Next()
+	if !hasRow {
+		problem.Send("Product "+vars["id"]+" not found in DB", "err://products-db", resp, problem.HTTP404, nil, serviceName)
 		return
 	}
 
+	p := models.Product{}
+	rows.Scan(&p.ID, &p.Name, &p.Description, &p.Cost, &p.Image, &p.OnOffer)
 	productJSON, _ := json.Marshal(p)
 	resp.Header().Set("Content-Type", "application/json")
 	resp.Write(productJSON)
@@ -57,7 +58,7 @@ func (api API) getProduct(resp http.ResponseWriter, req *http.Request) {
 func (api API) getCatalog(resp http.ResponseWriter, req *http.Request) {
 	rows, err := db.Query("SELECT * FROM products")
 	if err != nil {
-		problem.Problem{"database", "Error querying products", 500, err.Error(), serviceName}.HttpSend(resp)
+		problem.Send("Error querying products", "err://products-db", resp, nil, err, serviceName)
 		return
 	}
 
@@ -70,7 +71,21 @@ func (api API) getCatalog(resp http.ResponseWriter, req *http.Request) {
 func (api API) getOffers(resp http.ResponseWriter, req *http.Request) {
 	rows, err := db.Query("SELECT * FROM products WHERE onoffer = true")
 	if err != nil {
-		problem.Problem{"database", "Error querying products", 500, err.Error(), serviceName}.HttpSend(resp)
+		problem.Send("Error querying products", "err://products-db", resp, nil, err, serviceName)
+		return
+	}
+
+	returnProducts(rows, resp)
+}
+
+//
+// Search the products table
+//
+func (api API) searchProducts(resp http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	rows, err := db.Query("SELECT * FROM products WHERE (description LIKE ? OR name LIKE ?)", "%"+vars["query"]+"%", "%"+vars["query"]+"%")
+	if err != nil {
+		problem.Send("Error querying products", "err://products-db", resp, nil, err, serviceName)
 		return
 	}
 
@@ -87,7 +102,7 @@ func returnProducts(rows *sql.Rows, resp http.ResponseWriter) {
 		p := models.Product{}
 		err := rows.Scan(&p.ID, &p.Name, &p.Description, &p.Cost, &p.Image, &p.OnOffer)
 		if err != nil {
-			problem.Problem{"database", "Error reading row", 500, err.Error(), serviceName}.HttpSend(resp)
+			problem.Send("Error reading row", "err://products-db", resp, nil, err, serviceName)
 			return
 		}
 		products = append(products, p)

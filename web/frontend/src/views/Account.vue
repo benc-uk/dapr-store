@@ -77,11 +77,6 @@ export default {
   },
 
   async created() {
-    if (!userProfile.userName) {
-      this.$router.replace({ path: '/' })
-      return
-    }
-
     try {
       let resp = await this.apiUserGet(userProfile.userName)
       if (resp.data) {
@@ -136,10 +131,13 @@ export default {
             // Items on order are just the product ids, we can rehydrae with full product objects
             order.itemsHydrated = []
             for (let itemId of order.items) {
-              let resp = await this.apiProductGet(itemId)
-              if (resp.data) {
-                order.itemsHydrated.push(resp.data)
-              }
+              // Do this async helps speed it up when running locally
+              this.apiProductGet(itemId)
+                .then((resp) => {
+                  if (resp.data) {
+                    order.itemsHydrated.push(resp.data)
+                  }
+                })
             }
             this.orders.push(order)
           }

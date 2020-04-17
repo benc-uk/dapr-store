@@ -13,7 +13,11 @@ GET http://{{host}}/v1.0/invoke/products/method/offers
 
 ###
 
-GET http://{{host}}/v1.0/invoke/products/method/get/1
+GET http://{{host}}/v1.0/invoke/products/method/get/41
+
+###
+
+GET http://{{host}}/v1.0/invoke/products/method/search/blue
 
 
 
@@ -38,7 +42,7 @@ content-type: application/json
 # ===================================================================
 
 ### Get existing order
-GET http://{{host}}/v1.0/invoke/orders/method/get/WK728
+GET http://{{host}}/v1.0/invoke/orders/method/get/3MKp6
 
 
 
@@ -58,7 +62,7 @@ POST http://{{host}}/v1.0/invoke/users/method/register
 content-type: application/json
 
 {
-  "username": "becolem@microsoft.com",
+  "username": "becolem@microsoft.net",
   "displayName": "Ben API TEST"
 }
  

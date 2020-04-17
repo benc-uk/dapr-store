@@ -8,14 +8,14 @@
       <b-navbar-toggle target="nav-collapse" />
 
       <b-collapse id="nav-collapse" is-nav>
-        <!-- <b-navbar-nav>
-          <b-nav-item to="/catalog" active-class="active">
-            <fa icon="shopping-basket" /> &nbsp; Catalog
-          </b-nav-item>
-          <b-nav-item to="/offers" active-class="active">
-            <fa icon="trophy" /> &nbsp; Offers
-          </b-nav-item>
-        </b-navbar-nav> -->
+        <b-navbar-nav>
+          <!-- <b-nav-form> -->
+          <b-form-input v-model="query" autocomplete="off" size="lg" placeholder="Search products" @keyup.enter="search" />
+          <b-button size="lg" variant="success" @click="search">
+            <fa icon="search" />
+          </b-button>
+          <!-- </b-nav-form> -->
+        </b-navbar-nav>
 
         <b-navbar-nav class="ml-auto">
           <b-nav-item v-if="!user.userName" to="/login" variant="info">
@@ -33,6 +33,7 @@
 
 
     <div class="container">
+      <!-- Views are injected here -->
       <router-view />
 
       <footer>Dapr eShop v{{ version }} - (C) Ben Coleman, 2020</footer>
@@ -51,6 +52,7 @@ export default {
     return {
       user: userProfile,
       version: require('../package.json').version,
+      query: ''
     }
   },
 
@@ -89,6 +91,12 @@ export default {
         localStorage.removeItem('cart')
       }
     }
+  },
+
+  methods: {
+    search() {
+      if (this.query) { this.$router.push({ name: 'search', params: { query: this.query } }) }
+    }
   }
 }
 </script>
@@ -110,6 +118,7 @@ export default {
     font-family: 'Cinzel Decorative', cursive;
     font-size: 2rem;
     padding-right: 3rem;
+    line-height: 3rem;
   }
   .navbar {
     padding: 0.4rem 1rem !important;

@@ -53,7 +53,7 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 
 	err := json.NewDecoder(req.Body).Decode(&event)
 	if err != nil {
-		problem.Problem{"json-error", "JSON decoding error", 500, err.Error(), serviceName}.HttpSend(resp)
+		problem.Send("Event JSON decoding error", "err://json-decode", resp, nil, err, serviceName)
 		return
 	} else {
 		log.Printf("### Received event from pub/sub topic: %s\n", daprTopicName)
@@ -120,14 +120,12 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 func (api API) getOrder(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	data, err := state.GetState(resp, daprPort, daprStoreName, serviceName, vars["id"])
-
-	if len(data) <= 0 {
-		problem.Problem{"order-not-found", vars["id"] + " not found", 404, "Order does not exist", serviceName}.HttpSend(resp)
-		return
-	}
-
 	if err != nil {
 		return // Error will have already been written to resp
+	}
+	if len(data) <= 0 {
+		problem.Send(vars["id"]+" not found", "err://not-found", resp, nil, err, serviceName)
+		return
 	}
 
 	resp.Header().Set("Content-Type", "application/json")

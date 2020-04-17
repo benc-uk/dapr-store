@@ -13,13 +13,13 @@ WORKDIR /build
 RUN apk update && apk add git gcc musl-dev
 
 # Fetch and cache Go modules
-COPY services/go.mod .
-COPY services/go.sum .
+COPY go.mod .
+COPY go.sum .
 RUN go mod download
 
 # Copy in Go source files
-COPY services/$serviceName/ ./service
-COPY services/common/ ./common
+COPY cmd/$serviceName/ ./service
+COPY pkg/ ./pkg
 
 # Now run the build
 # Disabling cgo results in a fully static binary that can run without C libs
@@ -45,7 +45,7 @@ ENV PORT=$servicePort
 
 # This is a trick, we don't really need run.sh
 # But some services might have .db files, some don't
-COPY services/$serviceName/run.sh services/$serviceName/*.db ./
+COPY cmd/$serviceName/run.sh cmd/$serviceName/*.db ./
 
 # That's it! Just run the server 
 CMD [ "./server"]

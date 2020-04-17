@@ -2,7 +2,7 @@
 // Copyright (c) Ben Coleman, 2020
 // Licensed under the MIT License.
 //
-// Dapr compatible REST API service for orders
+// Dapr compatible REST API service for cart
 // ----------------------------------------------------------------------------
 
 package main
@@ -36,7 +36,7 @@ func (api API) addRoutes(router *mux.Router) {
 func (api API) submitOrder(resp http.ResponseWriter, req *http.Request) {
 	cl, _ := strconv.Atoi(req.Header.Get("content-length"))
 	if cl <= 0 {
-		problem.Problem{"json-error", "Zero length body", 400, "Body is required", serviceName}.HttpSend(resp)
+		problem.Send("Zero length body", "err://json-error", resp, problem.HTTP400, nil, serviceName)
 		return
 	}
 
@@ -46,11 +46,11 @@ func (api API) submitOrder(resp http.ResponseWriter, req *http.Request) {
 
 	// Some basic validation and checking on what we've been posted
 	if err != nil {
-		problem.Problem{"json-error", "JSON decoding error", 400, err.Error(), serviceName}.HttpSend(resp)
+		problem.Send("Malformed orders JSON", "err://json-decode", resp, problem.HTTP400, err, serviceName)
 		return
 	}
 	if order.Amount <= 0 || len(order.Items) == 0 {
-		problem.Problem{"json-error", "Malformed orders JSON", 400, "Validation failed, check orders schema", serviceName}.HttpSend(resp)
+		problem.Send("Malformed orders JSON", "err://json-error", resp, problem.HTTP400, nil, serviceName)
 		return
 	}
 	order.ID = orderID
@@ -58,14 +58,14 @@ func (api API) submitOrder(resp http.ResponseWriter, req *http.Request) {
 
 	jsonPayload, err := json.Marshal(order)
 	if err != nil {
-		problem.Problem{"json-error", "Order JSON marshalling error", 500, err.Error(), serviceName}.HttpSend(resp)
+		problem.Send("Malformed orders JSON", "err://json-marshal", resp, nil, err, serviceName)
 		return
 	}
 
 	daprURL := fmt.Sprintf("http://localhost:%d/v1.0/publish/%s", daprPort, daprTopicName)
 	daprResp, err := http.Post(daprURL, "application/json", bytes.NewBuffer(jsonPayload))
-	if err != nil || (daprResp.StatusCode < 200 || daprResp.StatusCode > 299) {
-		problem.SendDaprProblem(daprURL, resp, daprResp, err, serviceName)
+	if err != nil {
+		problem.Send("Error publishing event", daprURL, resp, daprResp, err, serviceName)
 		return
 	}
 

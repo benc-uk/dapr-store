@@ -9,13 +9,13 @@ WORKDIR /build
 RUN apk update && apk add git gcc musl-dev
 
 # Fetch and cache Go modules
-COPY services/go.mod .
-COPY services/go.sum .
+COPY go.mod .
+COPY go.sum .
 RUN go mod download
 
 # Copy in Go source files
-COPY services/frontend-host/ ./service
-COPY services/common/ ./common
+COPY cmd/frontend-host/ ./service
+COPY pkg/ ./pkg
 
 # Now run the build
 # Disabling cgo results in a fully static binary that can run without C libs
@@ -32,14 +32,14 @@ FROM node:12-alpine as frontend-build
 WORKDIR /build
 
 # Install all the Vue.js dev tools & CLI, and our app dependencies 
-COPY frontend/package*.json ./
+COPY web/frontend/package*.json ./
 RUN npm install --silent
 
 # Copy in the Vue.js app source
-COPY frontend/.eslintrc.js .
-COPY frontend/public ./public
-COPY frontend/src ./src
-COPY frontend/.env.production .
+COPY web/frontend/.eslintrc.js .
+COPY web/frontend/public ./public
+COPY web/frontend/src ./src
+COPY web/frontend/.env.production .
 
 # Run ESLint checks
 RUN npm run lint

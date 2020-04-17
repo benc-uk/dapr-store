@@ -14,7 +14,7 @@ schema:
     - env
     paths:
     - .
-    - ../common
+    - ../../pkg
     ignored_paths:
     - .git
     - .realize

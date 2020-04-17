@@ -34,6 +34,10 @@ export default {
       return this._apiRawCall(`v1.0/invoke/products/method/get/${productId}`)
     },
 
+    apiProductSearch: function(query) {
+      return this._apiRawCall(`v1.0/invoke/products/method/search/${query}`)
+    },
+
     //
     // ===== Orders =====
     //

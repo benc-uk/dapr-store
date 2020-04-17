@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1>All Products</h1>
-    <product-list view-type="all" />
+    <h1>Search results for: <i>{{ this.$route.params.query }}</i></h1>
+    <product-list view-type="search" :query="this.$route.params.query" />
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 import ProductList from '../components/ProductList'
 
 export default {
-  name: 'ProductCatalog',
+  name: 'ProductSearch',
 
   components: {
     'product-list': ProductList

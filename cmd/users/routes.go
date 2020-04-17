@@ -36,7 +36,7 @@ func (api API) addRoutes(router *mux.Router) {
 func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 	cl, _ := strconv.Atoi(req.Header.Get("content-length"))
 	if cl <= 0 {
-		problem.Problem{"json-error", "Zero length body", 400, "Body is required", serviceName}.HttpSend(resp)
+		problem.Send("Zero length body", "err://json-error", resp, problem.HTTP400, nil, serviceName)
 		return
 	}
 
@@ -45,11 +45,11 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 
 	// Some basic validation and checking on what we've been posted
 	if err != nil {
-		problem.Problem{"json-error", "JSON decoding error", 400, err.Error(), serviceName}.HttpSend(resp)
+		problem.Send("Malformed user JSON", "err://json-decode", resp, problem.HTTP400, err, serviceName)
 		return
 	}
 	if len(user.DisplayName) == 0 || len(user.Username) == 0 {
-		problem.Problem{"json-error", "Malformed user JSON", 400, "Validation failed, check user schema", serviceName}.HttpSend(resp)
+		problem.Send("Malformed user JSON", "err://json-decode", resp, problem.HTTP400, err, serviceName)
 		return
 	}
 	log.Printf("### Registering user %+v\n", user)
@@ -61,7 +61,7 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 	}
 	log.Printf("### Existing user data %+v\n", string(data))
 	if len(data) > 0 {
-		problem.Problem{"user-exists", user.Username + " already registered", 400, "User is already registered!", serviceName}.HttpSend(resp)
+		problem.Send(user.Username+" already registered", "err://json-decode", resp, problem.HTTP400, nil, serviceName)
 		return
 	}
 
@@ -86,7 +86,7 @@ func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	if len(data) <= 0 {
-		problem.Problem{"user-not-found", vars["username"] + " not found", 404, "User is not registered", serviceName}.HttpSend(resp)
+		problem.Send("User "+vars["username"]+" not found", "err://user-not-found", resp, problem.HTTP404, nil, serviceName)
 		return
 	}
 

@@ -26,8 +26,8 @@ func GetState(resp http.ResponseWriter, port int, store string, service string, 
 
 	daprResp, err := http.Get(daprURL)
 	if err != nil || (daprResp.StatusCode < 200 || daprResp.StatusCode > 299) {
-		problem.SendDaprProblem(daprURL, resp, daprResp, err, service)
-		return nil, errors.New("Failed to get state object from Dapr")
+		problem.Send("Dapr get state failed", daprURL, resp, daprResp, err, service)
+		return nil, errors.New("Failed to call Dapr get state API")
 	}
 
 	defer daprResp.Body.Close()
@@ -46,8 +46,8 @@ func SaveState(resp http.ResponseWriter, port int, store string, service string,
 
 	jsonPayload, err := json.Marshal([]DaprState{daprPayload})
 	if err != nil {
-		problem.Problem{"json-error", "State JSON marshalling error", 500, err.Error(), service}.HttpSend(resp)
-		return
+		problem.Send("State JSON marshalling error", "err://json-marshall", resp, nil, err, service)
+		return errors.New("Failed to call Dapr save state API")
 	}
 
 	log.Printf("### State save helper, key:%s payload:%+v\n", key, string(jsonPayload))
@@ -55,8 +55,8 @@ func SaveState(resp http.ResponseWriter, port int, store string, service string,
 	daprURL := fmt.Sprintf("http://localhost:%d/v1.0/state/%s", port, store)
 	daprResp, err := http.Post(daprURL, "application/json", bytes.NewBuffer(jsonPayload))
 	if err != nil || (daprResp.StatusCode < 200 || daprResp.StatusCode > 299) {
-		problem.SendDaprProblem(daprURL, resp, daprResp, err, service)
-		return err
+		problem.Send("Dapr save state failed", daprURL, resp, daprResp, err, service)
+		return errors.New("Failed to call Dapr save state API")
 	}
 	return nil
 }

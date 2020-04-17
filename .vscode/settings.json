@@ -1,12 +1,11 @@
 {
+  // Go settings
   "go.useLanguageServer": true,
-
-  "files.exclude": {
-    "**/node_modules/": false
-  },
   "go.vetFlags": [
     "-composites=false"
   ],
+
+  // ESLint config for Vue
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
@@ -15,6 +14,6 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
   "eslint.workingDirectories": [
-    "./frontend"
+    "./web/frontend"
   ]
 }

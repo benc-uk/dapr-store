@@ -26,7 +26,6 @@ docker build . -f build/service.Dockerfile \
 docker build . -f build/frontend.Dockerfile \
 -t $ACR_NAME.azurecr.io/dapr-store/frontend-host
 
-
 docker push $ACR_NAME.azurecr.io/dapr-store/cart
 docker push $ACR_NAME.azurecr.io/dapr-store/products
 docker push $ACR_NAME.azurecr.io/dapr-store/users
