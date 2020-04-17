@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: bcdemo.azurecr.io/dapr-store/frontend-host
+        image: daprstore/frontend-host
         imagePullPolicy: Always
         ports:
         - containerPort: 8000        

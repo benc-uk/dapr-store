@@ -5,7 +5,7 @@ metadata:
   labels:
     app: products
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: products
@@ -20,12 +20,22 @@ spec:
     spec:
       containers:
       - name: service
-        image: bcdemo.azurecr.io/dapr-store/products
+        image: daprstore/products
         imagePullPolicy: Always
         env:
           - name: DAPR_HTTP_PORT
             value: "3500"
         resources:
           limits:
-            cpu: 200m
+            cpu: 100m
             memory: 200M
+        # readinessProbe:
+        #   httpGet:
+        #     path: /get/1
+        #     port: 9002
+        #   initialDelaySeconds: 15
+        # livenessProbe:
+        #   httpGet:
+        #     path: /healthz
+        #     port: 9002     
+        #   initialDelaySeconds: 15       
