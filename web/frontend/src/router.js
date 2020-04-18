@@ -5,6 +5,7 @@ import { userProfile } from './main'
 import ProductCatalog from './views/ProductCatalog'
 import ProductOffers from './views/ProductOffers'
 import ProductSearch from './views/ProductSearch'
+import ProductSingle from './views/ProductSingle'
 import Login from './views/Login'
 import Account from './views/Account'
 import Home from './views/Home'
@@ -55,6 +56,11 @@ const router = new VueRouter({
       name: 'offers',
       path: '/offers',
       component: ProductOffers
+    },
+    {
+      name: 'single-product',
+      path: '/product/:id',
+      component: ProductSingle
     },
   ]
 })

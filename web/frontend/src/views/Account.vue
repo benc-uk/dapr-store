@@ -13,11 +13,11 @@
       <b-spinner variant="success" style="width: 5rem; height: 5rem;" />
     </div>
     <b-card v-if="registeredUser" class="details">
-      <img class="profile" :src="registeredUser.profileImage">
+      <img class="profile d-none d-md-block" :src="registeredUser.profileImage">
+
       Display Name: <b>{{ registeredUser.displayName }}</b>
       <br>
       Username: <b>{{ registeredUser.username }}</b>
-      <br><br>
     </b-card>
 
     <br>
@@ -32,9 +32,9 @@
       <b-spinner variant="success" style="width: 5rem; height: 5rem;" />
     </div>
     <b-card v-for="order in orders" :key="order.id" class="order">
-      <h2>{{ order.title }}</h2>
-      <h2 class="float-right text-uppercase">
-        {{ order.status }}
+      <h2>Order: {{ order.title }}</h2>
+      <h2>
+        Status: <span class="text-capitalize order-status" :class="['order-'+order.status]">{{ order.status }}</span>
       </h2>
       <ul>
         <li>Amount: £{{ order.amount }}</li>
@@ -121,7 +121,7 @@ export default {
       }
 
       // Load orders call the API to fetch details
-      for (let orderId of orderList) {
+      for (let orderId of orderList.reverse()) {
         try {
           let resp = await this.apiOrderGet(orderId)
 
@@ -154,12 +154,38 @@ export default {
 </script>
 
 <style scoped>
+code {
+  color:rgb(23, 38, 173);
+  font-size: 1.2rem;
+}
 .details {
   font-size: 140%;
 }
 .order {
   font-size: 140%;
   margin-bottom: 1rem;
+}
+.order-received {
+  color: rgb(115, 8, 119);
+  background-color: rgb(227, 189, 236);
+}
+.order-received {
+  color: rgb(129, 66, 8);
+  background-color: rgb(231, 202, 138);
+}
+.order-processing {
+  color: rgb(23, 38, 173);
+  background-color: rgb(194, 214, 240);
+}
+.order-complete {
+  color: rgb(10, 107, 10);
+  background-color: rgb(119, 223, 150);
+}
+.order-status {
+  padding: 6px 20px;
+  margin: 6px;
+  display: inline-block;
+  border-radius: 5px;
 }
 .profile {
   float: right;

@@ -9,12 +9,10 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
-          <!-- <b-nav-form> -->
           <b-form-input v-model="query" autocomplete="off" size="lg" placeholder="Search products" @keyup.enter="search" />
-          <b-button size="lg" variant="success" @click="search">
+          <b-button size="lg" variant="success" class="d-none d-lg-flex" @click="search">
             <fa icon="search" />
           </b-button>
-          <!-- </b-nav-form> -->
         </b-navbar-nav>
 
         <b-navbar-nav class="ml-auto">
@@ -30,7 +28,6 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-
 
     <div class="container">
       <!-- Views are injected here -->
@@ -116,9 +113,14 @@ export default {
   }
   .logo-text {
     font-family: 'Cinzel Decorative', cursive;
-    font-size: 2rem;
+    font-size: 1.7rem;
     padding-right: 3rem;
     line-height: 3rem;
+  }
+  @media  (max-width: 500px) {
+    .logo-text {
+      font-size: 1.0rem;
+    }
   }
   .navbar {
     padding: 0.4rem 1rem !important;
@@ -156,5 +158,15 @@ export default {
     color: #222;
     padding-bottom: 0.3rem;
     border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+  }
+  input[type=text] {
+    background-color: rgba(10, 10, 60, 0.1);
+    padding: 0px 0px 0px 10px !important;
+    border-radius:5px !important;
+    font-size: 1.2rem !important;
+    height: 45px;
+  }
+  input[type=text]:focus {
+    background-color: rgba(200, 200, 255, 0.2);
   }
 </style>

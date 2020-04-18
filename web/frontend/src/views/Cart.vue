@@ -55,7 +55,7 @@ export default {
           forUser: userProfile.userName,
           amount: userProfile.cart.reduce((total, p) => { return total + parseFloat(p.cost) }, 0),
           items: userProfile.cart.map((p) => p.id),
-          title: 'Order on '+(new Date().toDateString())
+          title: new Date().toLocaleString()
         }
 
         let resp = await this.apiOrderSubmit(order)

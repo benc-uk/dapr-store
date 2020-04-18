@@ -14,7 +14,7 @@
                 If you have already registered on Dapr eShop, sign in using your Microsoft indentity.
               </div>
               <b-button size="lg" variant="dark" @click="login">
-                <img src="../assets/img/ms-tiny-logo.png"> &nbsp; Sign in with Microsoft
+                <img src="../assets/img/ms-tiny-logo.png"> &nbsp; Sign-in using Microsoft Account
               </b-button>
             </b-card-body>
           </b-card>
@@ -40,7 +40,7 @@
                 If you do not have an Dapr eShop account yet, register using your Microsoft indentity.<br>You only need to do this once.
               </div>
               <b-button size="lg" variant="dark" @click="register">
-                <img src="../assets/img/ms-tiny-logo.png"> &nbsp; Register with Microsoft
+                <img src="../assets/img/ms-tiny-logo.png"> &nbsp; Register using Microsoft Account
               </b-button>
             </b-card-body>
           </b-card>

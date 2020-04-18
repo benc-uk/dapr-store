@@ -1,7 +1,7 @@
 <template>
   <b-container>
-    <b-row class="m-3">
-      <b-col cols="12">
+    <b-row class="m-2">
+      <b-col>
         <b-card
           overlay
           img-src="photo/home.jpg"
@@ -16,7 +16,7 @@
       </b-col>
     </b-row>
 
-    <b-row class="m-3">
+    <b-row class="m-2">
       <b-col>
         <b-link to="/catalog">
           <b-card
@@ -59,12 +59,42 @@
   font-size: 1.5rem;
   text-shadow: 3px 3px 3px rgba(0,0,0,0.8);
 }
-.card-title {
-  font-size: 1.8rem;
+.card-body {
+  display: flex;
+  flex-direction: column;
+  padding: auto 0.7rem;
 }
-@media  (max-width: 800px) {
-.card-title {
-  font-size: 1.1rem;
+.card-text {
+  font-variant: small-caps;
+  color: rgba(255,255,255, 0.7) !important;
 }
+.card-title, .card-text {
+  margin: auto;
+  font-size: 4rem;
+  text-align: center;
+}
+@media  (max-width: 1200px) {
+  .card-title, .card-text {
+    font-size: 3rem;
+    /* color: yellow; */
+  }
+}
+@media  (max-width: 992px) {
+  .card-title, .card-text {
+    font-size: 2rem;
+    /* color: red; */
+  }
+}
+@media  (max-width: 768px) {
+  .card-title, .card-text {
+    font-size: 1.3rem;
+    /* color: blue; */
+  }
+}
+@media  (max-width: 576px) {
+  .card-title, .card-text {
+    font-size: 1.0rem;
+    /* color: green; */
+  }
 }
 </style>
