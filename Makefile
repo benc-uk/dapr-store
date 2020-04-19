@@ -7,7 +7,6 @@
 # Variables
 ################################################################################
 CGO := 0
-GOLANGCI_LINT := golangci-lint
 SERVICE_DIR := cmd
 FRONTEND_DIR := web/frontend
 
@@ -20,7 +19,7 @@ DOCKER_TAG ?= latest
 ################################################################################
 .PHONY: lint
 lint : $(FRONTEND_DIR)/node_modules
-	golint -set_exit_status $(SERVICE_DIR)/...
+	$$GOPATH/bin/golint -set_exit_status $(SERVICE_DIR)/...
 	@cd $(FRONTEND_DIR); npm run lint
 
 ################################################################################
