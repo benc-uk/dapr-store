@@ -21,8 +21,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - run docker build . -f build/frontend.Dockerfile -t temp
-    
+    - run: docker build . -f build/frontend.Dockerfile -t temp
+
     # - uses: actions/setup-go@v2
     #   with:
     #     go-version: '^1.14.0'
