@@ -25,7 +25,7 @@ jobs:
       run: make gofmt
 
     - name: Linting checks for everything
-      run: make lint
+      run: go get -u golang.org/x/lint/golint && make lint
 
     - name: Run unit tests # *whispers* "Don't tell anyone, but there aren't any yet!" 
       run: make test
