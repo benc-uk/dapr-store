@@ -1,7 +1,11 @@
+# Secrets here
 **/.env
-services/frontend-host/frontend-host
-services/frontend-host/main
+
+# Dapr components
 **/components/**
+!web/frontend/src/components/**
+
+# Go binaries
 cmd/cart/cart
 cmd/orders/orders
 cmd/users/users
