@@ -55,9 +55,8 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		problem.Send("Event JSON decoding error", "err://json-decode", resp, nil, err, serviceName)
 		return
-	} else {
-		log.Printf("### Received event from pub/sub topic: %s\n", daprTopicName)
 	}
+	log.Printf("### Received event from pub/sub topic: %s\n", daprTopicName)
 
 	// Save order in state with received status
 	order := event.Data

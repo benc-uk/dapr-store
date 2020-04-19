@@ -3,14 +3,15 @@
 # ===================================================================================
 FROM golang:1.14-alpine as go-build
 
-ARG serviceName="SET_ON_COMMAND_LINE"
-ARG version="0.0.1"
-ARG buildInfo="Local manual builds"
+ARG SERVICE_NAME="SET_ON_COMMAND_LINE"
+ARG VERSION="0.0.1"
+ARG BUILD_INFO="Manual build"
+ARG CGO_ENABLED=0
 
 WORKDIR /build
 
-# Install system dependencies
-RUN apk update && apk add git gcc musl-dev
+# Install system dependencies, if CGO_ENABLED=1
+RUN if [[ $CGO_ENABLED -eq 1 ]]; then apk update && apk add git gcc musl-dev; fi
 
 # Fetch and cache Go modules
 COPY go.mod .
@@ -18,15 +19,15 @@ COPY go.sum .
 RUN go mod download
 
 # Copy in Go source files
-COPY cmd/$serviceName/ ./service
+COPY cmd/$SERVICE_NAME/ ./service
 COPY pkg/ ./pkg
 
 # Now run the build
-# Disabling cgo results in a fully static binary that can run without C libs
-# Also inject version and build details 
-RUN GO111MODULE=on CGO_ENABLED=1 GOOS=linux go build \
-    -ldflags "-X main.version=$version -X 'main.buildInfo=$buildInfo'" \
-    -o server ./service
+# Inject version and build details, to be available at runtime 
+RUN GO111MODULE=on CGO_ENABLED=$CGO_ENABLED GOOS=linux \
+go build \
+-ldflags "-X main.version=$VERSION -X 'main.buildInfo=$BUILD_INFO'" \
+-o server ./service
 
 # ================================================================================================
 # === Stage 2: Get server exe into a lightweight container =======================================
@@ -34,18 +35,18 @@ RUN GO111MODULE=on CGO_ENABLED=1 GOOS=linux go build \
 FROM alpine
 WORKDIR /app 
 
-ARG serviceName="SET_ON_COMMAND_LINE"
-ARG servicePort=9000
+ARG SERVICE_NAME="SET_ON_COMMAND_LINE"
+ARG SERVICE_PORT=9000
 
 # Copy the Go server binary
 COPY --from=go-build /build/server . 
 
-EXPOSE $servicePort
-ENV PORT=$servicePort
+EXPOSE $SERVICE_PORT
+ENV PORT=$SERVICE_PORT
 
 # This is a trick, we don't really need run.sh
 # But some services might have .db files, some don't
-COPY cmd/$serviceName/run.sh cmd/$serviceName/*.db ./
+COPY cmd/$SERVICE_NAME/run.sh cmd/$SERVICE_NAME/*.db ./
 
 # That's it! Just run the server 
 CMD [ "./server"]

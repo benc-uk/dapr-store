@@ -6,7 +6,7 @@ FROM golang:1.14-alpine as server-build
 WORKDIR /build
 
 # Install system dependencies
-RUN apk update && apk add git gcc musl-dev
+#RUN apk update && apk add git gcc musl-dev
 
 # Fetch and cache Go modules
 COPY go.mod .
@@ -18,11 +18,8 @@ COPY cmd/frontend-host/ ./service
 COPY pkg/ ./pkg
 
 # Now run the build
-# Disabling cgo results in a fully static binary that can run without C libs
-# Also inject version and build details 
 RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build \
-    -ldflags "-X main.version=$version -X 'main.buildInfo=$buildInfo'" \
-    -o server ./service
+-o server ./service
 
 # ================================================================================================
 # === Stage 2: Build and bundle the Vue.js app with Vue CLI 3 ====================================

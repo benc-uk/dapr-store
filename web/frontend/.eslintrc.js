@@ -30,7 +30,7 @@ module.exports = {
     'func-call-spacing': 'error',
     'block-spacing': 'error',
     'object-curly-spacing': ['error', 'always'],
-    'no-trailing-spaces': 'error',
+    'no-trailing-spaces': 'warn',
     'no-whitespace-before-property': 'error',
     'comma-spacing': 'error',
     'keyword-spacing':  'error',

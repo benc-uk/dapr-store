@@ -1,0 +1,42 @@
+name: CI Build Images
+
+on: 
+  push: 
+    branches: [master]
+  pull_request:
+    branches: [master]
+    
+env:
+  DOCKER_USER: bencuk
+  DOCKER_REGISTRY: docker.io
+  DOCKER_REPO: daprstore
+  # DOCKER_USER: acr_name
+  # DOCKER_REGISTRY: acr_name.azurecr.io
+  DOCKER_TAG: latest
+  
+jobs:
+  buildJob:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Check Go code with gofmt
+      run: make gofmt
+
+    - name: Linting checks for everything
+      run: make lint
+
+    - name: Run unit tests # *whispers* "Don't tell anyone, but there aren't any yet!" 
+      run: make test
+
+    - name: Run all builds
+      run: make docker DOCKER_PREFIX=$DOCKER_REGISTRY/$DOCKER_REPO DOCKER_TAG=$DOCKER_TAG
+    
+    - name: Login to registry 
+      if: github.event_name == 'push'
+      run:  docker login $DOCKER_REGISTRY -u $DOCKER_USER -p ${{ secrets.DOCKER_PASSWORD }} 
+
+    - name: Push to Dockerhub
+      if: github.event_name == 'push'
+      run: make push DOCKER_PREFIX=$DOCKER_REGISTRY/$DOCKER_REPO DOCKER_TAG=$DOCKER_TAG
