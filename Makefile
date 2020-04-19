@@ -19,6 +19,7 @@ DOCKER_TAG ?= latest
 ################################################################################
 .PHONY: lint
 lint : $(FRONTEND_DIR)/node_modules
+	export GOPATH=$(go env GOPATH)
 	$$GOPATH/bin/golint -set_exit_status $(SERVICE_DIR)/...
 	@cd $(FRONTEND_DIR); npm run lint
 
