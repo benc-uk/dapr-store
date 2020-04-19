@@ -19,30 +19,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - name: Checkout source
+      uses: actions/checkout@v1
 
-    - run: docker build . -f build/frontend.Dockerfile -t temp
+    - name: Set Go version and paths
+      uses: actions/setup-go@v2
+      with:
+        go-version: '^1.14.0'
 
-    # - uses: actions/setup-go@v2
-    #   with:
-    #     go-version: '^1.14.0'
+    - name: Check Go code with gofmt
+      run: make gofmt
 
-    # - name: Check Go code with gofmt
-    #   run: make gofmt
+    - name: Linting checks for everything
+      run: go get -u golang.org/x/lint/golint && make lint
 
-    # - name: Linting checks for everything
-    #   run: go get -u golang.org/x/lint/golint && make lint
+    - name: Run unit tests # *whispers* "Don't tell anyone, but there aren't any yet!" 
+      run: make test
 
-    # - name: Run unit tests # *whispers* "Don't tell anyone, but there aren't any yet!" 
-    #   run: make test
-
-    # - name: Run all builds
-    #   run: make docker DOCKER_PREFIX=$DOCKER_REGISTRY/$DOCKER_REPO DOCKER_TAG=$DOCKER_TAG
+    - name: Run all builds
+      run: make docker DOCKER_PREFIX=$DOCKER_REGISTRY/$DOCKER_REPO DOCKER_TAG=$DOCKER_TAG
     
-    # - name: Login to registry 
-    #   if: github.event_name == 'push'
-    #   run:  docker login $DOCKER_REGISTRY -u $DOCKER_USER -p ${{ secrets.DOCKER_PASSWORD }} 
+    - name: Login to registry 
+      if: github.event_name == 'push'
+      run:  docker login $DOCKER_REGISTRY -u $DOCKER_USER -p ${{ secrets.DOCKER_PASSWORD }} 
 
-    # - name: Push to Dockerhub
-    #   if: github.event_name == 'push'
-    #   run: make push DOCKER_PREFIX=$DOCKER_REGISTRY/$DOCKER_REPO DOCKER_TAG=$DOCKER_TAG
+    - name: Push to Dockerhub
+      if: github.event_name == 'push'
+      run: make push DOCKER_PREFIX=$DOCKER_REGISTRY/$DOCKER_REPO DOCKER_TAG=$DOCKER_TAG
