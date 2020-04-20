@@ -23,6 +23,7 @@
     "bootswatch": "^4.4.1",
     "core-js": "^3.6.5",
     "msal": "^1.2.2",
+    "node-fetch": "^2.6.0",
     "vue": "^2.6.11",
     "vue-router": "^3.1.6"
   },

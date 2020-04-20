@@ -1,6 +1,7 @@
-/* eslint-disable no-console */
 import { userProfile } from '../main'
 import axios from 'axios'
+
+const API_ENDPOINT = process.env.VUE_APP_API_ENDPOINT || '/'
 
 export default {
   methods: {
@@ -57,7 +58,7 @@ export default {
     // ===== Base Axios wrapper =====
     //
     _apiRawCall: function(apiPath, method = 'get', data = null) {
-      let apiUrl = `/${apiPath}`
+      let apiUrl = `${API_ENDPOINT}${apiPath}`
       console.log(`### API CALL ${method} ${apiUrl}`)
 
       let headers = {}
@@ -77,6 +78,9 @@ export default {
       })
     },
 
+    //
+    // Helper to decode error messages
+    //
     apiDecodeError(err) {
       if (err.response && err.response.data && err.response.headers['content-type'].includes('json')) {
         // err.response.data.httpStatus = err.response.status

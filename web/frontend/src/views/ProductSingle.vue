@@ -3,7 +3,7 @@
     <h1>Product Details</h1>
     <error-box :error="error" />
 
-    <div v-if="!product" class="text-center">
+    <div v-if="!product && !error" class="text-center">
       <b-spinner variant="success" style="width: 5rem; height: 5rem;" />
     </div>
 

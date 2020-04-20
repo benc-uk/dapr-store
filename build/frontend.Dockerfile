@@ -26,10 +26,13 @@ RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build \
 # ================================================================================================
 FROM node:12-alpine as frontend-build
 
+ARG VERSION="0.0.1"
+
 WORKDIR /build
 
 # Install all the Vue.js dev tools & CLI, and our app dependencies 
 COPY web/frontend/package*.json ./
+RUN npm version $VERSION --allow-same-version
 RUN npm install --silent
 
 # Copy in the Vue.js app source

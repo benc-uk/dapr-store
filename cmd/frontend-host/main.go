@@ -85,9 +85,8 @@ func main() {
 	serverPort := env.GetEnvInt("PORT", defaultPort)
 
 	srv := &http.Server{
-		Handler: router,
-		Addr:    fmt.Sprintf(":%d", serverPort),
-		// Good practice: enforce timeouts for servers you create!
+		Handler:      router,
+		Addr:         fmt.Sprintf(":%d", serverPort),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}

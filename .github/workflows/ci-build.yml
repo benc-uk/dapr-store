@@ -7,13 +7,13 @@ on:
     branches: [master]
     
 env:
+  DOCKER_TAG: latest
+  DOCKER_REPO: daprstore  
   DOCKER_USER: bencuk
   DOCKER_REG: docker.io
-  DOCKER_REPO: daprstore
   # DOCKER_USER: acr_name
   # DOCKER_REG: acr_name.azurecr.io
-  DOCKER_TAG: latest
-  
+
 jobs:
   buildJob:
     runs-on: ubuntu-latest

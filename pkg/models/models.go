@@ -22,10 +22,9 @@ type Order struct {
 
 // User holds information about a registered user
 type User struct {
-	Username     string   `json:"username"`
-	DisplayName  string   `json:"displayName"`
-	ProfileImage string   `json:"profileImage"`
-	Orders       []string `json:"orders"` // List of Order.IDs
+	Username     string `json:"username"`
+	DisplayName  string `json:"displayName"`
+	ProfileImage string `json:"profileImage"`
 }
 
 // OrderStatus enum

@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/benc-uk/dapr-store/pkg/api"
 	"github.com/benc-uk/dapr-store/pkg/env"
@@ -86,7 +87,14 @@ func main() {
 
 	// Start server
 	log.Printf("### Server listening on %v\n", serverPort)
-	err = http.ListenAndServe(fmt.Sprintf(":%d", serverPort), router)
+	srv := &http.Server{
+		Handler:      router,
+		Addr:         fmt.Sprintf(":%d", serverPort),
+		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  10 * time.Second,
+		IdleTimeout:  10 * time.Second,
+	}
+	err = srv.ListenAndServe()
 	if err != nil {
 		panic(err.Error())
 	}

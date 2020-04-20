@@ -1,0 +1,14 @@
+#
+# This file might sound important but...
+# It is only used by the hosting on GitHub Pages, it has no other importance to the project!
+#
+
+title: "Dapr Store: A Dapr Reference App"
+remote_theme: benc-uk/theme-msdark
+favicon: /web/frontend/public/logo.png
+plugins:
+  - jemoji
+buttons:
+  - b0:
+    text: Main Guide
+    href: /
