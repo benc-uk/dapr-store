@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: daprstore/products
+        image: daprstore/products:latest
         imagePullPolicy: Always
         env:
           - name: DAPR_HTTP_PORT
@@ -29,13 +29,11 @@ spec:
           limits:
             cpu: 100m
             memory: 200M
-        # readinessProbe:
-        #   httpGet:
-        #     path: /get/1
-        #     port: 9002
-        #   initialDelaySeconds: 15
-        # livenessProbe:
-        #   httpGet:
-        #     path: /healthz
-        #     port: 9002     
-        #   initialDelaySeconds: 15       
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 9002
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 9002

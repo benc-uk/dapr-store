@@ -17,6 +17,9 @@ DOCKER_REPO ?= daprstore
 DOCKER_TAG ?= latest
 DOCKER_PREFIX := $(DOCKER_REG)/$(DOCKER_REPO)
 
+# Change if you know what you're doing
+CLIENT_ID ?= ""
+
 ################################################################################
 # Lint check everything
 ################################################################################
@@ -38,6 +41,21 @@ test :
 .PHONY: gofmt
 gofmt :
 	@./.github/workflows/gofmt-action.sh $(SERVICE_DIR)/
+
+
+################################################################################
+# Clean up project
+################################################################################
+.PHONY: clean
+clean :
+	rm -rf $(FRONTEND_DIR)/node_modules
+	rm -rf $(FRONTEND_DIR)/dist
+	rm -rf $(SERVICE_DIR)/cart/cart
+	rm -rf $(SERVICE_DIR)/orders/orders
+	rm -rf $(SERVICE_DIR)/users/users
+	rm -rf $(SERVICE_DIR)/products/products
+	rm -rf $(SERVICE_DIR)/frontend-host/frontend-host
+
 
 ################################################################################
 # Build Docker images
@@ -71,6 +89,7 @@ docker :
 
 	docker build . -f build/frontend.Dockerfile \
 	--build-arg VERSION=$(VERSION) \
+	--build-arg CLIENT_ID=$(CLIENT_ID) \
 	-t $(DOCKER_PREFIX)/frontend-host:$(DOCKER_TAG)
 
 ################################################################################

@@ -1,4 +1,6 @@
-# frontend
+# Dapr Store Frontend
+
+Created with Vue CLI
 
 ## Project setup
 ```

@@ -6,7 +6,7 @@ spec:
   type: pubsub.redis
   metadata:
   - name: redisHost
-    value: redis:6379
+    value: redis-master:6379
   - name: redisPassword
     value: ""
 

@@ -58,6 +58,14 @@ export default {
     // If it works great, if not we remove the stored local user
     // and the user will need to login again
     let storedUser = localStorage.getItem('user')
+
+    if (storedUser == 'demo@example.net') {
+      Object.assign(userProfile, new User('', { name: 'Demo User' }, 'demo@example.net'))
+      console.log('### App.vue: MSAL aquireToken skipped for demo user: demo@example.net')
+      restoreCart()
+      return
+    }
+
     if (storedUser) {
       try {
         let tokenResp = await msalApp.acquireTokenSilent(accessTokenRequest)
@@ -67,22 +75,15 @@ export default {
           console.log(`### App.vue: MSAL user ${userProfile.userName} is logged & has token`)
           localStorage.setItem('user', userProfile.userName)
           userProfile.cart = []
-
-          try {
-            if (localStorage.getItem('cart')) {
-              userProfile.cart = JSON.parse(localStorage.getItem('cart'))
-            }
-          } catch (err) {
-            userProfile.cart = []
-          }
+          restoreCart()
         } else {
-          console.log('### acquireTokenSilent returned no token, removing stored user')
+          console.log('### acquireTokenSilent returned no token - removing stored user')
           Object.assign(userProfile, new User())
           localStorage.removeItem('user')
           localStorage.removeItem('cart')
         }
       } catch (err) {
-        console.log(`### Error acquireTokenSilent ${err}, removing stored user`)
+        console.log(`### Error acquireTokenSilent ${err} - removing stored user`)
         Object.assign(userProfile, new User())
         localStorage.removeItem('user')
         localStorage.removeItem('cart')
@@ -94,6 +95,16 @@ export default {
     search() {
       if (this.query) { this.$router.push({ name: 'search', params: { query: this.query } }) }
     }
+  }
+}
+
+function restoreCart() {
+  try {
+    if (localStorage.getItem('cart')) {
+      userProfile.cart = JSON.parse(localStorage.getItem('cart'))
+    }
+  } catch (err) {
+    userProfile.cart = []
   }
 }
 </script>

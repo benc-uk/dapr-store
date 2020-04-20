@@ -27,7 +27,7 @@ Shared Go code lives in the `pkg/` directory, which is used by all the services.
 - `pkg/problem` - Standarized REST error messages using [RFC 7807 Problem Details](https://tools.ietf.org/html/rfc7807).
 - `pkg/state` - A Dapr state API helper for getting / setting state with error handling.
 
-## Orders service
+## 💰 Orders service
 This service provides order processing to the Dapr Store.  
 It is written in Go, source is in `cmd/orders` and it exposes the following API routes:
 ```
@@ -36,7 +36,7 @@ It is written in Go, source is in `cmd/orders` and it exposes the following API 
 ```
 See `pkg/models` for details of the **Order** struct.
 
-The service provides some faked order processing activity so that orders are moved through a number of statuses, simulating some back-office systems or inventory management. Orders are initially set to `OrderReceived` status, then after 30 seconds moved to `OrderProcessing`, then after 2 minutes moved to `OrderComplete`
+The service provides some fake order processing activity so that orders are moved through a number of statuses, simulating some back-office systems or inventory management. Orders are initially set to `OrderReceived` status, then after 30 seconds moved to `OrderProcessing`, then after 2 minutes moved to `OrderComplete`
 
 ### Orders - Dapr Interaction
 - **Pub/Sub.** Subscribes to the `orders-queue` topic to receive new orders from the *cart* service
@@ -44,7 +44,7 @@ The service provides some faked order processing activity so that orders are mov
 - **SendGrid.** To be added
 
 
-## Users service
+## 👦 Users service
 This provides a simple user profile service to the Dapr Store. Only registered users can use the store to place orders etc.  
 It is written in Go, source is in `cmd/users` and it exposes the following API routes:
 ```
@@ -60,7 +60,7 @@ The service provides some faked order processing activity so that orders are mov
 - **State.** Stores and retrieves **User** entities from the state service, keyed on username.
 
 
-## Products service
+## 📑 Products service
 This is the product catalog service for Dapr Store.  
 It is written in Go, source is in `cmd/products` and it exposes the following API routes:
 ```
@@ -77,7 +77,7 @@ The products data is held in a SQLite database, this decision was taken due to t
 None
 
 
-## Cart service
+## 🛒 Cart service
 This provides a cart service to the Dapr Store. The currently implementation is very minimal.  
 It is written in Go, source is in `cmd/cart` and it exposes the following API routes:
 ```
@@ -90,21 +90,67 @@ The service currently is little more than gateway API for publishing new orders 
 ### Users - Dapr Interaction
 - **Pub/Sub.** Pushes **Order** entities to the `orders-queue` topic to be collected by the *orders* service
 
-## Frontend 
+## 💻 Frontend 
 This is the frontend accessed by users of store and visitors to the site. It is a single-page application (SPA) as such it runs entirely client side in the browser. It was created using the [Vue CLI](https://cli.vuejs.org/) and written in Vue.js
 
 It follows the standard SPA pattern of being served via static hosting (the 'frontend host' described below) and all data is fetched via a REST API endpoint. Note. [Vue Router](https://router.vuejs.org/) is used to provide client side routing, as such it needs to be served from a host that is configured to support it.
 
-The default API endpoint is `/` and it makes calls to the Dapr invoke API, namely `/v1.0/invoke/{service}` via the API gateway
+The default API endpoint is `/` and it makes calls to the Dapr invoke API, namely `/v1.0/invoke/{service}` via the *API gateway*
 
-## Frontend host
+## 📡 Frontend host
 A very basic / minimal static server using gorilla/mux. See https://github.com/gorilla/mux#static-files. It simply serves up the static bundled files output from the build process of the frontend, it expects to find these files in `./dist` directory but this is configurable 
 
-## API gateway
+## 🌍 API gateway
+This component is critical but consists of no code. It's a NGINX reverse proxy configured to do two things:
+- Forward specific calls to the relevant services via Dapr
+- Direct requests to the *frontend host*
 
+> Note. This is not to be confused with Azure API Management, Azure App Gateway or AWS API Gateway 
+
+This is done with path based routing, it aggregates the various APIs and frontend SPA into a single endpoint or host, making configuration much easier (and the reason the API endpoint for the SPA can simply be `/`)
+
+NGINX is run with the Dapr sidecar alongside it, so that it can proxy requests to the `/v1.0/invoke` Dapr API, via this the downstream services are invoked, through Dapr.
+
+### Within Kubernetes 
+Inspired by [this blog post](https://carlos.mendible.com/2020/04/05/kubernetes-nginx-ingress-controller-with-dapr/) it is deployed in Kubernetes as a "Daprized NGINX ingress controller". See `deploy/ingress` for details on how this is done.
+
+### Locally
+To provide a like for like experience with Kubernetes, and the single aggregated endpoint - the same model is used locally. NGINX is run as a Docker container exposed to the host network, and NGINX configuration applied allow to route traffic. This is then run via the dapr CLI (i.e `dapr run`) so that the daprd sidecar process is available to it.
+
+See `scripts/local-gateway` for details on how this is done, the `scripts/local-gateway/run.sh` script starts the gateway which will run on port 9000
 
 
 # Running in Kubernetes  - Quick guide 
+Quick and dirty guide to deploying Dapr Store into Kubernetes.
+
+1. Deploy a state provider. Redis has been used as it's lightweight and is also the default used when running Dapr locally
+    ```bash
+    kubectl apply -f deploy/state/redis.yaml
+    ```
+    Note this deploys Redis with no persistent storage, so only a good idea for testing/demos
+    
+    For a more robust deployment use Helm
+    ```bash
+    helm install redis bitnami/redis --set "cluster.enabled=false,usePassword=false"
+    ```
+2. Deploy *API Gateway* which is the "Daprized" NGINX Ingress, this will also deploy the ingress rules
+   ```bash
+   ./deploy/ingress/deploy.sh 
+   ```
+   Thn get the public IP assigned to the controller, Note. it could take some minutes for it to get an IP
+   ```bash
+   kubectl get svc -l component=controller -o jsonpath='Public IP is: {.items[0].status.loadBalancer.ingress[0].ip}{"\n"}'
+   ```
+3. Deploy the Dapr *Components* for state store and pub/sub
+   ```bash
+   kubectl apply -f deploy/dapr
+   ```
+4. Deploy all the Dapr Store services & frontend host
+   ```bash
+   kubectl apply -f deploy/app
+   ```
+5. Access the site & frontend via public IP obtained in step 2
+   
 
 # Running locally - Quick guide 
 This is a (very) basic guide to running the Dapr Store locally. Only instructions for WSL 2/Linux/MacOS are provided. It's advised to only do this if you wish to develop or debug the project.
@@ -139,9 +185,29 @@ To stop Dapr instances and other processes, run the `stop-local.sh` script:
 ./bin/stop-local.sh
 ```
 
+# Build and CI/CD
+A makefile is provided, the main targets you are likely to use are:
+
+`make docker`  
+Build the Docker images for all services + frontend. Set vars `DOCKER_REG`, `DOCKER_REPO`, `DOCKER_TAG` to configure the image name, otherwise defaults will be used, which is `docker.io/daprstore/{service}:latest`
+
+`make push`  
+Push Docker images, Set vars `DOCKER_REG`, `DOCKER_REPO`, `DOCKER_TAG` as above
+
+`make lint`  
+Run linting checks in the Go code with golint and Vue code with ESLint
+
+`make gofmt`  
+Checks Go code with gofmt
+
+GitHub Actions is used to provide some simple CI builds of the Docker images, See ([.github/workflows](./.github/workflows/)) this is a work in progress and needs much expansion and extending
+
 
 # Reference Information
 NOT FINISHED ☢
+
+## Security & Authentication
+See [security section](./docs/security.md)
 
 ## Config - Environmental Variables
 The services support the following environmental variables. All settings are optional.
@@ -151,6 +217,8 @@ The services support the following environmental variables. All settings are opt
 - `DAPR_STORE_NAME` - Name of the Dapr state component to use. Default is `statestore`
 - `DAPR_ORDERS_TOPIC` - Name of the Dapr pub/sub topic to use for orders. Default is `orders-queue"`
 - `STATIC_DIR` - (Frontend host only) The path to serve static content from, i.e. the bundled Vue.js SPA output. Default is `./dist`
+
+The frontend has no runtime configuration, but can be configured at build time, see the `.env.production` and `.env.development` in [web/frontend](./web/frontend/).
 
 ## Default ports
 - 9000 - NGINX API gateway (reverse proxy)
@@ -162,14 +230,15 @@ The services support the following environmental variables. All settings are opt
 
 
 # Roadmap & known issues
-See [project plan on GitHub](https://github.com/benc-uk/dapr-store/projects/1)
+LOTS! See [project plan on GitHub](https://github.com/benc-uk/dapr-store/projects/1)
 
 
 # Concepts and Terms
-Clarity of terminology is important
+Clarity of terminology is sometimes important, here's a small glossary
 
 - **Building Block** - [Specific Dapr term](https://github.com/dapr/docs/tree/master/concepts#building-blocks). A *building bloc*k is an API level feature of Dapr, such as 'state mangement' or 'pub/sub' or 'secrets'
 - **Component** - Component is another Dapr specific term. A *component* is a plugin that provides implementation functionality to building blocks. As component is a generic & commonly used word, the term "Dapr component" will be used where ambiguity is possible
-- **Service** - The 
-- API Gateway 
-- State
+- **Service** - The microservices, written in Go and exposing REST API, either invoked through Dapr and.or using the Dapr API for things such as state.
+- **API Gateway** - NGINX reverse proxy sitting in front of the services. This is not to be confused with Azure API Management, Azure App Gateway or AWS API Gateway 
+- **State** - Dapr state API, backed with a Dapr component state provider, e.g. Redis
+- **Entity** - A data object, typically a JSON representation of one of the structs in `pkg/models`, can be client or server side

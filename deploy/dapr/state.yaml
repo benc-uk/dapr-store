@@ -6,9 +6,6 @@ spec:
   type: state.redis
   metadata:
   - name: redisHost
-    value: redis:6379
+    value: redis-master:6379
   - name: redisPassword
     value: ""
-
-# helm install redis bitnami/redis --set "cluster.enabled=false,master.persistence.enabled=false"
-# kubectl get secret --namespace default redis -o jsonpath="{.data.redis-password}" | base64 --decode

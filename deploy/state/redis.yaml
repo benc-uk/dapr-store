@@ -28,7 +28,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: redis
+  name: redis-master
   labels:
     app: redis
 spec:

@@ -11,3 +11,6 @@ cmd/orders/orders
 cmd/users/users
 cmd/products/products
 cmd/frontend-host/frontend-host
+
+# My configs
+deploy/ingress/myrules.yaml

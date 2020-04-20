@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# pushd cmd/frontend-host
-# source ./run.sh &
-# popd
 pushd web/frontend
 npm run serve &
 popd

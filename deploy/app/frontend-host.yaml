@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: daprstore/frontend-host
+        image: daprstore/frontend-host:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8000        
@@ -24,6 +24,14 @@ spec:
           limits:
             cpu: 100m
             memory: 50M
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
 
 ---
 
