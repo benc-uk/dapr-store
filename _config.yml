@@ -5,7 +5,7 @@
 
 title: "Dapr Store: A Dapr Reference App"
 remote_theme: benc-uk/theme-msdark
-favicon: /web/frontend/public/logo.png
+favicon: web/frontend/public/logo.png
 plugins:
   - jemoji
 buttons:
