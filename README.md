@@ -1,7 +1,7 @@
 # Dapr Store
-Dapr Store is a sample/reference application showcasing the use of [Dapr](https://dapr.io/) to build microservices based systems. It is a simple online store with all the core elements that make up such system, e.g. a frontend for users, authentication, product catalog, and order processing
+Dapr Store is a sample/reference application showcasing the use of [Dapr](https://dapr.io/) to build microservices based applications. It is a simple online store with all the core components that make up such system, e.g. a frontend for users, authentication, product catalog, and order processing etc.
 
-[Dapr](https://dapr.io/) is an *"event-driven, portable runtime for building microservices on cloud and edge"*. The intention of this project was to show off many of the capabilities and features of Dapr in the context of a real working application. This has influenced the architecture and design decisions, balancing between realism and a simple demo-ware showcase.
+[Dapr](https://dapr.io/) is an *"event-driven, portable runtime for building microservices on cloud and edge"*. The intention of this project was to show off many of the capabilities and features of Dapr, but in the context of a real working application. This has influenced the architecture and design decisions, balancing between realism and a simple *"demo-ware"* showcase.
 
 The backend microservices are written in Go (however it's worth nothing that Dapr is language independent), and the frontend is a single-page application (SPA) written in [Vue.js](https://vuejs.org/). All APIs are REST & HTTP based
 
