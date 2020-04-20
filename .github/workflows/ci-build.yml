@@ -8,10 +8,10 @@ on:
     
 env:
   DOCKER_USER: bencuk
-  DOCKER_REGISTRY: docker.io
+  DOCKER_REG: docker.io
   DOCKER_REPO: daprstore
   # DOCKER_USER: acr_name
-  # DOCKER_REGISTRY: acr_name.azurecr.io
+  # DOCKER_REG: acr_name.azurecr.io
   DOCKER_TAG: latest
   
 jobs:
@@ -27,22 +27,26 @@ jobs:
       with:
         go-version: '^1.14.0'
 
-    - name: Check Go code with gofmt
-      run: make gofmt
+    - name: Install any extra tools
+      run: go get -u golang.org/x/lint/golint
 
-    - name: Linting checks for everything
-      run: go get -u golang.org/x/lint/golint && make lint
+    - name: Check code with gofmt, golint and ESLint
+      run: make lint gofmt
 
     - name: Run unit tests # *whispers* "Don't tell anyone, but there aren't any yet!" 
       run: make test
 
     - name: Run all builds
-      run: make docker DOCKER_PREFIX=$DOCKER_REGISTRY/$DOCKER_REPO DOCKER_TAG=$DOCKER_TAG
+      run: make docker
     
+    # =====================================================================
+    # Steps after this are only run when merging or pushing into master
+    # =====================================================================
+
     - name: Login to registry 
       if: github.event_name == 'push'
-      run:  docker login $DOCKER_REGISTRY -u $DOCKER_USER -p ${{ secrets.DOCKER_PASSWORD }} 
+      run:  docker login $DOCKER_REG -u $DOCKER_USER -p ${{ secrets.DOCKER_PASSWORD }} 
 
     - name: Push to Dockerhub
       if: github.event_name == 'push'
-      run: make push DOCKER_PREFIX=$DOCKER_REGISTRY/$DOCKER_REPO DOCKER_TAG=$DOCKER_TAG
+      run: make push

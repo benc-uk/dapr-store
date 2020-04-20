@@ -11,8 +11,10 @@ SERVICE_DIR := cmd
 FRONTEND_DIR := web/frontend
 
 # Probably want to override these when calling make
-DOCKER_PREFIX ?= docker.io/daprstore
+DOCKER_REG ?= docker.io
+DOCKER_REPO ?= daprstore
 DOCKER_TAG ?= latest
+DOCKER_PREFIX := $(DOCKER_REG)/$(DOCKER_REPO)
 
 ################################################################################
 # Lint check everything
