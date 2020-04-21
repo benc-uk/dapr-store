@@ -1,3 +1,12 @@
+<!--
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr Store frontend - Reusable component that lists products
+// ----------------------------------------------------------------------------
+-->
+
 <template>
   <div>
     <error-box :error="error" />

@@ -1,3 +1,12 @@
+<!--
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr Store frontend - Main app with nav bar menu and slot for views to be injected
+// ----------------------------------------------------------------------------
+-->
+
 <template>
   <div class="app">
     <b-navbar toggleable="lg" type="dark" variant="primary">
@@ -59,6 +68,7 @@ export default {
     // and the user will need to login again
     let storedUser = localStorage.getItem('user')
 
+    // Skip token if demo user in use
     if (storedUser == 'demo@example.net') {
       Object.assign(userProfile, new User('', { name: 'Demo User' }, 'demo@example.net'))
       console.log('### App.vue: MSAL aquireToken skipped for demo user: demo@example.net')
@@ -98,6 +108,7 @@ export default {
   }
 }
 
+// Just loads the cart from local storage into the user
 function restoreCart() {
   try {
     if (localStorage.getItem('cart')) {

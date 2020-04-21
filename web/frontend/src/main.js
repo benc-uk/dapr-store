@@ -1,3 +1,10 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr Store frontend - main app initialization and startup
+// ----------------------------------------------------------------------------
+
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import * as msal from 'msal'

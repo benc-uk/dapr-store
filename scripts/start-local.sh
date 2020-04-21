@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#
+# For local debugging / testing only
+# ==================================
+# This script starts all services + gateway + frontend
+# All will run in hot-reload mode so will restart on code changes
+# See run.sh in each directory for details
+#
+
 pushd web/frontend
 npm run serve &
 popd

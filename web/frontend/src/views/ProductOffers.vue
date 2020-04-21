@@ -1,3 +1,12 @@
+<!--
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr Store frontend - Show products that are on offer from the catalog
+// ----------------------------------------------------------------------------
+-->
+
 <template>
   <div>
     <h1>On Sale</h1>

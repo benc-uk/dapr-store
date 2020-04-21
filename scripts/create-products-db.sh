@@ -1,4 +1,9 @@
 #!/bin/bash
+
+#
+# Build the cmd/products/sqlite.db database file
+#
+
 echo "### Using cmd/products/sqlite.db"
 echo "### Droping products table"
 sqlite3 cmd/products/sqlite.db "DROP TABLE IF EXISTS products"

@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/benc-uk/dapr-store/pkg/auth"
@@ -67,6 +68,22 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	}
 	log.Printf("### Order %s was saved to state store\n", order.ID)
 
+	orderNotifyPayload := `{
+		"metadata": {
+			"ContentType": "text/plain",
+			"ContentEncoding": "UTF-8",
+			"blobName": "order_` + order.ID + `.txt"
+		},
+		"data": "----------\nOrder title:` + order.Title + `\nOrder ID: ` + order.ID + `\nUser: ` + order.ForUser + `\nAmount: ` + fmt.Sprintf("%f", order.Amount) + `\n----------"
+	}`
+
+	// We silently consume errors here
+	// - it's an optional component that might not be set up
+	blobResp, err := http.Post(fmt.Sprintf("http://localhost:%d/v1.0/bindings/orders-notify", daprPort), "application/json", strings.NewReader(orderNotifyPayload))
+	if err != nil || (blobResp.StatusCode != 200) {
+		log.Printf("### Warning! Failed to output order notification file, %d %+v", blobResp.StatusCode, err)
+	}
+
 	// Now create or update the user's orders index, which is keyed on their username
 	// And is simply an array of orderIds (strings)
 	userOrders := []string{}
@@ -99,6 +116,9 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	time.AfterFunc(30*time.Second, func() {
 		order.Status = models.OrderProcessing
 		err = state.SaveState(resp, daprPort, daprStoreName, serviceName, order.ID, order)
+		if err != nil {
+			return // Error will have already been written to resp
+		}
 		log.Printf("### Order %s was moved to status: %s", order.ID, order.Status)
 	})
 
@@ -106,6 +126,9 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	time.AfterFunc(120*time.Second, func() {
 		order.Status = models.OrderComplete
 		err = state.SaveState(resp, daprPort, daprStoreName, serviceName, order.ID, order)
+		if err != nil {
+			return // Error will have already been written to resp
+		}
 		log.Printf("### Order %s was moved to status: %s", order.ID, order.Status)
 	})
 

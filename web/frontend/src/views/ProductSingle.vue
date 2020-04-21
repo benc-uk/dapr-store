@@ -1,3 +1,12 @@
+<!--
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr Store frontend - Show a single product
+// ----------------------------------------------------------------------------
+-->
+
 <template>
   <div>
     <h1>Product Details</h1>

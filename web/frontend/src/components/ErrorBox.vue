@@ -1,3 +1,12 @@
+<!--
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr Store frontend - Reusable error alert box component
+// ----------------------------------------------------------------------------
+-->
+
 <template>
   <b-alert v-if="error" show variant="warning">
     <h4>There was a problem 😥</h4>

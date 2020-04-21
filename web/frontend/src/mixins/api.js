@@ -1,3 +1,10 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr Store frontend - API helper to call the various backend microservices
+// ----------------------------------------------------------------------------
+
 import { userProfile } from '../main'
 import axios from 'axios'
 

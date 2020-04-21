@@ -41,7 +41,7 @@ The service provides some fake order processing activity so that orders are move
 ### Orders - Dapr Interaction
 - **Pub/Sub.** Subscribes to the `orders-queue` topic to receive new orders from the *cart* service
 - **State.** Stores and retrieves **Order** entities from the state service, keyed on OrderID. Also lists of orders per user, held as an array of OrderIDs and keyed on username
-- **SendGrid.** To be added
+- **Bindings.** To be added
 
 
 ## 👦 Users service
@@ -87,8 +87,8 @@ See `pkg/models` for details of the **Order** struct.
 
 The service currently is little more than gateway API for publishing new orders onto the `orders-queue`. The cart is not persisted server side (it's held in the client in local storage), this leaves room for future improvement.
 
-### Users - Dapr Interaction
-- **Pub/Sub.** Pushes **Order** entities to the `orders-queue` topic to be collected by the *orders* service
+### Cart - Dapr Interaction
+- **Pub/Sub.** The cart pushes **Order** entities to the `orders-queue` topic to be collected by the *orders* service
 
 ## 💻 Frontend 
 This is the frontend accessed by users of store and visitors to the site. It is a single-page application (SPA) as such it runs entirely client side in the browser. It was created using the [Vue CLI](https://cli.vuejs.org/) and written in Vue.js
@@ -133,6 +133,7 @@ Quick and dirty guide to deploying Dapr Store into Kubernetes.
     ```bash
     helm install redis bitnami/redis --set "cluster.enabled=false,usePassword=false"
     ```
+
 2. Deploy *API Gateway* which is the "Daprized" NGINX Ingress, this will also deploy the ingress rules
    ```bash
    ./deploy/ingress/deploy.sh 
@@ -141,14 +142,18 @@ Quick and dirty guide to deploying Dapr Store into Kubernetes.
    ```bash
    kubectl get svc -l component=controller -o jsonpath='Public IP is: {.items[0].status.loadBalancer.ingress[0].ip}{"\n"}'
    ```
-3. Deploy the Dapr *Components* for state store and pub/sub
+
+3. Deploy the Dapr *Components* used for state store and pub/sub  
+   > ***Optional.*** Setup Azure blob storage for order reporting output, to do this rename `deploy/dapr/azure-blob.yaml.sample` and configure the values
    ```bash
    kubectl apply -f deploy/dapr
    ```
+
 4. Deploy all the Dapr Store services & frontend host
    ```bash
    kubectl apply -f deploy/app
    ```
+
 5. Access the site & frontend via public IP obtained in step 2
    
 

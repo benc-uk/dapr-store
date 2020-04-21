@@ -1,0 +1,17 @@
+#
+# ===== IGNORE FOR NOW =====
+#
+
+# apiVersion: dapr.io/v1alpha1
+# kind: Component
+# metadata:
+#   name: sendgrid
+# spec:
+#   type: bindings.sendgrid
+#   metadata:
+#   # OPTIONAL. Set here or in metadata of request payload
+#   - name: emailFrom
+#     value: "orders@daprstore.com"
+#   # REQUIRED. Must be set here, this is your SendGrid API key
+#   - name: apiKey
+#     value: "CHANGEME"

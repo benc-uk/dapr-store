@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#
+# For local debugging / testing only
+# ==================================
+# Stop everything started by the start-local.sh script
+#
+
 # Needed
 dapr stop --app-id products
 dapr stop --app-id orders

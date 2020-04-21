@@ -1,11 +1,13 @@
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: messagebus
+  name: statestore
 spec:
-  type: pubsub.redis
+  type: state.redis
   metadata:
   - name: redisHost
-    value: redis-master:6379
+    value: localhost:6379
   - name: redisPassword
     value: ""
+  - name: actorStateStore
+    value: "true"

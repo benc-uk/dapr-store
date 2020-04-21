@@ -13,11 +13,11 @@ GET http://{{host}}/v1.0/invoke/products/method/offers
 
 ###
 
-GET http://{{host}}/v1.0/invoke/products/method/get/41
+GET http://{{host}}/v1.0/invoke/products/method/get/4
 
 ###
 
-GET http://{{host}}/v1.0/invoke/products/method/search/blue
+GET http://{{host}}/v1.0/invoke/products/method/search/silk
 
 
 
@@ -32,7 +32,7 @@ content-type: application/json
 {
   "items": ["1","3"],
   "amount": 34.7,
-  "forUser": "becolem@microsoft.com"
+  "forUser": "demo@example.net"
 }
 
 
@@ -42,7 +42,7 @@ content-type: application/json
 # ===================================================================
 
 ### Get existing order
-GET http://{{host}}/v1.0/invoke/orders/method/get/3MKp6
+GET http://{{host}}/v1.0/invoke/orders/method/get/HwY7X
 
 
 

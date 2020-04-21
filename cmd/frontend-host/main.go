@@ -1,3 +1,10 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Static HTML/ content host for frontend
+// ----------------------------------------------------------------------------
+
 package main
 
 import (

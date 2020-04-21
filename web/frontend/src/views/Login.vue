@@ -1,3 +1,12 @@
+<!--
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr Store frontend - Login and account registration
+// ----------------------------------------------------------------------------
+-->
+
 <template>
   <b-container>
     <error-box :error="error" />

@@ -1,3 +1,12 @@
+<!--
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr Store frontend - Home page
+// ----------------------------------------------------------------------------
+-->
+
 <template>
   <b-container>
     <b-row class="m-2">

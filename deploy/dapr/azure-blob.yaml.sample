@@ -1,0 +1,13 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: orders-notify
+spec:
+  type: bindings.azure.blobstorage
+  metadata:
+  - name: storageAccount
+    value: __CHANGE_ME__
+  - name: storageAccessKey
+    value: __CHANGE_ME__
+  - name: container
+    value: __CHANGE_ME__

@@ -2,8 +2,8 @@
 **/.env
 
 # Dapr components
-**/components/**
-!web/frontend/src/components/**
+# **/components/**
+# !web/frontend/src/components/**
 
 # Go binaries
 cmd/cart/cart
@@ -13,4 +13,4 @@ cmd/products/products
 cmd/frontend-host/frontend-host
 
 # My configs
-deploy/ingress/myrules.yaml
+**/my*.yaml

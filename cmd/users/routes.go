@@ -2,7 +2,7 @@
 // Copyright (c) Ben Coleman, 2020
 // Licensed under the MIT License.
 //
-// Dapr compatible REST API service for orders
+// Dapr compatible REST API service for users
 // ----------------------------------------------------------------------------
 
 package main

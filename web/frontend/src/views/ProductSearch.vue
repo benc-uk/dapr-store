@@ -1,3 +1,12 @@
+<!--
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr Store frontend - Show product results from a search
+// ----------------------------------------------------------------------------
+-->
+
 <template>
   <div>
     <h1>Search results for: <i>{{ this.$route.params.query }}</i></h1>

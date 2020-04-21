@@ -1,3 +1,10 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr Store frontend - client side routes
+// ----------------------------------------------------------------------------
+
 import VueRouter from 'vue-router'
 
 import { userProfile } from './main'

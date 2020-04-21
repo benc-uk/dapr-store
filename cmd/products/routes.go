@@ -2,7 +2,7 @@
 // Copyright (c) Ben Coleman, 2020
 // Licensed under the MIT License.
 //
-// REST API routes providing services for products
+// Dapr compatible REST API service for products
 // ----------------------------------------------------------------------------
 
 package main
