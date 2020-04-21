@@ -1,3 +1,10 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Really simple env variable helper, with default values
+// ----------------------------------------------------------------------------
+
 package env
 
 import (

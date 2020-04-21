@@ -1,3 +1,10 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Dapr state API helper and wrapper returns standard formatted errors
+// ----------------------------------------------------------------------------
+
 package state
 
 import (

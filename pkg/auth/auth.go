@@ -1,3 +1,10 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// HandlerFunc middleware for checking JWT token validity
+// ----------------------------------------------------------------------------
+
 package auth
 
 import (
@@ -36,6 +43,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
+		// Get auth header & bearer scheme
 		authHeader := r.Header.Get("Authorization")
 		if len(authHeader) == 0 {
 			w.WriteHeader(401)

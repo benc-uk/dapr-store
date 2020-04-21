@@ -1,3 +1,10 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// All types & data structs here
+// ----------------------------------------------------------------------------
+
 package models
 
 // Product holds product data
@@ -30,7 +37,7 @@ type User struct {
 // OrderStatus enum
 type OrderStatus string
 
-// This is a enum of Order statuses
+// This is a (sort of) enum of Order statuses
 const (
 	OrderNew        OrderStatus = "new"
 	OrderReceived   OrderStatus = "received"

@@ -1,3 +1,10 @@
+// ----------------------------------------------------------------------------
+// Copyright (c) Ben Coleman, 2020
+// Licensed under the MIT License.
+//
+// Base API that all services implement and extend
+// ----------------------------------------------------------------------------
+
 package api
 
 import (
