@@ -54,7 +54,7 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 	log.Printf("### Registering user %+v\n", user)
 
 	// Check is user already registered
-	data, prob := daprHelper.GetState(user.Username)
+	data, prob := daprHelper.GetState(daprStoreName, user.Username)
 	if prob != nil {
 		prob.Send(resp)
 		return
@@ -65,7 +65,7 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	prob = daprHelper.SaveState(user.Username, user)
+	prob = daprHelper.SaveState(daprStoreName, user.Username, user)
 	if prob != nil {
 		prob.Send(resp)
 		return
@@ -81,7 +81,7 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 //
 func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	data, prob := daprHelper.GetState(vars["username"])
+	data, prob := daprHelper.GetState(daprStoreName, vars["username"])
 	if prob != nil {
 		prob.Send(resp)
 		return
@@ -101,7 +101,7 @@ func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 //
 func (api API) checkRegistered(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	data, prob := daprHelper.GetState(vars["username"])
+	data, prob := daprHelper.GetState(daprStoreName, vars["username"])
 	if prob != nil {
 		prob.Send(resp)
 		return

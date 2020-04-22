@@ -30,8 +30,9 @@ POST http://{{host}}/v1.0/invoke/cart/method/submit
 content-type: application/json
 
 {
+  "title": "Test order ~ {{$datetime rfc1123}}",
   "items": ["1","3"],
-  "amount": 34.7,
+  "amount": 99.99,
   "forUser": "demo@example.net"
 }
 
@@ -42,7 +43,7 @@ content-type: application/json
 # ===================================================================
 
 ### Get existing order
-GET http://{{host}}/v1.0/invoke/orders/method/get/HwY7X
+GET http://{{host}}/v1.0/invoke/orders/method/get/IXpsh
 
 
 

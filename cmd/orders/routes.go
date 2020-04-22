@@ -25,7 +25,7 @@ import (
 //
 func (api API) addRoutes(router *mux.Router) {
 	router.HandleFunc("/dapr/subscribe", api.subscribeTopic)
-	router.HandleFunc("/"+daprHelper.PubsubQueueName, api.receiveOrders)
+	router.HandleFunc("/"+ordersTopicName, api.receiveOrders)
 	router.HandleFunc("/get/{id}", auth.AuthMiddleware(api.getOrder))
 	router.HandleFunc("/getForUser/{username}", auth.AuthMiddleware(api.getOrdersForUser))
 }
@@ -35,7 +35,7 @@ func (api API) addRoutes(router *mux.Router) {
 //
 func (api API) subscribeTopic(resp http.ResponseWriter, req *http.Request) {
 	// A simple JSON array of strings, each being a topic we subscribe to
-	topicListJSON := fmt.Sprintf(`["%s"]`, daprHelper.PubsubQueueName)
+	topicListJSON := fmt.Sprintf(`["%s"]`, ordersTopicName)
 	resp.Header().Set("Content-Type", "application/json")
 	resp.Write([]byte(topicListJSON))
 }
@@ -56,12 +56,12 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 		problem.New("err://json-decode", "Event JSON decoding error", 500, err.Error(), daprHelper.AppInstanceName).Send(resp)
 		return
 	}
-	log.Printf("### Received event from pub/sub topic: %s\n", daprHelper.PubsubQueueName)
+	log.Println("### Received event from orders pub/sub topic")
 
 	// Save order in state with received status
 	order := event.Data
 	order.Status = models.OrderReceived
-	prob := daprHelper.SaveState(order.ID, order)
+	prob := daprHelper.SaveState(daprStoreName, order.ID, order)
 	if prob != nil {
 		// Returning a non-200 will reschedule the received message
 		prob.Send(resp)
@@ -84,7 +84,7 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	// And is simply an array of orderIds (strings)
 	userOrders := []string{}
 	// !NOTE! We use the username as a key in the orders state set, to hold an index of orders
-	data, prob := daprHelper.GetState(order.ForUser)
+	data, prob := daprHelper.GetState(daprStoreName, order.ForUser)
 	// Ignore any problem, it's possible it doesn't exist yet (user's first order)
 	err = json.Unmarshal(data, &userOrders)
 
@@ -103,7 +103,7 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	// Save new list back
-	prob = daprHelper.SaveState(order.ForUser, userOrders)
+	prob = daprHelper.SaveState(daprStoreName, order.ForUser, userOrders)
 	if prob != nil {
 		// Returning a non-200 will reschedule the received message
 		prob.Send(resp)
@@ -113,7 +113,7 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	// Fake background order processing
 	time.AfterFunc(30*time.Second, func() {
 		order.Status = models.OrderProcessing
-		prob = daprHelper.SaveState(order.ID, order)
+		prob = daprHelper.SaveState(daprStoreName, order.ID, order)
 		if prob != nil {
 			log.Printf("### Warning, order processing failed: %s", prob.Error())
 		} else {
@@ -124,7 +124,7 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	// Fake background order completion
 	time.AfterFunc(120*time.Second, func() {
 		order.Status = models.OrderComplete
-		prob = daprHelper.SaveState(order.ID, order)
+		prob = daprHelper.SaveState(daprStoreName, order.ID, order)
 		if prob != nil {
 			log.Printf("### Warning, order completion failed: %s", prob.Error())
 		} else {
@@ -141,7 +141,7 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 //
 func (api API) getOrder(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	data, prob := daprHelper.GetState(vars["id"])
+	data, prob := daprHelper.GetState(daprStoreName, vars["id"])
 	if prob != nil {
 		prob.Send(resp)
 		return
@@ -161,7 +161,7 @@ func (api API) getOrder(resp http.ResponseWriter, req *http.Request) {
 func (api API) getOrdersForUser(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	// !NOTE! We use the username as a key in the orders state set, to hold an index of orders
-	data, prob := daprHelper.GetState(vars["username"])
+	data, prob := daprHelper.GetState(daprStoreName, vars["username"])
 	if prob != nil {
 		prob.Send(resp)
 		return

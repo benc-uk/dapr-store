@@ -47,14 +47,14 @@ func (api API) submitOrder(resp http.ResponseWriter, req *http.Request) {
 		problem.New("err://json-decode", "Malformed order JSON", 400, "JSON could not be decoded", daprHelper.AppInstanceName).Send(resp)
 		return
 	}
-	if order.Amount <= 0 || len(order.Items) == 0 {
+	if order.Amount <= 0 || len(order.Items) == 0 || order.Title == "" {
 		problem.New("err://json-error", "Malformed order JSON", 400, "Order failed validation, check spec", daprHelper.AppInstanceName).Send(resp)
 		return
 	}
 	order.ID = orderID
 	order.Status = models.OrderNew
 
-	prob := daprHelper.PublishMessage(order)
+	prob := daprHelper.PublishMessage(ordersTopicName, order)
 	if prob != nil {
 		prob.Send(resp)
 		return

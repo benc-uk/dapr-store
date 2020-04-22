@@ -28,12 +28,13 @@ type API struct {
 }
 
 var (
-	healthy     = true               // Simple health flag
-	version     = "0.0.1"            // App version number, set at build time with -ldflags "-X 'main.version=1.2.3'"
-	buildInfo   = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
-	serviceName = "cart"
-	defaultPort = 9001
-	daprHelper  *dapr.Helper
+	healthy         = true               // Simple health flag
+	version         = "0.0.1"            // App version number, set at build time with -ldflags "-X 'main.version=1.2.3'"
+	buildInfo       = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
+	serviceName     = "cart"
+	defaultPort     = 9001
+	daprHelper      *dapr.Helper
+	ordersTopicName string
 )
 
 //
@@ -46,11 +47,12 @@ func main() {
 	// Port to listen on, change the default as you see fit
 	serverPort := env.GetEnvInt("PORT", defaultPort)
 
-	// Bootstrap standard helper, checks env vars for default settings etc
-	daprHelper = dapr.BootstrapHelper(serviceName)
+	// Set up Dapr & checks for Dapr sidecar port, abort
+	daprHelper = dapr.NewHelper(serviceName)
 	if daprHelper == nil {
 		os.Exit(1)
 	}
+	ordersTopicName = env.GetEnvString("DAPR_ORDERS_TOPIC", "orders-queue")
 
 	// Use gorilla/mux for routing
 	router := mux.NewRouter()
