@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/benc-uk/dapr-store/pkg/api"
+	"github.com/benc-uk/dapr-store/pkg/dapr"
 	"github.com/benc-uk/dapr-store/pkg/env"
 
 	"github.com/gorilla/handlers"
@@ -28,13 +29,12 @@ type API struct {
 }
 
 var (
-	healthy       = true               // Simple health flag
-	version       = "0.0.1"            // App version number, set at build time with -ldflags "-X 'main.version=1.2.3'"
-	buildInfo     = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
-	serviceName   = "users"
-	defaultPort   = 9003
-	daprPort      int
-	daprStoreName string
+	healthy     = true               // Simple health flag
+	version     = "0.0.1"            // App version number, set at build time with -ldflags "-X 'main.version=1.2.3'"
+	buildInfo   = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
+	serviceName = "users"
+	defaultPort = 9003
+	daprHelper  *dapr.Helper
 )
 
 //
@@ -47,15 +47,9 @@ func main() {
 	// Port to listen on, change the default as you see fit
 	serverPort := env.GetEnvInt("PORT", defaultPort)
 
-	// Use the given Dapr component name to use with the state API
-	daprStoreName = env.GetEnvString("DAPR_STORE_NAME", "statestore")
-
-	daprPort = env.GetEnvInt("DAPR_HTTP_PORT", 0)
-	if daprPort != 0 {
-		log.Printf("### Dapr sidecar detected on port %v", daprPort)
-	} else {
-		log.Printf("### Dapr not detected (no DAPR_HTTP_PORT available), this is bad")
-		log.Printf("### Exiting...")
+	// Bootstrap standard helper, checks env vars for default settings etc
+	daprHelper = dapr.BootstrapHelper(serviceName)
+	if daprHelper == nil {
 		os.Exit(1)
 	}
 
@@ -79,7 +73,6 @@ func main() {
 	api.addRoutes(router)
 
 	// Start server
-	log.Printf("### Dapr state store: %v\n", daprStoreName)
 	log.Printf("### Server listening on %v\n", serverPort)
 	srv := &http.Server{
 		Handler:      router,

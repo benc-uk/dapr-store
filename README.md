@@ -25,7 +25,7 @@ Shared Go code lives in the `pkg/` directory, which is used by all the services.
 - `pkg/env` - Very simple `os.LookupEnv` wrapper with fallback defaults.
 - `pkg/models` - Types and data structs used by the services.
 - `pkg/problem` - Standarized REST error messages using [RFC 7807 Problem Details](https://tools.ietf.org/html/rfc7807).
-- `pkg/state` - A Dapr state API helper for getting / setting state with error handling.
+- `pkg/dapr` - A Dapr helper & wrapper library for state and pub/sub
 
 ## 💰 Orders service
 This service provides order processing to the Dapr Store.  

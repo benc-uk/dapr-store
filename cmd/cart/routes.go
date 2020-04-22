@@ -8,9 +8,7 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
-	"fmt"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -36,7 +34,7 @@ func (api API) addRoutes(router *mux.Router) {
 func (api API) submitOrder(resp http.ResponseWriter, req *http.Request) {
 	cl, _ := strconv.Atoi(req.Header.Get("content-length"))
 	if cl <= 0 {
-		problem.Send("Zero length body", "err://json-error", resp, problem.HTTP400, nil, serviceName)
+		problem.New("err://body-missing", "Zero length body", 400, "Zero length body", daprHelper.AppInstanceName).Send(resp)
 		return
 	}
 
@@ -46,26 +44,19 @@ func (api API) submitOrder(resp http.ResponseWriter, req *http.Request) {
 
 	// Some basic validation and checking on what we've been posted
 	if err != nil {
-		problem.Send("Malformed orders JSON", "err://json-decode", resp, problem.HTTP400, err, serviceName)
+		problem.New("err://json-decode", "Malformed order JSON", 400, "JSON could not be decoded", daprHelper.AppInstanceName).Send(resp)
 		return
 	}
 	if order.Amount <= 0 || len(order.Items) == 0 {
-		problem.Send("Malformed orders JSON", "err://json-error", resp, problem.HTTP400, nil, serviceName)
+		problem.New("err://json-error", "Malformed order JSON", 400, "Order failed validation, check spec", daprHelper.AppInstanceName).Send(resp)
 		return
 	}
 	order.ID = orderID
 	order.Status = models.OrderNew
 
-	jsonPayload, err := json.Marshal(order)
-	if err != nil {
-		problem.Send("Malformed orders JSON", "err://json-marshal", resp, nil, err, serviceName)
-		return
-	}
-
-	daprURL := fmt.Sprintf("http://localhost:%d/v1.0/publish/%s", daprPort, daprTopicName)
-	daprResp, err := http.Post(daprURL, "application/json", bytes.NewBuffer(jsonPayload))
-	if err != nil {
-		problem.Send("Error publishing event", daprURL, resp, daprResp, err, serviceName)
+	prob := daprHelper.PublishMessage(order)
+	if prob != nil {
+		prob.Send(resp)
 		return
 	}
 
