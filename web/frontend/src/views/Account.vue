@@ -101,10 +101,11 @@ export default {
 
   methods: {
     async logout() {
+      let isDemo = userProfile.userName == 'demo@example.net'
       Object.assign(userProfile, new User())
       localStorage.removeItem('user')
       localStorage.removeItem('cart')
-      await msalApp.logout()
+      if (!isDemo) { await msalApp.logout() }
 
       this.$router.push({ name: 'home' })
     },

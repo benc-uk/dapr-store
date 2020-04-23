@@ -11,7 +11,7 @@
   <b-container>
     <error-box :error="error" />
     <b-alert v-if="demoMode" show dismissible>
-      Used Sign-in disabled, due to lack of client-id configuration. <br>Running in demo mode, using a dummy user account
+      Real user sign-in disabled, due to lack of client-id configuration. <br>Running in demo mode, using a dummy user account
     </b-alert>
     <b-overlay :show="inprogress && !error" rounded="sm">
       <b-row class="m-1">
