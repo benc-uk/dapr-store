@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: daprstore/cart:latest
+        image: daprstore/cart:0.1.0
         imagePullPolicy: Always
         env:
           - name: DAPR_HTTP_PORT

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: daprstore/frontend-host:latest
+        image: daprstore/frontend-host:0.1.0
         imagePullPolicy: Always
         ports:
         - containerPort: 8000        

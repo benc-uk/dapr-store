@@ -70,14 +70,29 @@ func (api API) receiveOrders(resp http.ResponseWriter, req *http.Request) {
 	log.Printf("### Order %s was saved to state store\n", order.ID)
 
 	// Save order to blob storage as a text file "notification"
-	outputMetadata := map[string]string{
+	// Also email to the user via SendGrid
+	// For these to work configure the components in cmd/orders/components
+	// If un-configured then nothing happens, and no output is send or generated
+	blobMetadata := map[string]string{
 		"ContentType": "text/plain",
 		"blobName":    "order_" + order.ID + ".txt",
 	}
-	outputData := "----------\nOrder title:" + order.Title + "\nOrder ID: " + order.ID + "\nUser: " + order.ForUser + "\nAmount: " + fmt.Sprintf("%f", order.Amount) + "\n----------"
-	prob = daprHelper.SendOutput("orders-notify", outputData, outputMetadata)
+	blobData := "----------\nOrder title:" + order.Title + "\nOrder ID: " + order.ID +
+		"\nUser: " + order.ForUser + "\nAmount: " + fmt.Sprintf("%f", order.Amount) + "\n----------"
+	prob = daprHelper.SendOutput("orders-notify", blobData, blobMetadata)
 	if prob != nil {
-		log.Printf("### Problem sending to notification output: %+v", prob)
+		log.Printf("### Problem sending to blob output: %+v", prob)
+	}
+
+	emailMetadata := map[string]string{
+		"emailTo": order.ForUser,
+		"subject": "Dapr Store, order details: " + order.Title,
+	}
+	emailData := "<h1>Thanks for your order!</h1>Order title: " + order.Title + "<br>Order ID: " + order.ID +
+		"<br>User: " + order.ForUser + "<br>Amount: £" + fmt.Sprintf("%.2f", order.Amount) + "<br><br>Enjoy your new dappr threads!"
+	prob = daprHelper.SendOutput("orders-email", emailData, emailMetadata)
+	if prob != nil {
+		log.Printf("### Problem sending to email output: %+v", prob)
 	}
 
 	// Now create or update the user's orders index, which is keyed on their username

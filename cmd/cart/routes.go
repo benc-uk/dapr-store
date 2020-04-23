@@ -38,7 +38,6 @@ func (api API) submitOrder(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	orderID := makeID(5)
 	order := models.Order{}
 	err := json.NewDecoder(req.Body).Decode(&order)
 
@@ -51,7 +50,8 @@ func (api API) submitOrder(resp http.ResponseWriter, req *http.Request) {
 		problem.New("err://json-error", "Malformed order JSON", 400, "Order failed validation, check spec", daprHelper.AppInstanceName).Send(resp)
 		return
 	}
-	order.ID = orderID
+
+	order.ID = makeID(5)
 	order.Status = models.OrderNew
 
 	prob := daprHelper.PublishMessage(ordersTopicName, order)

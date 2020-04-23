@@ -13,6 +13,14 @@ The ["Go Standard Project Layout"](https://github.com/golang-standards/project-l
 The following diagram shows all the components of the application and main interactions. It also highlights which Dapr API/feature (aka Dapr building block) is used and where.
 ![architecture diagram](./docs/img/design.png)
 
+## Dapr Interfaces & Building Blocks
+The application uses the following [Dapr Building Blocks](https://github.com/dapr/docs/tree/master/concepts#building-blocks) and APIs
+- **Service Invocation** — The API gateway calls the four main microservices using HTTP calls to [Dapr service invocation](https://github.com/dapr/docs/blob/master/concepts/service-invocation/README.md). This provides retries, mTLS and service discovery.
+- **State** — State is held for users and orders using the [Dapr state management API](https://github.com/dapr/docs/blob/master/concepts/state-management/README.md). The state provider used is Redis, however any other provider could be plugged in without any application code changes. 
+- **Pub/Sub** — The submission of new orders through the cart service, is decoupled from the order processing via pub/sub messaging and the [Dapr pub/sub messaging API](https://github.com/dapr/docs/blob/master/concepts/publish-subscribe-messaging/README.md). New orders are placed on a topic as messages, to be collected by the orders service. This allows the orders service to independently scale and separates our reads & writes 
+- **Output Bindings** — To communicate with downstream & 3rd party systems, the [Dapr Bindings API](https://github.com/dapr/docs/blob/master/concepts/bindings/README.md) is used. This allows the store to carry out tasks such as saving order details into external storage (e.g. Azure Blob) and notify uses with emails via SendGrid
+- **Middleware** — To be added later, e.g. to provide rate limiting, and possibly JWT validation
+
 
 # Components
 The major components and microservices that make up the Dapr Store system are described here
@@ -25,7 +33,7 @@ Shared Go code lives in the `pkg/` directory, which is used by all the services.
 - `pkg/env` - Very simple `os.LookupEnv` wrapper with fallback defaults.
 - `pkg/models` - Types and data structs used by the services.
 - `pkg/problem` - Standarized REST error messages using [RFC 7807 Problem Details](https://tools.ietf.org/html/rfc7807).
-- `pkg/dapr` - A Dapr helper & wrapper library for state and pub/sub
+- `pkg/dapr` - A Dapr helper & wrapper library for state, pub/sub and output bindings
 
 ## 💰 Orders service
 This service provides order processing to the Dapr Store.  
@@ -41,8 +49,9 @@ The service provides some fake order processing activity so that orders are move
 ### Orders - Dapr Interaction
 - **Pub/Sub.** Subscribes to the `orders-queue` topic to receive new orders from the *cart* service
 - **State.** Stores and retrieves **Order** entities from the state service, keyed on OrderID. Also lists of orders per user, held as an array of OrderIDs and keyed on username
-- **Bindings.** To be added
-
+- **Bindings.** All output bindings are optional
+  - **Azure Blob.** For saving "order reports" as text files into Azure Blob storage
+  - **SendGrid.** For sending emails to users. *Note.* Not available yet, should be in next release of Dapr
 
 ## 👦 Users service
 This provides a simple user profile service to the Dapr Store. Only registered users can use the store to place orders etc.  

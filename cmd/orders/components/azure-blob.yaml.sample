@@ -1,3 +1,7 @@
+#
+# Rename this file, remove the .sample and set your storage account details & key
+#
+
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
