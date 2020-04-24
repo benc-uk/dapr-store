@@ -1,9 +1,0 @@
-apiVersion: dapr.io/v1alpha1
-kind: Configuration
-metadata:
-  name: custom
-spec:
-  httpPipeline:
-    handlers:
-    - name: uppercase
-      type: middleware.http.uppercase

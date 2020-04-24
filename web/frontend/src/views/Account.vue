@@ -64,7 +64,7 @@
 <script>
 import { userProfile, msalApp } from '../main'
 import api from '../mixins/api'
-import User from '../user'
+import { User, demoUserName } from '../user'
 import ErrorBox from '../components/ErrorBox'
 
 export default {
@@ -101,11 +101,13 @@ export default {
 
   methods: {
     async logout() {
-      let isDemo = userProfile.userName == 'demo@example.net'
+      let isDemo = userProfile.userName == demoUserName
       Object.assign(userProfile, new User())
       localStorage.removeItem('user')
       localStorage.removeItem('cart')
-      if (!isDemo) { await msalApp.logout() }
+      if (!isDemo) {
+        await msalApp.logout()
+      }
 
       this.$router.push({ name: 'home' })
     },

@@ -73,7 +73,7 @@
 <script>
 import { userProfile, msalApp, accessTokenRequest } from '../main'
 import api from '../mixins/api'
-import User from '../user'
+import { User, demoUserName } from '../user'
 import ErrorBox from '../components/ErrorBox'
 
 export default {
@@ -159,7 +159,7 @@ export default {
 
       // In demo mode only one fake account is supported, it has no token
       if (this.demoMode) {
-        let dummyUser = new User('', { name: 'Demo User' }, 'demo@example.net')
+        let dummyUser = new User('', { name: 'Demo User' }, demoUserName)
         dummyUser.dummy = true
         return dummyUser
       }

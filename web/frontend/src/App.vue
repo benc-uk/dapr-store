@@ -49,7 +49,7 @@
 
 <script>
 import { userProfile, msalApp, accessTokenRequest } from './main'
-import User from './user'
+import { User, demoUserName } from './user'
 
 export default {
   name: 'App',
@@ -69,9 +69,9 @@ export default {
     let storedUser = localStorage.getItem('user')
 
     // Skip token if demo user in use
-    if (storedUser == 'demo@example.net') {
-      Object.assign(userProfile, new User('', { name: 'Demo User' }, 'demo@example.net'))
-      console.log('### App.vue: MSAL aquireToken skipped for demo user: demo@example.net')
+    if (storedUser == demoUserName) {
+      Object.assign(userProfile, new User('', { name: 'Demo User' }, demoUserName))
+      console.log('### App.vue: MSAL aquireToken skipped for demo user')
       restoreCart()
       return
     }

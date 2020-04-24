@@ -13,3 +13,5 @@ export default class User {
     this.cart = []
   }
 }
+
+export const demoUserName = 'demo@example.net'
