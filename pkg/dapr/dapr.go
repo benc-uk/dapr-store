@@ -14,6 +14,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/benc-uk/dapr-store/pkg/env"
 	"github.com/benc-uk/dapr-store/pkg/problem"
@@ -43,40 +44,26 @@ type Helper struct {
 	AppInstanceName string
 }
 
-// NewHelper returns a new dapr helper
+// NewHelper returns a new Dapr helper
 func NewHelper(appName string) *Helper {
-	daprPort := env.GetEnvInt("DAPR_HTTP_PORT", 0)
-	if daprPort != 0 {
-		log.Printf("### Dapr sidecar detected on port %v", daprPort)
-	} else {
-		log.Printf("### Dapr not detected (no DAPR_HTTP_PORT available), this is bad")
-		log.Printf("### Exiting...")
-		return nil
-	}
+	// Fall back to default Dapr port of 3500
+	daprPort := env.GetEnvInt("DAPR_HTTP_PORT", 3500)
+
+	// Check for Dapr existence
+	time.AfterFunc(time.Second*15, func() {
+		daprResp, err := http.Get(fmt.Sprintf("http://localhost:%d/v1.0/healthz", daprPort))
+		if err != nil || daprResp.StatusCode != 200 {
+			log.Println("### WARNING! Dapr process/sidecar NOT found")
+		} else {
+			log.Printf("### Dapr process/sidecar found on port: %d", daprPort)
+		}
+	})
 
 	return &Helper{
 		Port:            daprPort,
 		AppInstanceName: appName,
 	}
 }
-
-// func BootstrapHelper(appName string) *Helper {
-// 	daprStoreName := env.GetEnvString("DAPR_STORE_NAME", "statestore")
-// 	daprTopicName := env.GetEnvString("DAPR_ORDERS_TOPIC", "orders-queue")
-
-// 	daprPort := env.GetEnvInt("DAPR_HTTP_PORT", 0)
-// 	if daprPort != 0 {
-// 		log.Printf("### Dapr sidecar detected on port %v", daprPort)
-// 	} else {
-// 		log.Printf("### Dapr not detected (no DAPR_HTTP_PORT available), this is bad")
-// 		log.Printf("### Exiting...")
-// 		return nil
-// 	}
-
-// 	log.Printf("### Dapr store name: %s\n", daprStoreName)
-// 	log.Printf("### Dapr orders topic: %s\n", daprTopicName)
-// 	return NewHelper(daprPort, appName, daprStoreName, daprTopicName)
-// }
 
 //
 // GetState returns the state of given key

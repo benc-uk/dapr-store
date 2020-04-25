@@ -9,7 +9,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import * as msal from 'msal'
 import App from './App.vue'
-import User from './user'
+import { User } from './user'
 
 // Use Vue Bootstrap and theme
 import BootstrapVue from 'bootstrap-vue'

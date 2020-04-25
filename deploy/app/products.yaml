@@ -22,9 +22,6 @@ spec:
       - name: service
         image: daprstore/products:0.1.0
         imagePullPolicy: Always
-        env:
-          - name: DAPR_HTTP_PORT
-            value: "3500"
         resources:
           limits:
             cpu: 100m

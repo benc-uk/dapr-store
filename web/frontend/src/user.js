@@ -5,7 +5,7 @@
 // Dapr Store frontend - Simple data class to hold user profile data
 // ----------------------------------------------------------------------------
 
-export default class User {
+export class User {
   constructor(token, account, userName) {
     this.token = token
     this.account = account
