@@ -13,11 +13,11 @@ GET http://{{host}}/v1.0/invoke/products/method/offers
 
 ###
 
-GET http://{{host}}/v1.0/invoke/products/method/get/1
+GET http://{{host}}/v1.0/invoke/products/method/get/2
 
 ###
 
-GET http://{{host}}/v1.0/invoke/products/method/search/silk
+GET http://{{host}}/v1.0/invoke/products/method/search/tied
 
 
 

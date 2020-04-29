@@ -1,4 +1,4 @@
-package dapr
+package impl
 
 import (
 	"math/rand"
@@ -18,7 +18,7 @@ type CartService struct {
 //
 // New creates a new OrderService
 //
-func New(serviceName string) *CartService {
+func NewService(serviceName string) *CartService {
 	// Set up Dapr & checks for Dapr sidecar port, abort
 	helper := dapr.NewHelper(serviceName)
 	if helper == nil {

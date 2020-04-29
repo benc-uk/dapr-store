@@ -28,12 +28,14 @@ lint : $(FRONTEND_DIR)/node_modules
 	golint -set_exit_status $(SERVICE_DIR)/...
 	@cd $(FRONTEND_DIR); npm run lint
 
+
 ################################################################################
 # Run tests
 ################################################################################
 .PHONY: test
 test : 
 	echo "BLEEP BLOOP. All tests passing. Nothing to see here. Move along"
+
 
 ################################################################################
 # Gofmt
@@ -92,6 +94,7 @@ docker :
 	--build-arg CLIENT_ID=$(CLIENT_ID) \
 	-t $(DOCKER_PREFIX)/frontend-host:$(DOCKER_TAG)
 
+
 ################################################################################
 # Push Docker images
 ################################################################################
@@ -103,6 +106,7 @@ push :
 	docker push $(DOCKER_PREFIX)/orders:$(DOCKER_TAG)
 	docker push $(DOCKER_PREFIX)/frontend-host:$(DOCKER_TAG)
 	
+
 ################################################################################
 # Frontend / Vue.js
 ################################################################################

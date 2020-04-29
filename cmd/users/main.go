@@ -14,7 +14,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/benc-uk/dapr-store/cmd/users/dapr"
+	"github.com/benc-uk/dapr-store/cmd/cart/impl"
 	"github.com/benc-uk/dapr-store/cmd/users/spec"
 	"github.com/benc-uk/dapr-store/pkg/api"
 	"github.com/benc-uk/dapr-store/pkg/env"
@@ -53,7 +53,7 @@ func main() {
 	// Our API wraps the Base API and UserService
 	api := API{
 		api.NewBase(serviceName, version, buildInfo, healthy, router),
-		dapr.New(serviceName),
+		impl.NewService(serviceName),
 	}
 
 	// Add routes for this service

@@ -14,7 +14,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/benc-uk/dapr-store/cmd/orders/dapr"
+	"github.com/benc-uk/dapr-store/cmd/orders/impl"
 	"github.com/benc-uk/dapr-store/cmd/orders/spec"
 	"github.com/benc-uk/dapr-store/pkg/auth"
 	"github.com/benc-uk/dapr-store/pkg/problem"
@@ -43,7 +43,7 @@ func (api API) subscribeTopic(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (api API) getTopicName() string {
-	topicName := api.service.(*dapr.OrderService).TopicName
+	topicName := api.service.(*impl.OrderService).TopicName
 	if topicName == "" {
 		topicName = "orders-queue"
 	}

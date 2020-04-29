@@ -5,7 +5,7 @@
 // Dapr implementation of the UserService
 // ----------------------------------------------------------------------------
 
-package dapr
+package impl
 
 import (
 	"encoding/json"
@@ -26,7 +26,7 @@ type UserService struct {
 //
 // New creates a new UserService
 //
-func New(serviceName string) *UserService {
+func NewService(serviceName string) *UserService {
 	// Set up Dapr & checks for Dapr sidecar port, abort
 	helper := dapr.NewHelper(serviceName)
 	if helper == nil {

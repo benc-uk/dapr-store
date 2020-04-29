@@ -14,10 +14,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/benc-uk/dapr-store/cmd/products/impl"
+	"github.com/benc-uk/dapr-store/cmd/products/spec"
 	"github.com/benc-uk/dapr-store/pkg/api"
 	"github.com/benc-uk/dapr-store/pkg/env"
-
-	"database/sql"
 
 	"github.com/gorilla/mux"
 	_ "github.com/joho/godotenv/autoload" // Autoloads .env file if it exists
@@ -27,6 +27,7 @@ import (
 // API type is a wrap of the common base API with local implementation
 type API struct {
 	*api.Base
+	service spec.ProductService
 }
 
 var (
@@ -35,7 +36,7 @@ var (
 	buildInfo   = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
 	serviceName = "products"
 	defaultPort = 9002
-	db          *sql.DB
+	// db          *sql.DB
 )
 
 //
@@ -53,19 +54,12 @@ func main() {
 
 	// Wrapper API with anonymous inner new Base API
 	api := API{
-		api.New(serviceName, version, buildInfo, healthy, router),
+		api.NewBase(serviceName, version, buildInfo, healthy, router),
+		impl.NewService(serviceName),
 	}
 
 	// Add routes for this service
 	api.addRoutes(router)
-
-	// Open database
-	var err error
-	db, err = sql.Open("sqlite3", "./sqlite.db")
-	if err != nil {
-		log.Panicf("### Failed to open database! %+v\n", err)
-	}
-	defer db.Close()
 
 	// Start server
 	log.Printf("### Server listening on %v\n", serverPort)
@@ -76,7 +70,7 @@ func main() {
 		ReadTimeout:  10 * time.Second,
 		IdleTimeout:  10 * time.Second,
 	}
-	err = srv.ListenAndServe()
+	err := srv.ListenAndServe()
 	if err != nil {
 		panic(err.Error())
 	}

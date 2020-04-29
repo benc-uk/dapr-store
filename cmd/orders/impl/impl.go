@@ -1,4 +1,4 @@
-package dapr
+package impl
 
 import (
 	"encoding/json"
@@ -24,7 +24,7 @@ type OrderService struct {
 //
 // New creates a new OrderService
 //
-func New(serviceName string) *OrderService {
+func NewService(serviceName string) *OrderService {
 	// Set up Dapr & checks for Dapr sidecar port, abort
 	helper := dapr.NewHelper(serviceName)
 	if helper == nil {
@@ -114,7 +114,6 @@ func (d *OrderService) GetOrdersForUser(userName string) ([]string, error) {
 		return orders, nil
 	}
 
-	log.Printf("\n}}}}}}} %s\n\n", string(data))
 	err := json.Unmarshal(data, &orders)
 	if err != nil {
 		prob := problem.New("err://json-decode", "Malformed orders JSON", 500, "JSON could not be decoded", d.ServiceName)
