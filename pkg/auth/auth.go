@@ -88,7 +88,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 // Get key for given token (from it's kid header)
 //
 func getKeyFromJWKS(token *jwt.Token) (interface{}, error) {
-	// TODO: cache response so we don't have to make a request every time we want to verify a JWT
+	// We only support one JWKS, but most identity platforms have just the one
 	if jwkSet == nil {
 		var err error
 		jwkSet, err = jwk.FetchHTTP(jwksURL)

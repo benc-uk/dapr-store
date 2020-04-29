@@ -5,7 +5,9 @@
 // All types & data structs here
 // ----------------------------------------------------------------------------
 
-package models
+package modelsZZZZZ
+
+// **** Yes I _know_ this isn't idiomatic Go ****
 
 // Product holds product data
 type Product struct {

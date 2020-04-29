@@ -33,7 +33,13 @@ spec:
           httpGet:
             path: /healthz
             port: 9001
+            httpHeaders:
+              - name: "No-Log"
+                value: "true"
         livenessProbe:
           httpGet:
             path: /healthz
             port: 9001
+            httpHeaders:
+              - name: "No-Log"
+                value: "true"            

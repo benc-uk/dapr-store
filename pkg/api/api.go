@@ -9,6 +9,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	"runtime"
@@ -16,8 +17,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// APIBase holds a standard set of values for all services & APIs
-type APIBase struct {
+// Base holds a standard set of values for all services & APIs
+type Base struct {
 	ServiceName string
 	Healthy     bool
 	Version     string
@@ -25,19 +26,43 @@ type APIBase struct {
 }
 
 //
-// AddCommonRoutes is a function
+// New creates and returns a new Base API instance
 //
-func (api *APIBase) AddCommonRoutes(router *mux.Router) {
-	router.HandleFunc("/healthz", api.HealthCheck)
-	router.HandleFunc("/api/healthz", api.HealthCheck)
-	router.HandleFunc("/status", api.Status)
-	router.HandleFunc("/api/status", api.Status)
+func NewBase(name, ver, info string, healthy bool, router *mux.Router) *Base {
+	b := &Base{
+		ServiceName: name,
+		Healthy:     healthy,
+		Version:     ver,
+		BuildInfo:   info,
+	}
+	router.HandleFunc("/healthz", b.HealthCheck)
+	router.HandleFunc("/api/healthz", b.HealthCheck)
+	router.HandleFunc("/status", b.Status)
+	router.HandleFunc("/api/status", b.Status)
+
+	// Add middleware for logging
+	router.Use(b.loggingMiddleware)
+	return b
 }
+
+//
+// AddCommonRoutes registers common shared routes and middleware
+//
+// func (api *Base) AddCommonRoutes(router *mux.Router) {
+// 	router.HandleFunc("/healthz", api.HealthCheck)
+// 	router.HandleFunc("/api/healthz", api.HealthCheck)
+// 	router.HandleFunc("/status", api.Status)
+// 	router.HandleFunc("/api/status", api.Status)
+
+// 	// Add middleware for logging and CORS
+// 	//router.Use(api.corsMiddleware)
+// 	router.Use(api.loggingMiddleware)
+// }
 
 //
 // HealthCheck - Simple health check endpoint, returns 204 when healthy
 //
-func (api *APIBase) HealthCheck(resp http.ResponseWriter, req *http.Request) {
+func (api *Base) HealthCheck(resp http.ResponseWriter, req *http.Request) {
 	if api.Healthy {
 		resp.WriteHeader(http.StatusNoContent)
 		return
@@ -48,7 +73,7 @@ func (api *APIBase) HealthCheck(resp http.ResponseWriter, req *http.Request) {
 //
 // Status - status information data - Remove if you like
 //
-func (api *APIBase) Status(resp http.ResponseWriter, req *http.Request) {
+func (api *Base) Status(resp http.ResponseWriter, req *http.Request) {
 	type status struct {
 		Service    string `json:"service"`
 		Healthy    bool   `json:"healthy"`
@@ -89,4 +114,31 @@ func (api *APIBase) Status(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Add("Content-Type", "application/json")
 	resp.Write(statusJSON)
+}
+
+//
+// Standard CORS settings, no longer used, left for prosperity
+//
+/*func (api *APIBase) corsMiddleware(handler http.Handler) http.Handler {
+	corsMethods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
+	corsOrigins := handlers.AllowedOrigins([]string{"*"})
+	return handlers.CORS(corsOrigins, corsMethods)(handler)
+}*/
+
+//
+// Basic request logging,
+//
+func (api *Base) loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Invented header to not log this request, lets us ignore things like k8s probes
+		noLog := r.Header.Get("No-Log")
+		if noLog != "" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// Really simple request logging
+		log.Printf("### %s %s", r.Method, r.RequestURI)
+		next.ServeHTTP(w, r)
+	})
 }

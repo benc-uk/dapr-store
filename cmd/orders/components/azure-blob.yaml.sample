@@ -5,7 +5,7 @@
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: orders-notify
+  name: orders-report
 spec:
   type: bindings.azure.blobstorage
   metadata:

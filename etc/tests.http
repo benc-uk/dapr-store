@@ -13,7 +13,7 @@ GET http://{{host}}/v1.0/invoke/products/method/offers
 
 ###
 
-GET http://{{host}}/v1.0/invoke/products/method/get/4
+GET http://{{host}}/v1.0/invoke/products/method/get/1
 
 ###
 
@@ -43,7 +43,10 @@ content-type: application/json
 # ===================================================================
 
 ### Get existing order
-GET http://{{host}}/v1.0/invoke/orders/method/get/IXpsh
+GET http://{{host}}/v1.0/invoke/orders/method/get/48jMj
+
+### Get orders for user
+GET http://{{host}}/v1.0/invoke/orders/method/getForUser/demo@example.net
 
 
 
@@ -62,6 +65,6 @@ POST http://{{host}}/v1.0/invoke/users/method/register
 content-type: application/json
 
 {
-  "username": "becolem@microsoft.net",
+  "username": "benc.uk@outlook.com",
   "displayName": "Ben API TEST"
 }

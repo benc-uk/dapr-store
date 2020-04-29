@@ -40,8 +40,8 @@ type bindingOut struct {
 
 // Helper is our main struct
 type Helper struct {
-	Port            int
-	AppInstanceName string
+	Port        int
+	ServiceName string
 }
 
 // NewHelper returns a new Dapr helper
@@ -60,8 +60,8 @@ func NewHelper(appName string) *Helper {
 	})
 
 	return &Helper{
-		Port:            daprPort,
-		AppInstanceName: appName,
+		Port:        daprPort,
+		ServiceName: appName,
 	}
 }
 
@@ -73,7 +73,7 @@ func (h *Helper) GetState(storeName, key string) ([]byte, *problem.Problem) {
 
 	daprResp, err := http.Get(daprURL)
 	if err != nil || (daprResp.StatusCode < 200 || daprResp.StatusCode > 299) {
-		return nil, problem.NewAPIProblem(daprURL, "Dapr get state failed", h.AppInstanceName, daprResp, err)
+		return nil, problem.NewAPIProblem(daprURL, "Dapr get state failed", h.ServiceName, daprResp, err)
 	}
 
 	defer daprResp.Body.Close()
@@ -92,7 +92,7 @@ func (h *Helper) SaveState(storeName, key string, value interface{}) *problem.Pr
 
 	jsonPayload, err := json.Marshal([]state{daprPayload})
 	if err != nil {
-		return problem.NewAPIProblem("err://json-marshall", "State JSON marshalling error", h.AppInstanceName, nil, err)
+		return problem.NewAPIProblem("err://json-marshall", "State JSON marshalling error", h.ServiceName, nil, err)
 	}
 
 	log.Printf("### State save helper, key:%s payload:%+v\n", key, string(jsonPayload))
@@ -100,7 +100,7 @@ func (h *Helper) SaveState(storeName, key string, value interface{}) *problem.Pr
 	daprURL := fmt.Sprintf(saveStateURL, h.Port, storeName)
 	daprResp, err := http.Post(daprURL, "application/json", bytes.NewBuffer(jsonPayload))
 	if err != nil || (daprResp.StatusCode < 200 || daprResp.StatusCode > 299) {
-		return problem.NewAPIProblem(daprURL, "Dapr save state failed", h.AppInstanceName, daprResp, err)
+		return problem.NewAPIProblem(daprURL, "Dapr save state failed", h.ServiceName, daprResp, err)
 	}
 
 	// All good
@@ -113,13 +113,13 @@ func (h *Helper) SaveState(storeName, key string, value interface{}) *problem.Pr
 func (h *Helper) PublishMessage(queueName string, message interface{}) *problem.Problem {
 	jsonPayload, err := json.Marshal(message)
 	if err != nil {
-		return problem.New("err://json-marshall", "Malformed JSON", 400, "Message could not be marshalled to JSON", h.AppInstanceName)
+		return problem.New("err://json-marshall", "Malformed JSON", 400, "Message could not be marshalled to JSON", h.ServiceName)
 	}
 
 	daprURL := fmt.Sprintf(publishURL, h.Port, queueName)
 	daprResp, err := http.Post(daprURL, "application/json", bytes.NewBuffer(jsonPayload))
 	if err != nil {
-		return problem.NewAPIProblem(daprURL, "Error publishing message", h.AppInstanceName, daprResp, err)
+		return problem.NewAPIProblem(daprURL, "Error publishing message", h.ServiceName, daprResp, err)
 	}
 
 	// All good
@@ -137,13 +137,13 @@ func (h *Helper) SendOutput(bindingName string, data interface{}, metadata map[s
 
 	jsonPayload, err := json.Marshal(daprPayload)
 	if err != nil {
-		return problem.NewAPIProblem("err://json-marshall", "State JSON marshalling error", h.AppInstanceName, nil, err)
+		return problem.NewAPIProblem("err://json-marshall", "State JSON marshalling error", h.ServiceName, nil, err)
 	}
 
 	daprURL := fmt.Sprintf(outputBindingURL, h.Port, bindingName)
 	daprResp, err := http.Post(daprURL, "application/json", bytes.NewBuffer(jsonPayload))
 	if err != nil {
-		return problem.NewAPIProblem(daprURL, "Error sending output", h.AppInstanceName, daprResp, err)
+		return problem.NewAPIProblem(daprURL, "Error sending output", h.ServiceName, daprResp, err)
 	}
 
 	// All good

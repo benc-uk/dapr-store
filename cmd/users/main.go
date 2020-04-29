@@ -14,28 +14,27 @@ import (
 	"os"
 	"time"
 
+	"github.com/benc-uk/dapr-store/cmd/users/dapr"
+	"github.com/benc-uk/dapr-store/cmd/users/spec"
 	"github.com/benc-uk/dapr-store/pkg/api"
-	"github.com/benc-uk/dapr-store/pkg/dapr"
 	"github.com/benc-uk/dapr-store/pkg/env"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/joho/godotenv/autoload" // Autoloads .env file if it exists
 )
 
-// API type is a wrap of he common API with local version
+// API type is a wrap of the common base API with local implementation
 type API struct {
-	*api.APIBase
+	*api.Base
+	service spec.UserService
 }
 
 var (
-	healthy       = true               // Simple health flag
-	version       = "0.0.1"            // App version number, set at build time with -ldflags "-X 'main.version=1.2.3'"
-	buildInfo     = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
-	serviceName   = "users"
-	defaultPort   = 9003
-	daprHelper    *dapr.Helper
-	daprStoreName string
+	healthy     = true               // Simple health flag
+	version     = "0.0.1"            // App version number, set at build time with -ldflags "-X 'main.version=1.2.3'"
+	buildInfo   = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
+	serviceName = "users"
+	defaultPort = 9003
 )
 
 //
@@ -48,30 +47,16 @@ func main() {
 	// Port to listen on, change the default as you see fit
 	serverPort := env.GetEnvInt("PORT", defaultPort)
 
-	// Set up Dapr & checks for Dapr sidecar port, abort
-	daprHelper = dapr.NewHelper(serviceName)
-	if daprHelper == nil {
-		os.Exit(1)
-	}
-	daprStoreName = env.GetEnvString("DAPR_STORE_NAME", "statestore")
-
 	// Use gorilla/mux for routing
 	router := mux.NewRouter()
 
-	// Add middleware for logging and CORS
-	router.Use(corsMiddleware)
-	router.Use(loggingMiddleware)
-
-	// Wrapper type with anonymous inner field
+	// Our API wraps the Base API and UserService
 	api := API{
-		&api.APIBase{
-			ServiceName: serviceName,
-			Healthy:     healthy,
-			Version:     version,
-			BuildInfo:   buildInfo,
-		}}
+		api.NewBase(serviceName, version, buildInfo, healthy, router),
+		dapr.New(serviceName),
+	}
 
-	api.AddCommonRoutes(router)
+	// Add routes for this service
 	api.addRoutes(router)
 
 	// Start server
@@ -87,20 +72,4 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-}
-
-//
-// Change CORS settings here
-//
-func corsMiddleware(handler http.Handler) http.Handler {
-	corsMethods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
-	corsOrigins := handlers.AllowedOrigins([]string{"*"})
-	return handlers.CORS(corsOrigins, corsMethods)(handler)
-}
-
-//
-// Change request logging here
-//
-func loggingMiddleware(handler http.Handler) http.Handler {
-	return handlers.LoggingHandler(os.Stdout, handler)
 }

@@ -10,9 +10,8 @@ package problem
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
-
-	"github.com/emicklei/go-restful/log"
 )
 
 // Problem in RFC-7807 format
@@ -42,27 +41,7 @@ func (p *Problem) Send(resp http.ResponseWriter) {
 }
 
 //
-// Send is a helper
-// It creates a standardized format problem from either the 'err' or 'apiResp' and sends it
-// Designed to be used inside a HTTP handler (the resp) which has just called a Dapr API (returning apiResp)
-//
-// func SendNOTUSED(title string, url string, resp http.ResponseWriter, apiResp *http.Response, err error, instance string) *Problem {
-// 	var p *Problem
-// 	if err != nil {
-// 		p = New(url, title, 500, err.Error(), instance)
-// 		p.HTTPSend(resp)
-// 	} else if apiResp != nil {
-// 		p = New(url, title, apiResp.StatusCode, http.StatusText(apiResp.StatusCode), instance)
-// 		p.HTTPSend(resp)
-// 	} else {
-// 		p = New(url, title, 500, "Other error occurred", instance)
-// 		p.HTTPSend(resp)
-// 	}
-// 	return p
-// }
-
-//
-// NewAPIProblem is a helper
+// NewAPIProblem creates a Problem based on either a HTTP resp or an error
 //
 func NewAPIProblem(url string, title string, instance string, apiResp *http.Response, err error) *Problem {
 	var p *Problem
@@ -77,6 +56,6 @@ func NewAPIProblem(url string, title string, instance string, apiResp *http.Resp
 }
 
 // Implement error interface
-func (p *Problem) Error() string {
+func (p Problem) Error() string {
 	return fmt.Sprintf("Problem: Type: '%s', Title: '%s', Status: '%d', Detail: '%s', Instance: '%s'", p.Type, p.Title, p.Status, p.Detail, p.Instance)
 }

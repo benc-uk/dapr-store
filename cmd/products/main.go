@@ -19,15 +19,14 @@ import (
 
 	"database/sql"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/joho/godotenv/autoload" // Autoloads .env file if it exists
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// API type is a wrap of he common API with local version
+// API type is a wrap of the common base API with local implementation
 type API struct {
-	*api.APIBase
+	*api.Base
 }
 
 var (
@@ -52,22 +51,15 @@ func main() {
 	// Use gorilla/mux for routing
 	router := mux.NewRouter()
 
-	// Add middleware for logging and CORS
-	router.Use(corsMiddleware)
-	router.Use(loggingMiddleware)
-
-	// Wrapper type with anonymous inner field
+	// Wrapper API with anonymous inner new Base API
 	api := API{
-		&api.APIBase{
-			ServiceName: serviceName,
-			Healthy:     healthy,
-			Version:     version,
-			BuildInfo:   buildInfo,
-		}}
+		api.New(serviceName, version, buildInfo, healthy, router),
+	}
 
-	api.AddCommonRoutes(router)
+	// Add routes for this service
 	api.addRoutes(router)
 
+	// Open database
 	var err error
 	db, err = sql.Open("sqlite3", "./sqlite.db")
 	if err != nil {
@@ -88,20 +80,4 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-}
-
-//
-// Change CORS settings here
-//
-func corsMiddleware(handler http.Handler) http.Handler {
-	corsMethods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
-	corsOrigins := handlers.AllowedOrigins([]string{"*"})
-	return handlers.CORS(corsOrigins, corsMethods)(handler)
-}
-
-//
-// Change request logging here
-//
-func loggingMiddleware(handler http.Handler) http.Handler {
-	return handlers.LoggingHandler(os.Stdout, handler)
 }

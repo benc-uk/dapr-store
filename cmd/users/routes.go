@@ -14,8 +14,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/benc-uk/dapr-store/cmd/users/spec"
 	"github.com/benc-uk/dapr-store/pkg/auth"
-	"github.com/benc-uk/dapr-store/pkg/models"
 	"github.com/benc-uk/dapr-store/pkg/problem"
 	"github.com/gorilla/mux"
 )
@@ -35,38 +35,27 @@ func (api API) addRoutes(router *mux.Router) {
 func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 	cl, _ := strconv.Atoi(req.Header.Get("content-length"))
 	if cl <= 0 {
-		problem.New("err://body-missing", "Zero length body", 400, "Zero length body", daprHelper.AppInstanceName).Send(resp)
+		problem.New("err://body-missing", "Zero length body", 400, "Zero length body", api.ServiceName).Send(resp)
 		return
 	}
 
-	user := models.User{}
+	user := spec.User{}
 	err := json.NewDecoder(req.Body).Decode(&user)
 
 	// Some basic validation and checking on what we've been posted
 	if err != nil {
-		problem.New("err://json-decode", "Malformed user JSON", 400, "JSON could not be decoded", daprHelper.AppInstanceName).Send(resp)
+		problem.New("err://json-decode", "Malformed user JSON", 400, "JSON could not be decoded", api.ServiceName).Send(resp)
 		return
 	}
 	if len(user.DisplayName) == 0 || len(user.Username) == 0 {
-		problem.New("err://json-error", "Malformed user JSON", 400, "User failed validation, check spec", daprHelper.AppInstanceName).Send(resp)
+		problem.New("err://json-error", "Malformed user JSON", 400, "User failed validation, check spec", api.ServiceName).Send(resp)
 		return
 	}
 	log.Printf("### Registering user %+v\n", user)
 
-	// Check is user already registered
-	data, prob := daprHelper.GetState(daprStoreName, user.Username)
-	if prob != nil {
-		prob.Send(resp)
-		return
-	}
-	log.Printf("### Existing user data %+v\n", string(data))
-	if len(data) > 0 {
-		problem.New("err://user-exists", user.Username+" already registered", 400, user.Username+" already registered", daprHelper.AppInstanceName).Send(resp)
-		return
-	}
-
-	prob = daprHelper.SaveState(daprStoreName, user.Username, user)
-	if prob != nil {
+	err = api.service.AddUser(user)
+	if err != nil {
+		prob := err.(*problem.Problem)
 		prob.Send(resp)
 		return
 	}
@@ -81,19 +70,16 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 //
 func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	data, prob := daprHelper.GetState(daprStoreName, vars["username"])
-	if prob != nil {
+	user, err := api.service.GetUser(vars["username"])
+	if err != nil {
+		prob := err.(*problem.Problem)
 		prob.Send(resp)
 		return
 	}
 
-	if len(data) <= 0 {
-		problem.New("err://not-found", "No data returned", 404, "Username: '"+vars["username"]+"' not found", daprHelper.AppInstanceName).Send(resp)
-		return
-	}
-
 	resp.Header().Set("Content-Type", "application/json")
-	resp.Write(data)
+	json, _ := json.Marshal(user)
+	resp.Write(json)
 }
 
 //
@@ -101,14 +87,10 @@ func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 //
 func (api API) checkRegistered(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	data, prob := daprHelper.GetState(daprStoreName, vars["username"])
-	if prob != nil {
+	_, err := api.service.GetUser(vars["username"])
+	if err != nil {
+		prob := err.(*problem.Problem)
 		prob.Send(resp)
-		return
-	}
-
-	if len(data) <= 0 {
-		resp.WriteHeader(404)
 		return
 	}
 

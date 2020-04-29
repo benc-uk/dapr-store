@@ -9,12 +9,12 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"net/http"
 
 	"github.com/benc-uk/dapr-store/pkg/models"
 	"github.com/benc-uk/dapr-store/pkg/problem"
 	"github.com/gorilla/mux"
-	"k8s.io/apimachinery/pkg/util/json"
 )
 
 //

@@ -37,7 +37,7 @@ jobs:
       run: make test
 
     - name: Run all builds
-      run: make docker
+      run: make docker DOCKER_TAG=$DOCKER_TAG VERSION=0.1.1
     
     # =====================================================================
     # Steps after this are only run when merging or pushing into master

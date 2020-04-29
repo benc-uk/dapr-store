@@ -9,13 +9,11 @@ package main
 
 import (
 	"encoding/json"
-	"math/rand"
 	"net/http"
 	"strconv"
-	"time"
 
+	"github.com/benc-uk/dapr-store/cmd/orders/spec"
 	"github.com/benc-uk/dapr-store/pkg/auth"
-	"github.com/benc-uk/dapr-store/pkg/models"
 	"github.com/benc-uk/dapr-store/pkg/problem"
 
 	"github.com/gorilla/mux"
@@ -34,49 +32,27 @@ func (api API) addRoutes(router *mux.Router) {
 func (api API) submitOrder(resp http.ResponseWriter, req *http.Request) {
 	cl, _ := strconv.Atoi(req.Header.Get("content-length"))
 	if cl <= 0 {
-		problem.New("err://body-missing", "Zero length body", 400, "Zero length body", daprHelper.AppInstanceName).Send(resp)
+		problem.New("err://body-missing", "Zero length body", 400, "Zero length body", api.ServiceName).Send(resp)
 		return
 	}
 
-	order := models.Order{}
+	order := spec.Order{}
 	err := json.NewDecoder(req.Body).Decode(&order)
 
 	// Some basic validation and checking on what we've been posted
 	if err != nil {
-		problem.New("err://json-decode", "Malformed order JSON", 400, "JSON could not be decoded", daprHelper.AppInstanceName).Send(resp)
+		problem.New("err://json-decode", "Malformed order JSON", 400, "JSON could not be decoded", api.ServiceName).Send(resp)
 		return
 	}
 	if order.Amount <= 0 || len(order.Items) == 0 || order.Title == "" {
-		problem.New("err://json-error", "Malformed order JSON", 400, "Order failed validation, check spec", daprHelper.AppInstanceName).Send(resp)
+		problem.New("err://json-error", "Malformed order JSON", 400, "Order failed validation, check spec", api.ServiceName).Send(resp)
 		return
 	}
 
-	order.ID = makeID(5)
-	order.Status = models.OrderNew
-
-	prob := daprHelper.PublishMessage(ordersTopicName, order)
-	if prob != nil {
-		prob.Send(resp)
-		return
-	}
+	api.service.SubmitOrder(&order)
 
 	// Send the order back, but this time it will have an id
 	resp.Header().Set("Content-Type", "application/json")
-	resultBytes, _ := json.Marshal(order)
-	resp.Write(resultBytes)
-}
-
-//
-// Scummy but functional ID generator
-//
-func makeID(length int) string {
-	id := ""
-	possible := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-	rand.Seed(time.Now().UnixNano())
-
-	for i := 0; i < length; i++ {
-		id += string(possible[rand.Intn(len(possible)-1)])
-	}
-
-	return id
+	json, _ := json.Marshal(order)
+	resp.Write(json)
 }

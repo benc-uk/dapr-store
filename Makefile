@@ -9,7 +9,7 @@
 CGO := 0
 SERVICE_DIR := cmd
 FRONTEND_DIR := web/frontend
-VERSION ?= latest
+VERSION ?= 0.0.1
 
 # Most likely want to override these when calling `make docker`
 DOCKER_REG ?= docker.io
