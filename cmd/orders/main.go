@@ -5,7 +5,7 @@
 // Dapr compatible REST API service for orders
 // ----------------------------------------------------------------------------
 
-package impl
+package main
 
 import (
 	"fmt"

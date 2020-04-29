@@ -44,7 +44,7 @@ func (api API) getProduct(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	json, _ := json.Marshal(products)
+	json, _ := json.Marshal(products[0])
 	resp.Header().Set("Content-Type", "application/json")
 	resp.Write(json)
 }

@@ -14,7 +14,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/benc-uk/dapr-store/cmd/cart/impl"
+	"github.com/benc-uk/dapr-store/cmd/users/impl"
 	"github.com/benc-uk/dapr-store/cmd/users/spec"
 	"github.com/benc-uk/dapr-store/pkg/api"
 	"github.com/benc-uk/dapr-store/pkg/env"
