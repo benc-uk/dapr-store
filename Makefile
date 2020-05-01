@@ -34,7 +34,10 @@ lint : $(FRONTEND_DIR)/node_modules
 ################################################################################
 .PHONY: test
 test : 
-	echo "BLEEP BLOOP. All tests passing. Nothing to see here. Move along"
+	go test -v github.com/benc-uk/dapr-store/cmd/cart
+	go test -v github.com/benc-uk/dapr-store/cmd/orders
+	go test -v github.com/benc-uk/dapr-store/cmd/products
+	go test -v github.com/benc-uk/dapr-store/cmd/users
 
 
 ################################################################################

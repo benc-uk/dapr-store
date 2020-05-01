@@ -46,20 +46,6 @@ func NewBase(name, ver, info string, healthy bool, router *mux.Router) *Base {
 }
 
 //
-// AddCommonRoutes registers common shared routes and middleware
-//
-// func (api *Base) AddCommonRoutes(router *mux.Router) {
-// 	router.HandleFunc("/healthz", api.HealthCheck)
-// 	router.HandleFunc("/api/healthz", api.HealthCheck)
-// 	router.HandleFunc("/status", api.Status)
-// 	router.HandleFunc("/api/status", api.Status)
-
-// 	// Add middleware for logging and CORS
-// 	//router.Use(api.corsMiddleware)
-// 	router.Use(api.loggingMiddleware)
-// }
-
-//
 // HealthCheck - Simple health check endpoint, returns 204 when healthy
 //
 func (api *Base) HealthCheck(resp http.ResponseWriter, req *http.Request) {

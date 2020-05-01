@@ -1,5 +1,9 @@
 package spec
 
+import (
+	"errors"
+)
+
 // Order holds information about a customer order
 type Order struct {
 	ID      string      `json:"id"`
@@ -25,8 +29,17 @@ const (
 type OrderService interface {
 	GetOrder(orderID string) (*Order, error)
 	GetOrdersForUser(username string) ([]string, error)
+	ProcessOrder(order Order) error
 	AddOrder(Order) error
 	SetStatus(order *Order, status OrderStatus) error
 	EmailNotify(Order) error
 	SaveReport(Order) error
+}
+
+// Validate checks an order is correct
+func Validate(o Order) error {
+	if o.Amount <= 0 || len(o.Items) == 0 || o.Title == "" || o.ForUser == "" {
+		return errors.New("Order failed validation")
+	}
+	return nil
 }

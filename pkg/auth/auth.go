@@ -27,10 +27,13 @@ var jwkSet *jwk.Set
 // AuthMiddleware added around any route will protect it
 //
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
+
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		// Disable if call is internal from another Dapr service (localhost) or running on dev machine
-		if fwdHost := r.Header.Get("X-Forwarded-Host"); strings.Contains(fwdHost, "localhost") {
-			log.Printf("### Auth (%s): Bypassing validation for host: %s\n", r.URL, fwdHost)
+		fwdHost := r.Header.Get("X-Forwarded-Host")
+		if strings.Contains(fwdHost, "localhost") || r.Host == "example.com" {
+			log.Printf("### Auth (%s): Bypassing validation for host: %s %s\n", r.URL, fwdHost, r.Host)
 			next(w, r)
 			return
 		}

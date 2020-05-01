@@ -53,7 +53,7 @@ func main() {
 	// Wrapper API with anonymous inner new Base API
 	api := API{
 		api.NewBase(serviceName, version, buildInfo, healthy, router),
-		impl.NewService(serviceName),
+		impl.NewService(serviceName, router),
 	}
 
 	// Add routes for this service

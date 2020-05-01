@@ -2,7 +2,8 @@
 // Copyright (c) Ben Coleman, 2020
 // Licensed under the MIT License.
 //
-// Dapr API helper/wrapper for state and pub/sub - returns standard formatted errors
+// Dapr API helper/wrapper for state and pub/sub
+// Designed to return standard formatted errors (pkg/problem)
 // ----------------------------------------------------------------------------
 
 package dapr
@@ -11,6 +12,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -18,6 +20,7 @@ import (
 
 	"github.com/benc-uk/dapr-store/pkg/env"
 	"github.com/benc-uk/dapr-store/pkg/problem"
+	"github.com/gorilla/mux"
 )
 
 const (
@@ -118,6 +121,7 @@ func (h *Helper) PublishMessage(queueName string, message interface{}) *problem.
 
 	daprURL := fmt.Sprintf(publishURL, h.Port, queueName)
 	daprResp, err := http.Post(daprURL, "application/json", bytes.NewBuffer(jsonPayload))
+	log.Printf("!!!! PublishMessage %+v", daprResp)
 	if err != nil {
 		return problem.NewAPIProblem(daprURL, "Error publishing message", h.ServiceName, daprResp, err)
 	}
@@ -148,4 +152,51 @@ func (h *Helper) SendOutput(bindingName string, data interface{}, metadata map[s
 
 	// All good
 	return nil
+}
+
+//
+//
+//
+func (h *Helper) RegisterTopicSubscriptions(topics []string, router *mux.Router) {
+	router.HandleFunc("/dapr/subscribe", func(resp http.ResponseWriter, req *http.Request) {
+		json, _ := json.Marshal(topics)
+		resp.Header().Set("Content-Type", "application/json")
+		resp.Write(json)
+	})
+}
+
+//
+//
+//
+func (h *Helper) RegisterTopicReceiver(topic string, router *mux.Router, handler func(body io.Reader) error) {
+	router.HandleFunc("/"+topic, func(resp http.ResponseWriter, req *http.Request) {
+		type cloudevent struct {
+			ID   string      `json:"id"`
+			Data interface{} `json:"data"`
+		}
+		event := &cloudevent{}
+		var bodyBytes []byte
+		bodyBytes, _ = ioutil.ReadAll(req.Body)
+
+		// Basic validation checks
+		err := json.Unmarshal(bodyBytes, &event)
+		if err != nil {
+			// Returning a non-200 will reschedule the received message
+			problem.New("err://json-decode", "Event JSON decoding error", 500, err.Error(), h.ServiceName).Send(resp)
+			return
+		}
+		log.Printf("### Received event from pub/sub topic %s %s", topic, event.ID)
+
+		// This is a trick to reset the body reader
+		req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+
+		// Pass the body to the handler
+		// It would be really nice to pass the decoded data object/struct but we don't know the type
+		err = handler(req.Body)
+		if err != nil {
+			// Returning a non-200 will reschedule the received message
+			problem.New("err://handler-failed", "Message hander returned an error", 500, err.Error(), h.ServiceName).Send(resp)
+			return
+		}
+	})
 }

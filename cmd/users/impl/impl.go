@@ -23,9 +23,7 @@ type UserService struct {
 	storeName string
 }
 
-//
-// New creates a new UserService
-//
+// NewService creates a new UserService
 func NewService(serviceName string) *UserService {
 	// Set up Dapr & checks for Dapr sidecar port, abort
 	helper := dapr.NewHelper(serviceName)
@@ -40,21 +38,22 @@ func NewService(serviceName string) *UserService {
 	}
 }
 
-func (d *UserService) AddUser(user spec.User) error {
+// AddUser registers a new user and stores in Dapr state
+func (s *UserService) AddUser(user spec.User) error {
 	// Check is user already registered
-	data, prob := d.GetState(d.storeName, user.Username)
+	data, prob := s.GetState(s.storeName, user.Username)
 	if prob != nil {
 		return prob
 	}
 
 	// If we get any data, that means we found a user, that's an error in our case
 	if len(data) > 0 {
-		prob := problem.New("err://user-exists", user.Username+" already registered", 400, user.Username+" already registered", d.ServiceName)
+		prob := problem.New("err://user-exists", user.Username+" already registered", 400, user.Username+" already registered", s.ServiceName)
 		return prob
 	}
 
 	// Call Dapr helper to save state
-	prob = d.SaveState(d.storeName, user.Username, user)
+	prob = s.SaveState(s.storeName, user.Username, user)
 	if prob != nil {
 		return prob
 	}
@@ -62,21 +61,22 @@ func (d *UserService) AddUser(user spec.User) error {
 	return nil
 }
 
-func (d *UserService) GetUser(username string) (*spec.User, error) {
-	data, prob := d.GetState(d.storeName, username)
+// GetUser fetches a user from Dapr state
+func (s *UserService) GetUser(username string) (*spec.User, error) {
+	data, prob := s.GetState(s.storeName, username)
 	if prob != nil {
 		return nil, prob
 	}
 
 	if len(data) <= 0 {
-		prob := problem.New("err://not-found", "No data returned", 404, "Username: '"+username+"' not found", d.ServiceName)
+		prob := problem.New("err://not-found", "No data returned", 404, "Username: '"+username+"' not found", s.ServiceName)
 		return nil, prob
 	}
 
 	user := &spec.User{}
 	err := json.Unmarshal(data, user)
 	if err != nil {
-		prob := problem.New("err://json-decode", "Malformed user JSON", 500, "JSON could not be decoded", d.ServiceName)
+		prob := problem.New("err://json-decode", "Malformed user JSON", 500, "JSON could not be decoded", s.ServiceName)
 		return nil, prob
 	}
 

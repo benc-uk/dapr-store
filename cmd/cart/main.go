@@ -49,7 +49,7 @@ func main() {
 	// Use gorilla/mux for routing
 	router := mux.NewRouter()
 
-	// Wrapper API with anonymous inner new Base API
+	// Our API wraps a common api.Base instance and a CartService
 	api := API{
 		api.NewBase(serviceName, version, buildInfo, healthy, router),
 		impl.NewService(serviceName),

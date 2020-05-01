@@ -15,11 +15,13 @@ import (
 	"github.com/benc-uk/dapr-store/pkg/problem"
 )
 
+// ProductService is a Dapr based implementation of ProductService interface
 type ProductService struct {
 	*sql.DB
 	serviceName string
 }
 
+// NewService creates a new ProductService
 func NewService(serviceName string) *ProductService {
 	db, err := sql.Open("sqlite3", "./sqlite.db")
 	if err != nil {
@@ -33,8 +35,9 @@ func NewService(serviceName string) *ProductService {
 	}
 }
 
-func (s ProductService) QueryProducts(field, term string) ([]spec.Product, error) {
-	rows, err := s.Query("SELECT * FROM products WHERE "+field+" = ?", term)
+// QueryProducts is a simple SQL WHERE query on a single column
+func (s ProductService) QueryProducts(column, term string) ([]spec.Product, error) {
+	rows, err := s.Query("SELECT * FROM products WHERE "+column+" = ?", term)
 	if err != nil {
 		prob := problem.New("err://products-db", "Database query error", 500, err.Error(), s.serviceName)
 		return nil, prob
@@ -43,6 +46,7 @@ func (s ProductService) QueryProducts(field, term string) ([]spec.Product, error
 	return s.processRows(rows)
 }
 
+// AllProducts returns all products from the DB, yeah this is pretty dumb
 func (s ProductService) AllProducts() ([]spec.Product, error) {
 	rows, err := s.Query("SELECT * FROM products")
 	if err != nil {
@@ -53,6 +57,7 @@ func (s ProductService) AllProducts() ([]spec.Product, error) {
 	return s.processRows(rows)
 }
 
+// SearchProducts is a text search in name or  product description
 func (s ProductService) SearchProducts(query string) ([]spec.Product, error) {
 	rows, err := s.Query("SELECT * FROM products WHERE (description LIKE ? OR name LIKE ?)", "%"+query+"%", "%"+query+"%")
 	if err != nil {
@@ -63,6 +68,7 @@ func (s ProductService) SearchProducts(query string) ([]spec.Product, error) {
 	return s.processRows(rows)
 }
 
+// Helper function to take a bunch of rows and return as a slice of Products
 func (s ProductService) processRows(rows *sql.Rows) ([]spec.Product, error) {
 	products := []spec.Product{}
 	defer rows.Close()

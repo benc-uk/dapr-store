@@ -10,13 +10,14 @@ import (
 	"github.com/benc-uk/dapr-store/pkg/env"
 )
 
+// CartService is a Dapr implementation of CartService interface
 type CartService struct {
 	*dapr.Helper
 	topicName string
 }
 
 //
-// New creates a new OrderService
+// NewService creates a new OrderService
 //
 func NewService(serviceName string) *CartService {
 	// Set up Dapr & checks for Dapr sidecar port, abort
@@ -32,6 +33,9 @@ func NewService(serviceName string) *CartService {
 	}
 }
 
+//
+// SubmitOrder takes a new order and publishes it to Dapr pub/sub topic
+//
 func (s CartService) SubmitOrder(order *spec.Order) error {
 	order.ID = makeID(5)
 	order.Status = spec.OrderNew

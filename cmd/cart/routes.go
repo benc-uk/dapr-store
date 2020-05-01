@@ -44,7 +44,7 @@ func (api API) submitOrder(resp http.ResponseWriter, req *http.Request) {
 		problem.New("err://json-decode", "Malformed order JSON", 400, "JSON could not be decoded", api.ServiceName).Send(resp)
 		return
 	}
-	if order.Amount <= 0 || len(order.Items) == 0 || order.Title == "" {
+	if err := spec.Validate(order); err != nil {
 		problem.New("err://json-error", "Malformed order JSON", 400, "Order failed validation, check spec", api.ServiceName).Send(resp)
 		return
 	}

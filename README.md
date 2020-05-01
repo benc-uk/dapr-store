@@ -29,11 +29,26 @@ The major components and microservices that make up the Dapr Store system are de
 ## Shared Go packages
 Shared Go code lives in the `pkg/` directory, which is used by all the services. These fall into the following packages:
 - `pkg/api` - A base API extended by all services, provides health & status endpoints.
+- `pkg/apitests` - A simple helper for running sets of router/API based tests.
 - `pkg/auth` - Server side token validation of JWT using JWK.
-- `pkg/env` - Very simple `os.LookupEnv` wrapper with fallback defaults.
-- `pkg/models` - Types and data structs used by the services.
-- `pkg/problem` - Standarized REST error messages using [RFC 7807 Problem Details](https://tools.ietf.org/html/rfc7807).
 - `pkg/dapr` - A Dapr helper & wrapper library for state, pub/sub and output bindings
+- `pkg/env` - Very simple `os.LookupEnv` wrapper with fallback defaults.
+- `pkg/problem` - Standarized REST error messages using [RFC 7807 Problem Details](https://tools.ietf.org/html/rfc7807).
+
+## Service Code
+Each Go microservice (in `/cmd/`) follows a very similar layout to the code base (the exception being `frontend-host` which has no business logic)
+
+Primary runtime code:
+- `main.go` - Starts HTTP server, creates service implementation + main entry point 
+- `routes.go` - All controllers for routes exposed by the service's API
+- `spec/spec.go` - Specification of domain entity (e.g. User) and interface to support it
+- `impl/impl.go` - Concrete implementation of the above spec, backed by either Dapr or other dependency (e.g. a database)
+
+For testing:
+- `*_test.go` - Main test file typically runs all of the tests found in `test_cases.go`
+- `test_cases.go` - List of API and route tests with expected results
+- `mock/mock.go` - Mock implementation of the domain spec, with no dependencies 
+
 
 ## 💰 Orders service
 This service provides order processing to the Dapr Store.  
@@ -42,7 +57,7 @@ It is written in Go, source is in `cmd/orders` and it exposes the following API 
 /get/{id}                GET a single order by orderID
 /getForUser/{username}   GET all orders for a given username
 ```
-See `pkg/models` for details of the **Order** struct.
+See `cmd/orders/spec` for details of the **Order** entity.
 
 The service provides some fake order processing activity so that orders are moved through a number of statuses, simulating some back-office systems or inventory management. Orders are initially set to `OrderReceived` status, then after 30 seconds moved to `OrderProcessing`, then after 2 minutes moved to `OrderComplete`
 
@@ -61,7 +76,7 @@ It is written in Go, source is in `cmd/users` and it exposes the following API r
 /get/{username}           GET the user profile for given username
 /isregistered/{username}  GET the registration status for a given username
 ```
-See `pkg/models` for details of the **User** struct.
+See `cmd/users/spec` for details of the **User** entity.
 
 The service provides some faked order processing activity so that orders are moved through a number of statuses, simulating some back-office systems or inventory management. Orders are initially set to `OrderReceived` status, then after 30 seconds moved to `OrderProcessing`, then after 2 minutes moved to `OrderComplete`
 
@@ -78,7 +93,7 @@ It is written in Go, source is in `cmd/products` and it exposes the following AP
 /offers          GET all products that are on offer, returns an array of products
 /search/{query}  GET search the product database, returns an array of products
 ```
-See `pkg/models` for details of the **Product** struct.
+See `cmd/products/spec` for details of the **Product** entity.
 
 The products data is held in a SQLite database, this decision was taken due to the lack of support for queries and filtering with the Dapr state API. The source data to populate the DB is in `etc/products.csv` and the database can be created with the `scripts/create-products-db.sh`. The database file (sqlite.db) is currently stored inside the products container, effectively making catalogue baked in at build time. This could be changed/improved at a later date
 
@@ -204,6 +219,9 @@ A makefile is provided, the main targets you are likely to use are:
 
 `make docker`  
 Build the Docker images for all services + frontend. Set vars `DOCKER_REG`, `DOCKER_REPO`, `DOCKER_TAG` to configure the image name, otherwise defaults will be used, which is `docker.io/daprstore/{service}:latest`
+
+`make test`  
+Runs all unit tests for Go services
 
 `make push`  
 Push Docker images, Set vars `DOCKER_REG`, `DOCKER_REPO`, `DOCKER_TAG` as above

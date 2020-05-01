@@ -17,9 +17,9 @@ type Product struct {
 	OnOffer     bool    `json:"onOffer"`
 }
 
-// UserService defines core CRUD methods a user service should have
+// ProductService defines core CRUD methods a products service should have
 type ProductService interface {
-	SearchProducts(query string) ([]Product, error)
-	QueryProducts(field, term string) ([]Product, error)
+	SearchProducts(string) ([]Product, error)
+	QueryProducts(string, string) ([]Product, error)
 	AllProducts() ([]Product, error)
 }

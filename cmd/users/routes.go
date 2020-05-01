@@ -38,7 +38,6 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 		problem.New("err://body-missing", "Zero length body", 400, "Zero length body", api.ServiceName).Send(resp)
 		return
 	}
-
 	user := spec.User{}
 	err := json.NewDecoder(req.Body).Decode(&user)
 
@@ -66,7 +65,7 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 }
 
 //
-// Fetch existing user
+// Fetch existing user, return 404 if they don't exist
 //
 func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
@@ -74,6 +73,11 @@ func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+		return
+	}
+
+	if user == nil {
+		resp.WriteHeader(404)
 		return
 	}
 
