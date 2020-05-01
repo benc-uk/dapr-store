@@ -52,5 +52,6 @@ jobs:
 
     - name: Push to Dockerhub
       if: github.event_name == 'push'
-      run: make push DOCKER_TAG=latest
-      run: make push DOCKER_TAG=auth
+      run: |
+        make push DOCKER_TAG=latest
+        make push DOCKER_TAG=auth
