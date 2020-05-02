@@ -28,7 +28,7 @@ export default {
     },
 
     apiProductGet: function(productId) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         resolve({ data: mockData.products.find((p) => p.id == productId) } )
       })
     },
@@ -45,7 +45,7 @@ export default {
       }
     },
 
-    apiUserGet: function(username) {
+    apiUserGet: function() {
       return {
         data: mockData.users[0]
       }

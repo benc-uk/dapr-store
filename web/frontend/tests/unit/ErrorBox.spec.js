@@ -6,7 +6,7 @@ localVue.use(BootstrapVue)
 import ErrorBox from '@/components/ErrorBox.vue'
 
 describe('ErrorBox.vue', () => {
-  it('renders props.error when passed', () => {
+  it('renders error message', () => {
     const errorMsg = 'This is an error'
     const wrapper = shallowMount(ErrorBox, { localVue,
       propsData: { error: errorMsg }
