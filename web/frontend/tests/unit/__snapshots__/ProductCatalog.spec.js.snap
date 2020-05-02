@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProductCatalog.vue renders error messages 1`] = `
+<div>
+  <h1>All Products</h1>
+  <div role="alert" aria-live="polite" aria-atomic="true" class="alert alert-warning">
+    <!---->
+    <h4>There was a problem 😥</h4>
+    <div class="errmsg">
+      Bad thing
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`ProductCatalog.vue renders products in catalog 1`] = `
+<div>
+  <h1>All Products</h1>
+  <!---->
+  <div>
+    <!---->
+    <div class="card">
+      <!---->
+      <!---->
+      <div class="card-body">
+        <!---->
+        <!---->
+        <div class="row">
+          <div class="col"><a target="_self" href="/product/1" class="">
+              <h4 class="card-title">
+                Top&nbsp;Hat&nbsp;(6″)
+              </h4>
+            </a>
+            <p class="card-text">
+            <h4>Made from 100% Wool and nice</h4>
+
+            £39.95
+            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="shopping-cart" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="svg-inline--fa fa-shopping-cart fa-w-18">
+                <path fill="currentColor" d="M528.12 301.319l47.273-208C578.806 78.301 567.391 64 551.99 64H159.208l-9.166-44.81C147.758 8.021 137.93 0 126.529 0H24C10.745 0 0 10.745 0 24v16c0 13.255 10.745 24 24 24h69.883l70.248 343.435C147.325 417.1 136 435.222 136 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-15.674-6.447-29.835-16.824-40h209.647C430.447 426.165 424 440.326 424 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-22.172-12.888-41.332-31.579-50.405l5.517-24.276c3.413-15.018-8.002-29.319-23.403-29.319H218.117l-6.545-32h293.145c11.206 0 20.92-7.754 23.403-18.681z" class=""></path>
+              </svg>
+              &nbsp; Add to Cart
+            </a>
+          </div>
+          <div class="flex-grow-0 d-none d-md-block col">
+            <div class="product-img"><a target="_self" href="/product/1" class=""><img src="/img/catalog/1.jpg"></a></div>
+          </div>
+        </div>
+      </div>
+      <!---->
+      <!---->
+    </div>
+    <div class="card">
+      <!---->
+      <!---->
+      <div class="card-body">
+        <!---->
+        <!---->
+        <div class="row">
+          <div class="col"><a target="_self" href="/product/2" class="">
+              <h4 class="card-title">
+                Black &amp; Gold Tie Set
+              </h4>
+            </a>
+            <p class="card-text">
+            <h4>100% hand made silk includes tie, pocket square and cufflinks</h4>
+
+            £18
+            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="shopping-cart" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="svg-inline--fa fa-shopping-cart fa-w-18">
+                <path fill="currentColor" d="M528.12 301.319l47.273-208C578.806 78.301 567.391 64 551.99 64H159.208l-9.166-44.81C147.758 8.021 137.93 0 126.529 0H24C10.745 0 0 10.745 0 24v16c0 13.255 10.745 24 24 24h69.883l70.248 343.435C147.325 417.1 136 435.222 136 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-15.674-6.447-29.835-16.824-40h209.647C430.447 426.165 424 440.326 424 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-22.172-12.888-41.332-31.579-50.405l5.517-24.276c3.413-15.018-8.002-29.319-23.403-29.319H218.117l-6.545-32h293.145c11.206 0 20.92-7.754 23.403-18.681z" class=""></path>
+              </svg>
+              &nbsp; Add to Cart
+            </a>
+          </div>
+          <div class="flex-grow-0 d-none d-md-block col">
+            <div class="product-img"><a target="_self" href="/product/2" class=""><img src="/img/catalog/2.jpg"></a></div>
+          </div>
+        </div>
+      </div>
+      <!---->
+      <!---->
+    </div>
+    <div class="card">
+      <!---->
+      <!---->
+      <div class="card-body">
+        <!---->
+        <!---->
+        <div class="row">
+          <div class="col"><a target="_self" href="/product/3" class="">
+              <h4 class="card-title">
+                Paisley Cravat Ascot Tie
+              </h4>
+            </a>
+            <p class="card-text">
+            <h4>Black &amp; Red Paisley Cravat</h4>
+
+            £11.2
+            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="shopping-cart" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="svg-inline--fa fa-shopping-cart fa-w-18">
+                <path fill="currentColor" d="M528.12 301.319l47.273-208C578.806 78.301 567.391 64 551.99 64H159.208l-9.166-44.81C147.758 8.021 137.93 0 126.529 0H24C10.745 0 0 10.745 0 24v16c0 13.255 10.745 24 24 24h69.883l70.248 343.435C147.325 417.1 136 435.222 136 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-15.674-6.447-29.835-16.824-40h209.647C430.447 426.165 424 440.326 424 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-22.172-12.888-41.332-31.579-50.405l5.517-24.276c3.413-15.018-8.002-29.319-23.403-29.319H218.117l-6.545-32h293.145c11.206 0 20.92-7.754 23.403-18.681z" class=""></path>
+              </svg>
+              &nbsp; Add to Cart
+            </a>
+          </div>
+          <div class="flex-grow-0 d-none d-md-block col">
+            <div class="product-img"><a target="_self" href="/product/3" class=""><img src="/img/catalog/6.jpg"></a></div>
+          </div>
+        </div>
+      </div>
+      <!---->
+      <!---->
+    </div>
+  </div>
+</div>
+`;

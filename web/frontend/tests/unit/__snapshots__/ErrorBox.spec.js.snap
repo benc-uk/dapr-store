@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ErrorBox.vue renders props.error when passed 1`] = `
+<b-alert-stub variant="warning" dismisslabel="Close" show="true">
+  <h4>There was a problem 😥</h4>
+  <div class="errmsg">
+    This is an error
+  </div>
+</b-alert-stub>
+`;

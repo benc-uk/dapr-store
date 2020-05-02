@@ -50,6 +50,10 @@ if (process.env.VUE_APP_AUTH_CLIENT_ID) {
   console.log('### USER SIGN-IN DISABLED. Will run in demo mode, with dummy users')
 }
 
+if (process.env.VUE_APP_API_ENDPOINT) {
+  console.log(`### API_ENDPOINT overridden: ${process.env.VUE_APP_API_ENDPOINT}`)
+}
+
 new Vue({
   router,
   render: (h) => h(App),

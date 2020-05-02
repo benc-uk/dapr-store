@@ -103,7 +103,10 @@ export default {
 
   methods: {
     search() {
-      if (this.query) { this.$router.push({ name: 'search', params: { query: this.query } }) }
+      if (this.query) {
+        this.$router.push({ name: 'search', params: { query: this.query } })
+          .catch(() => {})
+      }
     }
   }
 }

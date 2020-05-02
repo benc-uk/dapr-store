@@ -10,18 +10,40 @@
 <template>
   <div>
     <h1>All Products</h1>
-    <product-list view-type="all" />
+    <error-box :error="error" />
+    <product-list v-if="!error" :products="products" />
   </div>
 </template>
 
 <script>
+import api from '../mixins/api'
 import ProductList from '../components/ProductList'
+import ErrorBox from '../components/ErrorBox'
 
 export default {
   name: 'ProductCatalog',
 
   components: {
-    'product-list': ProductList
-  }
+    'product-list': ProductList,
+    'error-box': ErrorBox
+  },
+
+  mixins: [ api ],
+
+  data() {
+    return {
+      products: null,
+      error: null,
+    }
+  },
+
+  async mounted() {
+    try {
+      let resp = await this.apiProductCatalog()
+      this.products = resp.data
+    } catch (err) {
+      this.error = this.apiDecodeError(err)
+    }
+  },
 }
 </script>

@@ -149,6 +149,7 @@ export default {
         } catch (err) {
           Object.assign(userProfile, new User())
           localStorage.removeItem('user')
+
           this.error = this.apiDecodeError(err)
         }
       }

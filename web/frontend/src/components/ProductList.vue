@@ -9,8 +9,6 @@
 
 <template>
   <div>
-    <error-box :error="error" />
-
     <div v-if="!products" class="text-center">
       <b-spinner variant="success" style="width: 5rem; height: 5rem;" />
     </div>
@@ -48,65 +46,22 @@
 </template>
 
 <script>
-import api from '../mixins/api'
-import ErrorBox from './ErrorBox'
+// import api from '../mixins/api'
 import { userProfile } from '../main'
 
 export default {
   name: 'ProductList',
 
-  components: {
-    'error-box': ErrorBox
-  },
-
-  mixins: [ api ],
-
   props: {
-    viewType: {
-      type: String,
-      required: true
-    },
-    query: {
-      type: String,
-      default: ''
+    products: {
+      type: Array,
+      default: () => []
     }
   },
 
   data() {
     return {
-      products: null,
-      error: null,
       user: userProfile
-    }
-  },
-
-  watch: {
-    query: async function (val) {
-      try {
-        if (this.query !== '') {
-          this.products = null
-          let resp = await this.apiProductSearch(val)
-          this.products = resp.data
-        }
-      } catch (err) {
-        this.error = this.apiDecodeError(err)
-      }
-    },
-  },
-
-  async mounted() {
-    try {
-      let resp
-      if (this.viewType == 'offers') {
-        resp = await this.apiProductOffers()
-      } else if (this.query !== '') {
-        resp = await this.apiProductSearch(this.query)
-      } else {
-        resp = await this.apiProductCatalog()
-      }
-      this.products = resp.data
-    } catch (err) {
-      this.error = this.apiDecodeError(err)
     }
   },
 
