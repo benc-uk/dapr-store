@@ -2,12 +2,16 @@ package spec
 
 import "github.com/benc-uk/dapr-store/cmd/orders/spec"
 
-// Cart isn't currently used
+// Cart
 type Cart struct {
-	items []string
+	Products map[string]int `json:"products"`
+	ForUser  string         `json:"forUser"`
 }
 
 // CartService defines core CRUD methods a cart service should have
 type CartService interface {
-	SubmitOrder(*spec.Order) error
+	Get(string) (*Cart, error)
+	Submit(Cart) (*spec.Order, error)
+	SetProductCount(*Cart, string, int) error
+	Clear(*Cart) error
 }

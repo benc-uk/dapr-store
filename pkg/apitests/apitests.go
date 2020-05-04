@@ -46,7 +46,7 @@ func Run(t *testing.T, router *mux.Router, testCases []Test) {
 			bodyCheckRegex := regexp.MustCompile(test.CheckBody)
 			matches := bodyCheckRegex.FindAllStringIndex(string(body), -1)
 
-			if len(matches) < test.CheckBodyCount {
+			if len(matches) != test.CheckBodyCount {
 				t.Errorf("'%s' failed. '%s' not found %d times in body ", test.Name, test.CheckBody, test.CheckBodyCount)
 				t.Logf("BODY: %s\n", body)
 				continue

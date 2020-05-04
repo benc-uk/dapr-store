@@ -72,7 +72,6 @@ export default {
     if (storedUser == demoUserName) {
       Object.assign(userProfile, new User('', { name: 'Demo User' }, demoUserName))
       console.log('### App.vue: MSAL aquireToken skipped for demo user')
-      restoreCart()
       return
     }
 
@@ -84,19 +83,15 @@ export default {
           Object.assign(userProfile, new User(tokenResp.accessToken, msalApp.getAccount(), msalApp.getAccount().userName || msalApp.getAccount().preferred_username))
           console.log(`### App.vue: MSAL user ${userProfile.userName} is logged & has token`)
           localStorage.setItem('user', userProfile.userName)
-          userProfile.cart = []
-          restoreCart()
         } else {
           console.log('### acquireTokenSilent returned no token - removing stored user')
           Object.assign(userProfile, new User())
           localStorage.removeItem('user')
-          localStorage.removeItem('cart')
         }
       } catch (err) {
         console.log(`### Error acquireTokenSilent ${err} - removing stored user`)
         Object.assign(userProfile, new User())
         localStorage.removeItem('user')
-        localStorage.removeItem('cart')
       }
     }
   },
@@ -108,17 +103,6 @@ export default {
           .catch(() => {})
       }
     }
-  }
-}
-
-// Just loads the cart from local storage into the user
-function restoreCart() {
-  try {
-    if (localStorage.getItem('cart')) {
-      userProfile.cart = JSON.parse(localStorage.getItem('cart'))
-    }
-  } catch (err) {
-    userProfile.cart = []
   }
 }
 </script>

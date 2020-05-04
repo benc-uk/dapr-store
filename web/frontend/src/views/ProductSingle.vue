@@ -27,7 +27,7 @@
           <br><br>
           £{{ product.cost }}
           <br><br>
-          <b-button :disabled="!user.userName" href="#" variant="primary" @click="addToCart(product)">
+          <b-button id="addBut" :disabled="!user.userName" variant="primary" @click="addToCart">
             <fa icon="shopping-cart" />
             &nbsp; Add to Cart
           </b-button>
@@ -77,18 +77,27 @@ export default {
   },
 
   methods: {
-    addToCart(product) {
-      userProfile.cart.push(product)
-      localStorage.setItem('cart', JSON.stringify(userProfile.cart))
-
-      this.$bvToast.toast(`${product.name}`, {
-        title: 'Added to your cart!',
-        variant: 'success',
-        autoHideDelay: 3000,
-        appendToast: true,
-        toaster: 'b-toaster-top-center',
-        solid: true
-      })
+    async addToCart() {
+      try {
+        await this.apiCartAddAmount(userProfile.userName, this.product.id, +1)
+        this.$bvToast.toast(`${this.product.name}`, {
+          title: 'Added to your cart!',
+          variant: 'success',
+          autoHideDelay: 3000,
+          appendToast: true,
+          toaster: 'b-toaster-top-center',
+          solid: true
+        })
+      } catch (err) {
+        this.$bvToast.toast(`${this.product.name}`, {
+          title: 'Error adding to cart 😫 '+err.toString(),
+          variant: 'danger',
+          autoHideDelay: 3000,
+          appendToast: true,
+          toaster: 'b-toaster-top-center',
+          solid: true
+        })
+      }
     }
   }
 }

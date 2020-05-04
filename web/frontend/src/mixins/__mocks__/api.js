@@ -9,7 +9,7 @@
 const fs = require('fs')
 
 // Load mock data, which we put beside the tests
-let mockJson = fs.readFileSync(__dirname+'/../../../tests/mock-data.json')
+let mockJson = fs.readFileSync(__dirname+'/../../../tests/unit/mock-data.json')
 let mockData = JSON.parse(mockJson)
 
 export default {

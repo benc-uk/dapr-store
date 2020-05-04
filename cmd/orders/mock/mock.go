@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/benc-uk/dapr-store/cmd/orders/spec"
+	products "github.com/benc-uk/dapr-store/cmd/products/spec"
 	"github.com/benc-uk/dapr-store/pkg/problem"
 )
 
@@ -13,19 +14,44 @@ import (
 type OrderService struct {
 }
 
-var orders = map[string]spec.Order{
+var Orders = map[string]spec.Order{
 	"fake-order-01": {
-		Title:   "A fake order",
-		ID:      "fake-order-01",
-		Items:   []string{"1", "3"},
+		Title: "A fake order",
+		ID:    "fake-order-01",
+		LineItems: []spec.LineItem{
+			{
+				Count: 1,
+				Product: products.Product{
+					ID:          "4",
+					Name:        "foo",
+					Cost:        12.34,
+					Description: "blah",
+					Image:       "fo.jpg",
+					OnOffer:     false,
+				},
+			},
+		},
 		ForUser: "demo@example.net",
 		Amount:  123.456,
-		Status:  spec.OrderProcessing,
+		Status:  spec.OrderNew,
 	},
+
 	"fake-order-02": {
-		Title:   "Another fake order",
-		ID:      "fake-order-02",
-		Items:   []string{"6", "2", "4"},
+		Title: "Another fake order",
+		ID:    "fake-order-02",
+		LineItems: []spec.LineItem{
+			{
+				Count: 2,
+				Product: products.Product{
+					ID:          "7",
+					Name:        "bar",
+					Cost:        88.30,
+					Description: "bar blah",
+					Image:       "bar.jpg",
+					OnOffer:     true,
+				},
+			},
+		},
 		ForUser: "test@example.net",
 		Amount:  77.88,
 		Status:  spec.OrderComplete,
@@ -34,7 +60,7 @@ var orders = map[string]spec.Order{
 
 // GetOrder mock
 func (s OrderService) GetOrder(orderID string) (*spec.Order, error) {
-	order, exist := orders[orderID]
+	order, exist := Orders[orderID]
 	if exist {
 		return &order, nil
 	}
@@ -90,14 +116,14 @@ func (s OrderService) ProcessOrder(order spec.Order) error {
 
 // AddOrder mock
 func (s OrderService) AddOrder(order spec.Order) error {
-	orders[order.ID] = order
+	Orders[order.ID] = order
 	return nil
 }
 
 // SetStatus mock
 func (s OrderService) SetStatus(order *spec.Order, status spec.OrderStatus) error {
 	order.Status = status
-	orders[order.ID] = *order
+	Orders[order.ID] = *order
 	return nil
 }
 

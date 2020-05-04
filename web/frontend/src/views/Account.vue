@@ -104,7 +104,6 @@ export default {
       let isDemo = userProfile.userName == demoUserName
       Object.assign(userProfile, new User())
       localStorage.removeItem('user')
-      localStorage.removeItem('cart')
       if (!isDemo) {
         await msalApp.logout()
       }

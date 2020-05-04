@@ -47,8 +47,8 @@ func TestOrders(t *testing.T) {
 	}
 
 	badOrder := spec.Order{
-		Items:   []string{"3"},
-		ForUser: "",
+		LineItems: []spec.LineItem{},
+		ForUser:   "",
 	}
 	err = mockOrdersSvc.ProcessOrder(badOrder)
 	if err != nil && strings.Contains(err.Error(), "validation") {
@@ -57,14 +57,7 @@ func TestOrders(t *testing.T) {
 		t.Error("'process invalid order' failed")
 	}
 
-	goodOrder := spec.Order{
-		Items:   []string{"3"},
-		ForUser: "test@example.net",
-		Amount:  23.66,
-		Status:  spec.OrderNew,
-		Title:   "Test order",
-		ID:      "test-01",
-	}
+	goodOrder := mock.Orders["fake-order-01"]
 	err = mockOrdersSvc.ProcessOrder(goodOrder)
 	if err != nil {
 		t.Errorf("'process valid new order' failed %+v", err)
@@ -72,7 +65,7 @@ func TestOrders(t *testing.T) {
 		t.Log("'process valid new order' passed")
 	}
 
-	newOrder, err := mockOrdersSvc.GetOrder("test-01")
+	newOrder, err := mockOrdersSvc.GetOrder("fake-order-01")
 	if err != nil {
 		t.Errorf("'get new order' failed: %+v", err)
 	} else {
@@ -84,7 +77,7 @@ func TestOrders(t *testing.T) {
 	}
 
 	time.Sleep(time.Second * 3)
-	newOrder, err = mockOrdersSvc.GetOrder("test-01")
+	newOrder, err = mockOrdersSvc.GetOrder("fake-order-01")
 	if err != nil {
 		t.Errorf("'order processing completed' failed: %+v", err)
 	} else {
@@ -94,4 +87,24 @@ func TestOrders(t *testing.T) {
 			t.Log("'order processing completed' passed")
 		}
 	}
+}
+
+var testCases = []apitests.Test{
+	{
+		"get an existing order",
+		"/get/fake-order-01",
+		"GET",
+		"",
+		"fake-order-01",
+		1,
+		200,
+	},
+	{
+		"get an non-existent order",
+		"/get/foo",
+		"GET",
+		``,
+		"not found", 1,
+		404,
+	},
 }

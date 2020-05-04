@@ -47,12 +47,43 @@ export default {
     },
 
     //
-    // ===== Orders =====
+    // ===== Cart =====
     //
-    apiOrderSubmit: function(order) {
-      return this._apiRawCall('v1.0/invoke/cart/method/submit', 'POST', order)
+    apiCartProductSet: function(username, productId, count) {
+      return this._apiRawCall(`v1.0/invoke/cart/method/setProduct/${username}/${productId}/${count}`, 'PUT')
     },
 
+    apiCartGet: function(username) {
+      return this._apiRawCall(`v1.0/invoke/cart/method/get/${username}`, 'GET')
+    },
+
+    apiCartSubmit: function(username) {
+      return this._apiRawCall('v1.0/invoke/cart/method/submit', 'POST', username)
+    },
+
+    apiCartClear: function(username) {
+      return this._apiRawCall(`v1.0/invoke/cart/method/clear/${username}`, 'PUT', username)
+    },
+
+    apiCartAddAmount: async function(username, productId, amount) {
+      let count = 0
+      let cartResp = await this.apiCartGet(username)
+      if (cartResp.data) {
+        let cart = cartResp.data
+        let productCount = cart.products[productId]
+        if (productCount) {
+          count = productCount + amount
+        } else {
+          count = amount
+        }
+        if (count < 0) { count = 0 }
+      }
+      return this.apiCartProductSet(username, productId, count)
+    },
+
+    //
+    // ===== Orders =====
+    //
     apiOrderGet: function(orderId) {
       return this._apiRawCall(`v1.0/invoke/orders/method/get/${orderId}`)
     },

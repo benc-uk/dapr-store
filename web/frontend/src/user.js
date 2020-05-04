@@ -10,7 +10,6 @@ export class User {
     this.token = token
     this.account = account
     this.userName = userName
-    this.cart = []
   }
 }
 

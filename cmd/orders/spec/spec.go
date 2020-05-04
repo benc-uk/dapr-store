@@ -2,16 +2,23 @@ package spec
 
 import (
 	"errors"
+
+	productspec "github.com/benc-uk/dapr-store/cmd/products/spec"
 )
 
 // Order holds information about a customer order
 type Order struct {
-	ID      string      `json:"id"`
-	Title   string      `json:"title"`
-	Amount  float32     `json:"amount"`
-	Items   []string    `json:"items"` // List of Product.ID
-	Status  OrderStatus `json:"status"`
-	ForUser string      `json:"forUser"` // Ref to User.Username
+	ID        string      `json:"id"`
+	Title     string      `json:"title"`
+	Amount    float32     `json:"amount"`
+	LineItems []LineItem  `json:"lineItems"`
+	Status    OrderStatus `json:"status"`
+	ForUser   string      `json:"forUser"` // Ref to User.Username
+}
+
+type LineItem struct {
+	Count   int                 `json:"count"`
+	Product productspec.Product `json:"product"`
 }
 
 // OrderStatus enum
@@ -38,7 +45,7 @@ type OrderService interface {
 
 // Validate checks an order is correct
 func Validate(o Order) error {
-	if o.Amount <= 0 || len(o.Items) == 0 || o.Title == "" || o.ForUser == "" {
+	if o.Amount <= 0 || len(o.LineItems) == 0 || o.Title == "" || o.ForUser == "" {
 		return errors.New("Order failed validation")
 	}
 	return nil

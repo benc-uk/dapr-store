@@ -13,7 +13,7 @@ import ProductList from '@/components/ProductList.vue'
 jest.mock('@/mixins/api')
 
 // Load mock data
-let mockJson = require('fs').readFileSync(__dirname+'/../mock-data.json')
+let mockJson = require('fs').readFileSync(__dirname+'/mock-data.json')
 let mockData = JSON.parse(mockJson)
 
 describe('ProductList.vue', () => {

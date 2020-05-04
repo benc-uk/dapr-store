@@ -28,6 +28,7 @@ const (
 	saveStateURL     = "http://localhost:%d/v1.0/state/%s"
 	publishURL       = "http://localhost:%d/v1.0/publish/%s"
 	outputBindingURL = "http://localhost:%d/v1.0/bindings/%s"
+	invokeURL        = "http://localhost:%d/v1.0/invoke/%s/method/%s"
 )
 
 // DaprState is the payload for the Dapr state API
@@ -47,7 +48,9 @@ type Helper struct {
 	ServiceName string
 }
 
+//
 // NewHelper returns a new Dapr helper
+//
 func NewHelper(appName string) *Helper {
 	// Fall back to default Dapr port of 3500
 	daprPort := env.GetEnvInt("DAPR_HTTP_PORT", 3500)
@@ -155,7 +158,7 @@ func (h *Helper) SendOutput(bindingName string, data interface{}, metadata map[s
 }
 
 //
-//
+// RegisterTopicSubscriptions is a HTTP handler that lets Dapr know what topics we subscribe to
 //
 func (h *Helper) RegisterTopicSubscriptions(topics []string, router *mux.Router) {
 	router.HandleFunc("/dapr/subscribe", func(resp http.ResponseWriter, req *http.Request) {
@@ -166,7 +169,7 @@ func (h *Helper) RegisterTopicSubscriptions(topics []string, router *mux.Router)
 }
 
 //
-//
+// RegisterTopicReceiver is a way to plug in a handler for receiving messages from a topic
 //
 func (h *Helper) RegisterTopicReceiver(topic string, router *mux.Router, handler func(body io.Reader) error) {
 	router.HandleFunc("/"+topic, func(resp http.ResponseWriter, req *http.Request) {
@@ -199,4 +202,13 @@ func (h *Helper) RegisterTopicReceiver(topic string, router *mux.Router, handler
 			return
 		}
 	})
+}
+
+//
+// InvokeGet calls another service with a HTTP GET
+//
+func (h *Helper) InvokeGet(service, method string) (*http.Response, error) {
+	daprURL := fmt.Sprintf(invokeURL, h.Port, service, method)
+	daprResp, err := http.Get(daprURL)
+	return daprResp, err
 }

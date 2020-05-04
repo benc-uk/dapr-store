@@ -3,6 +3,6 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css)$': 'identity-obj-proxy'
   },
-  setupFiles: ['<rootDir>/tests/no-console.js'],
+  setupFiles: ['<rootDir>/tests/unit/setup.js'],
   verbose: true
 }

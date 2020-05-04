@@ -38,7 +38,7 @@ test :
 	go test -v github.com/benc-uk/dapr-store/cmd/orders
 	go test -v github.com/benc-uk/dapr-store/cmd/products
 	go test -v github.com/benc-uk/dapr-store/cmd/users
-	@cd $(FRONTEND_DIR); npm run test -- --ci
+	@cd $(FRONTEND_DIR); NODE_ENV=test npm run test -- --ci
 
 
 ################################################################################

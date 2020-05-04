@@ -8,6 +8,9 @@ import Cart from '@/views/Cart.vue'
 
 jest.mock('@/mixins/api')
 
+// import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+// jest.mock('FontAwesomeIcon')
+
 import { userProfile } from '@/main.js'
 
 describe('Cart.vue', () => {

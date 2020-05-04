@@ -25,16 +25,20 @@ GET http://{{host}}/v1.0/invoke/products/method/search/tied
 # Cart API
 # ===================================================================
 
-### Create new order
+### Add products to cart
+PUT http://{{host}}/v1.0/invoke/cart/method/setProduct/demo@example.net/1/6
+
+### Get cart
+GET http://{{host}}/v1.0/invoke/cart/method/get/becolem@microsoft.com
+
+### Clear cart
+PUT http://{{host}}/v1.0/invoke/cart/method/clear/becolem@microsoft.com
+
+### Submit cart
 POST http://{{host}}/v1.0/invoke/cart/method/submit
 content-type: application/json
 
-{
-  "title": "Test order ~ {{$datetime rfc1123}}",
-  "items": ["1","3"],
-  "amount": 99.99,
-  "forUser": "demo@example.net"
-}
+"becolem@microsoft.com"
 
 
 
@@ -43,7 +47,7 @@ content-type: application/json
 # ===================================================================
 
 ### Get existing order
-GET http://{{host}}/v1.0/invoke/orders/method/get/48jMj
+GET http://{{host}}/v1.0/invoke/orders/method/get/CMAM2 
 
 ### Get orders for user
 GET http://{{host}}/v1.0/invoke/orders/method/getForUser/demo@example.net
