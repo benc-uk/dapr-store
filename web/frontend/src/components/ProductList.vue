@@ -48,9 +48,12 @@
 <script>
 // import api from '../mixins/api'
 import { userProfile } from '../main'
+import api from '../mixins/api'
 
 export default {
   name: 'ProductList',
+
+  mixins: [ api ],
 
   props: {
     products: {
@@ -66,13 +69,19 @@ export default {
   },
 
   methods: {
-    addToCart(product) {
-      userProfile.cart.push(product)
-      localStorage.setItem('cart', JSON.stringify(userProfile.cart))
+    async addToCart(product) {
+      try {
+        await this.apiCartAddAmount(userProfile.userName, product.id, +1)
+        this.showToast('Added to your cart!', 'success', product)
+      } catch (err) {
+        this.showToast('Error adding to cart 😫 '+err.toString(), 'danger', product)
+      }
+    },
 
+    showToast(msg, variant, product) {
       this.$bvToast.toast(`${product.name}`, {
-        title: 'Added to your cart!',
-        variant: 'success',
+        title: msg,
+        variant: variant,
         autoHideDelay: 3000,
         appendToast: true,
         toaster: 'b-toaster-top-center',

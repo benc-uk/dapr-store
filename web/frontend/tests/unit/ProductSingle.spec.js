@@ -25,12 +25,6 @@ describe('ProductSingle.vue', () => {
     })
 
     await flushPromises()
-    wrapper.vm.addToCart()
-    await localVue.nextTick()
-    await flushPromises()
-    expect(userProfile.cart).toHaveLength(1)
-    expect(userProfile.cart[0].id).toEqual(productId)
-
     expect(wrapper).toMatchSnapshot()
   })
 })

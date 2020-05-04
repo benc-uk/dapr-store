@@ -19,9 +19,9 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 // Set up FontAwesome
 import { library as faIcons } from '@fortawesome/fontawesome-svg-core'
-import { faUser, faUserPlus, faShoppingBasket, faTrophy, faIdCard, faShoppingCart, faSignOutAlt, faTrashAlt, faRedoAlt, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faUserPlus, faShoppingBasket, faTrophy, faIdCard, faShoppingCart, faSignOutAlt, faTrashAlt, faRedoAlt, faSearch, faPlusCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-faIcons.add(faUser, faUserPlus, faShoppingBasket, faTrophy, faIdCard, faShoppingCart, faSignOutAlt, faTrashAlt, faRedoAlt, faSearch)
+faIcons.add(faUser, faUserPlus, faShoppingBasket, faTrophy, faIdCard, faShoppingCart, faSignOutAlt, faTrashAlt, faRedoAlt, faSearch, faPlusCircle, faMinusCircle)
 Vue.component('fa', FontAwesomeIcon)
 
 // And client side routes (held in router.js)

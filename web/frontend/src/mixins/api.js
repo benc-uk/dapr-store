@@ -58,11 +58,11 @@ export default {
     },
 
     apiCartSubmit: function(username) {
-      return this._apiRawCall('v1.0/invoke/cart/method/submit', 'POST', username)
+      return this._apiRawCall('v1.0/invoke/cart/method/submit', 'POST', `"${username}"`)
     },
 
     apiCartClear: function(username) {
-      return this._apiRawCall(`v1.0/invoke/cart/method/clear/${username}`, 'PUT', username)
+      return this._apiRawCall(`v1.0/invoke/cart/method/clear/${username}`, 'PUT', `"${username}"`)
     },
 
     apiCartAddAmount: async function(username, productId, amount) {
@@ -121,8 +121,6 @@ export default {
     //
     apiDecodeError(err) {
       if (err.response && err.response.data && err.response.headers['content-type'].includes('json')) {
-        // err.response.data.httpStatus = err.response.status
-        // err.response.data.httpStatusText = err.response.statusText
         return err.response.data
       }
       if (err.response && err.request) {

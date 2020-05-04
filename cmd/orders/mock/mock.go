@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/benc-uk/dapr-store/cmd/orders/spec"
-	products "github.com/benc-uk/dapr-store/cmd/products/spec"
+	orderspec "github.com/benc-uk/dapr-store/cmd/orders/spec"
+	productspec "github.com/benc-uk/dapr-store/cmd/products/spec"
 	"github.com/benc-uk/dapr-store/pkg/problem"
 )
 
@@ -14,14 +14,14 @@ import (
 type OrderService struct {
 }
 
-var Orders = map[string]spec.Order{
+var Orders = map[string]orderspec.Order{
 	"fake-order-01": {
 		Title: "A fake order",
 		ID:    "fake-order-01",
-		LineItems: []spec.LineItem{
+		LineItems: []orderspec.LineItem{
 			{
 				Count: 1,
-				Product: products.Product{
+				Product: productspec.Product{
 					ID:          "4",
 					Name:        "foo",
 					Cost:        12.34,
@@ -33,16 +33,16 @@ var Orders = map[string]spec.Order{
 		},
 		ForUser: "demo@example.net",
 		Amount:  123.456,
-		Status:  spec.OrderNew,
+		Status:  orderspec.OrderNew,
 	},
 
 	"fake-order-02": {
 		Title: "Another fake order",
 		ID:    "fake-order-02",
-		LineItems: []spec.LineItem{
+		LineItems: []orderspec.LineItem{
 			{
 				Count: 2,
-				Product: products.Product{
+				Product: productspec.Product{
 					ID:          "7",
 					Name:        "bar",
 					Cost:        88.30,
@@ -54,12 +54,12 @@ var Orders = map[string]spec.Order{
 		},
 		ForUser: "test@example.net",
 		Amount:  77.88,
-		Status:  spec.OrderComplete,
+		Status:  orderspec.OrderComplete,
 	},
 }
 
 // GetOrder mock
-func (s OrderService) GetOrder(orderID string) (*spec.Order, error) {
+func (s OrderService) GetOrder(orderID string) (*orderspec.Order, error) {
 	order, exist := Orders[orderID]
 	if exist {
 		return &order, nil
@@ -74,14 +74,14 @@ func (s OrderService) GetOrdersForUser(username string) ([]string, error) {
 }
 
 // ProcessOrder mock
-func (s OrderService) ProcessOrder(order spec.Order) error {
-	err := spec.Validate(order)
+func (s OrderService) ProcessOrder(order orderspec.Order) error {
+	err := orderspec.Validate(order)
 	if err != nil {
 		return err
 	}
 
 	// Check we have a new order
-	if order.Status != spec.OrderNew {
+	if order.Status != orderspec.OrderNew {
 		return errors.New("Order not in correct status")
 	}
 
@@ -90,7 +90,7 @@ func (s OrderService) ProcessOrder(order spec.Order) error {
 		return prob
 	}
 
-	s.SetStatus(&order, spec.OrderReceived)
+	s.SetStatus(&order, orderspec.OrderReceived)
 
 	log.Printf("### Order %s was saved to state store\n", order.ID)
 
@@ -103,36 +103,36 @@ func (s OrderService) ProcessOrder(order spec.Order) error {
 
 	// Fake background order processing
 	time.AfterFunc(1*time.Second, func() {
-		s.SetStatus(&order, spec.OrderProcessing)
+		s.SetStatus(&order, orderspec.OrderProcessing)
 	})
 
 	// Fake background order completion
 	time.AfterFunc(2*time.Second, func() {
-		s.SetStatus(&order, spec.OrderComplete)
+		s.SetStatus(&order, orderspec.OrderComplete)
 	})
 
 	return nil
 }
 
 // AddOrder mock
-func (s OrderService) AddOrder(order spec.Order) error {
+func (s OrderService) AddOrder(order orderspec.Order) error {
 	Orders[order.ID] = order
 	return nil
 }
 
 // SetStatus mock
-func (s OrderService) SetStatus(order *spec.Order, status spec.OrderStatus) error {
+func (s OrderService) SetStatus(order *orderspec.Order, status orderspec.OrderStatus) error {
 	order.Status = status
 	Orders[order.ID] = *order
 	return nil
 }
 
 // EmailNotify mock
-func (s OrderService) EmailNotify(spec.Order) error {
+func (s OrderService) EmailNotify(orderspec.Order) error {
 	return nil
 }
 
 // SaveReport mock
-func (s OrderService) SaveReport(spec.Order) error {
+func (s OrderService) SaveReport(orderspec.Order) error {
 	return nil
 }

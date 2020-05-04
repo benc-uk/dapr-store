@@ -134,6 +134,6 @@ var testCases = []apitests.Test{
 		Body:           `"david_bowie@example.net"`,
 		CheckBody:      ``,
 		CheckBodyCount: 0,
-		CheckStatus:    404,
+		CheckStatus:    400,
 	},
 }

@@ -6,29 +6,22 @@ exports[`Cart.vue renders cart contents 1`] = `
   </h1> <br>
   <!---->
   <!---->
-  <table role="table" aria-busy="false" aria-colcount="3" class="table b-table table-striped table-hover" id="__BVID__26">
-    <!---->
-    <!---->
-    <thead role="rowgroup" class="">
+  <!---->
+  <!---->
+  <div>
+    <h2>Cart total: £36.00 </h2>
+    <div class="card m-3 p-1">
       <!---->
-      <tr role="row" class="">
-        <th role="columnheader" scope="col" aria-colindex="1" class="">Name</th>
-        <th role="columnheader" scope="col" aria-colindex="2" class="">Cost</th>
-        <th role="columnheader" scope="col" aria-colindex="3" class="">Description</th>
-      </tr>
-    </thead>
-    <tbody role="rowgroup">
-      <!---->
-      <tr role="row" class="">
-        <td aria-colindex="1" role="cell" class="">Top&nbsp;Hat&nbsp;(6″)</td>
-        <td aria-colindex="2" role="cell" class="">39.95</td>
-        <td aria-colindex="3" role="cell" class="">Made from 100% Wool and nice</td>
-      </tr>
+      <div class="card-header bg-primary text-white"><span>Black &amp; Gold Tie Set</span></div>
+      <div class="card-body">
+        <!---->
+        <!---->
+        <h2>Count:</h2> <input type="text" readonly="readonly"> <button type="button" class="btn ml-5 mr-3 btn-warning btn-lg"><i icon="minus-circle"></i></button> <button type="button" class="btn btn-success btn-lg"><i icon="plus-circle"></i></button> <img src="/img/catalog/2.jpg" class="thumb">
+      </div>
       <!---->
       <!---->
-    </tbody>
-    <!---->
-  </table> <button type="button" class="btn btn-primary btn-lg"><i icon="shopping-basket"></i> &nbsp; CHECKOUT
+    </div>
+  </div> <button type="button" class="btn btn-primary btn-lg"><i icon="shopping-basket"></i> &nbsp; CHECKOUT
   </button>
   &nbsp;
   <button type="button" class="btn float-right btn-warning btn-lg"><i icon="trash-alt"></i> &nbsp; EMPTY CART

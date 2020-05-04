@@ -57,13 +57,26 @@ export default {
       }
     },
 
+    apiCartGet: function(username) {
+      return {
+        data: mockData.carts[username]
+      }
+    },
+
+    apiCartAddAmount: function(username, productId, amount) {
+      let count = mockData.carts[username][productId]
+      count+=amount
+      mockData.carts[username][productId] = count
+      return {
+        data: mockData.carts[username]
+      }
+    },
+
     //
     // Helper to decode error messages
     //
     apiDecodeError(err) {
       if (err.response && err.response.data && err.response.headers['content-type'].includes('json')) {
-        // err.response.data.httpStatus = err.response.status
-        // err.response.data.httpStatusText = err.response.statusText
         return err.response.data
       }
       if (err.response && err.request) {

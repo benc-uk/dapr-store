@@ -47,5 +47,14 @@
 
   "ordersForUser": {
     "demo@example.net": ["order123"]
+  },
+
+  "carts": {
+    "demo@example.net": {
+      "products": {
+        "2": 2
+      },
+      "forUser": "demo@example.net"
+    }
   }
 }

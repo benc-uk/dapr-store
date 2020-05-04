@@ -80,24 +80,23 @@ export default {
     async addToCart() {
       try {
         await this.apiCartAddAmount(userProfile.userName, this.product.id, +1)
-        this.$bvToast.toast(`${this.product.name}`, {
-          title: 'Added to your cart!',
-          variant: 'success',
-          autoHideDelay: 3000,
-          appendToast: true,
-          toaster: 'b-toaster-top-center',
-          solid: true
-        })
+        this.showToast('Added to your cart!', 'success')
       } catch (err) {
-        this.$bvToast.toast(`${this.product.name}`, {
-          title: 'Error adding to cart 😫 '+err.toString(),
-          variant: 'danger',
-          autoHideDelay: 3000,
-          appendToast: true,
-          toaster: 'b-toaster-top-center',
-          solid: true
-        })
+        this.showToast('Error adding to cart 😫 '+err.toString(), 'danger')
       }
+    },
+
+    showToast(msg, variant) {
+      console.log(msg, variant)
+
+      this.$bvToast.toast(`${this.product.name}`, {
+        title: msg,
+        variant: variant,
+        autoHideDelay: 3000,
+        appendToast: true,
+        toaster: 'b-toaster-top-center',
+        solid: true
+      })
     }
   }
 }

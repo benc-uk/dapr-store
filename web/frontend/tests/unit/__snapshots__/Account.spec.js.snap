@@ -30,8 +30,9 @@ exports[`Account.vue renders user profile 1`] = `
     <!---->
     <div class="card-body">
       <!---->
-      <!---->
-      <h2>Order: Mock order</h2>
+      <!----><a target="_self" href="/order/order123" class="">
+        <h2>Mock order</h2>
+      </a>
       <h2>
         Status: <span class="text-capitalize order-status order-complete">complete</span></h2>
       <ul>
@@ -39,14 +40,7 @@ exports[`Account.vue renders user profile 1`] = `
         <li>
           Order Id: <code>order123</code></li>
         <li>Items:</li>
-        <ul>
-          <li>
-            Top&nbsp;Hat&nbsp;(6″) — £39.95
-          </li>
-          <li>
-            Paisley Cravat Ascot Tie — £11.2
-          </li>
-        </ul>
+        <ul></ul>
       </ul>
     </div>
     <!---->

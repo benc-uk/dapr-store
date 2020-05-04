@@ -1,7 +1,7 @@
 package mock
 
 import (
-	cart "github.com/benc-uk/dapr-store/cmd/cart/spec"
+	cartspec "github.com/benc-uk/dapr-store/cmd/cart/spec"
 	orderspec "github.com/benc-uk/dapr-store/cmd/orders/spec"
 	productspec "github.com/benc-uk/dapr-store/cmd/products/spec"
 	"github.com/benc-uk/dapr-store/pkg/problem"
@@ -11,14 +11,14 @@ import (
 type CartService struct {
 }
 
-var mockCart = &cart.Cart{
+var mockCart = &cartspec.Cart{
 	Products: map[string]int{},
 	ForUser:  "demo@example.net",
 }
 
-func (s CartService) Get(username string) (*cart.Cart, error) {
+func (s CartService) Get(username string) (*cartspec.Cart, error) {
 	if username != "demo@example.net" {
-		cart := &cart.Cart{}
+		cart := &cartspec.Cart{}
 		cart.ForUser = username
 		cart.Products = make(map[string]int)
 		return cart, nil
@@ -26,7 +26,7 @@ func (s CartService) Get(username string) (*cart.Cart, error) {
 	return mockCart, nil
 }
 
-func (s CartService) Submit(cart cart.Cart) (*orderspec.Order, error) {
+func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 	if len(cart.Products) == 0 {
 		return nil, problem.New("err://bad", "Cart empty", 400, "Cart empty", "mock-cart")
 	}
@@ -54,7 +54,7 @@ func (s CartService) Submit(cart cart.Cart) (*orderspec.Order, error) {
 	return o, nil
 }
 
-func (s CartService) SetProductCount(cart *cart.Cart, productId string, count int) error {
+func (s CartService) SetProductCount(cart *cartspec.Cart, productId string, count int) error {
 	if count < 0 {
 		return problem.New("err://bad", "SetProductCount", 500, "count can not be negative", "mock-cart")
 	}
@@ -66,7 +66,7 @@ func (s CartService) SetProductCount(cart *cart.Cart, productId string, count in
 	return nil
 }
 
-func (s CartService) Clear(cart *cart.Cart) error {
+func (s CartService) Clear(cart *cartspec.Cart) error {
 	cart.Products = map[string]int{}
 	return nil
 }

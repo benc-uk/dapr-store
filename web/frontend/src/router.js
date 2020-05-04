@@ -13,6 +13,7 @@ import ProductCatalog from './views/ProductCatalog'
 import ProductOffers from './views/ProductOffers'
 import ProductSearch from './views/ProductSearch'
 import ProductSingle from './views/ProductSingle'
+import ViewOrder from './views/ViewOrder'
 import Login from './views/Login'
 import Account from './views/Account'
 import Home from './views/Home'
@@ -68,6 +69,11 @@ const router = new VueRouter({
       name: 'single-product',
       path: '/product/:id',
       component: ProductSingle
+    },
+    {
+      name: 'view-order',
+      path: '/order/:id',
+      component: ViewOrder
     },
   ]
 })
