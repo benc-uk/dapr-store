@@ -22,5 +22,17 @@ npm run build
 npm run lint
 ```
 
+### Run unit tests (snapshots)
+Against current snapshots
+```
+npm run test
+```
+
+Update snapshots with
+```
+npm run test-update
+```
+
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).

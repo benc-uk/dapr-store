@@ -16,6 +16,7 @@ type Order struct {
 	ForUser   string      `json:"forUser"` // Ref to User.Username
 }
 
+// LineItem is a simple line on an order, a tuple of count and a Product struct
 type LineItem struct {
 	Count   int                 `json:"count"`
 	Product productspec.Product `json:"product"`

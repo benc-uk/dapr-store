@@ -9,7 +9,6 @@ localVue.use(VueRouter)
 const router = new VueRouter()
 
 import ProductSingle from '@/views/ProductSingle.vue'
-import { userProfile } from '@/main.js'
 
 jest.mock('@/mixins/api')
 

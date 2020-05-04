@@ -14,6 +14,7 @@ import (
 type OrderService struct {
 }
 
+// Orders is a set of mock order data
 var Orders = map[string]orderspec.Order{
 	"fake-order-01": {
 		Title: "A fake order",

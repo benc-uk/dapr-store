@@ -41,7 +41,7 @@ func NewService(serviceName string) *CartService {
 }
 
 //
-//
+// Get fetches saved cart for a given user, if not exists an empty cart is returned
 //
 func (s CartService) Get(username string) (*cartspec.Cart, error) {
 	data, prob := s.GetState(s.storeName, username)
@@ -67,7 +67,7 @@ func (s CartService) Get(username string) (*cartspec.Cart, error) {
 }
 
 //
-//
+// Submit a cart and turn into an order
 //
 func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 	if len(cart.Products) == 0 {
@@ -118,17 +118,17 @@ func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 }
 
 //
+// SetProductCount updates the count of a given product in the cart
 //
-//
-func (s CartService) SetProductCount(cart *cartspec.Cart, productId string, count int) error {
+func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, count int) error {
 	if count < 0 {
 		return problem.New("err://invalid-request", "SetProductCount error", 400, "Count can not be negative", s.ServiceName)
 	}
 	if count == 0 {
-		delete(cart.Products, productId)
+		delete(cart.Products, productID)
 
 	} else {
-		cart.Products[productId] = count
+		cart.Products[productID] = count
 	}
 
 	prob := s.SaveState(s.storeName, cart.ForUser, cart)
@@ -140,7 +140,7 @@ func (s CartService) SetProductCount(cart *cartspec.Cart, productId string, coun
 }
 
 //
-//
+// Clear the cart
 //
 func (s CartService) Clear(cart *cartspec.Cart) error {
 	cart.Products = map[string]int{}
