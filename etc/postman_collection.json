@@ -1,0 +1,969 @@
+{
+	"info": {
+		"_postman_id": "dc39e63e-8dc4-4337-9441-e5189fcfc4e6",
+		"name": "Dapr Store",
+		"description": "A set of API requests to test and validate the Dapr Store external API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Normal Requests",
+			"item": [
+				{
+					"name": "Products - Get by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5327ea00-897b-4e43-af7b-08ad8124c0dc",
+								"exec": [
+									"pm.test(\"result is OK and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('product is valid', function() {",
+									"    pm.response.to.have.jsonSchema(pm.variables.get(\"schema\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "b5185ea2-fb72-4598-a1b1-2845c2db4b07",
+								"exec": [
+									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+									"    pm.variables.set(\"schema\", response.json())\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/get/prd001",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"products",
+								"method",
+								"get",
+								"prd001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Products - Get Catalog",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "494d5a85-3878-4f94-ae0d-47e8d00576b5",
+								"exec": [
+									"pm.test(\"result is OK and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('multiple products are returned', function() {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
+									"});",
+									"",
+									"pm.test('all products are valid', function() {",
+									"    const schema = pm.environment.get(\"productSchema\");",
+									"    for(let product of pm.response.json())",
+									"        pm.expect(product).to.have.jsonSchema(pm.variables.get(\"schema\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a816ffec-0d94-4f76-808d-a4c2b1375fc2",
+								"exec": [
+									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+									"    pm.variables.set(\"schema\", response.json())\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/catalog",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"products",
+								"method",
+								"catalog"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Products - Get Offers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bdb9084e-75c9-464c-874e-84816242ff76",
+								"exec": [
+									"pm.test(\"result is OK and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('multiple products are returned', function() {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
+									"});",
+									"",
+									"pm.test('all products are valid', function() {",
+									"    const schema = pm.environment.get(\"productSchema\");",
+									"    for(let product of pm.response.json()) {",
+									"        pm.expect(product).to.have.jsonSchema(pm.variables.get(\"schema\"));",
+									"    }",
+									"});",
+									"",
+									"pm.test('all products are on offer', function() {",
+									"    for(let product of pm.response.json()) {",
+									"        pm.expect(product.onOffer).to.be.true",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "38ef3320-9d20-4466-9275-3c168a7bdbe1",
+								"exec": [
+									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+									"    pm.variables.set(\"schema\", response.json())\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/offers",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"products",
+								"method",
+								"offers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Products - Search",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d6cba778-de98-44d2-8bc2-b9cb44db0667",
+								"exec": [
+									"pm.test(\"result is OK and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('multiple products are returned', function() {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
+									"});",
+									"",
+									"pm.test('all products are valid', function() {",
+									"    const schema = pm.environment.get(\"productSchema\");",
+									"    for(let product of pm.response.json()) {",
+									"        pm.expect(product).to.have.jsonSchema(pm.variables.get(\"schema\"));",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e83759b3-cbda-404a-81f3-28a2d7a68b15",
+								"exec": [
+									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+									"    pm.variables.set(\"schema\", response.json());\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/search/silk",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"products",
+								"method",
+								"search",
+								"silk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users - Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3ce38ed6-a8bc-4257-b0af-357bf448144f",
+								"exec": [
+									"pm.test(\"result is OK and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c13a9217-a45a-42b2-96bf-4666c40915ed",
+								"exec": [
+									"pm.environment.set(\"username\", pm.variables.replaceIn('{{$randomExampleEmail}}'));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"{{username}}\",\n\t\"displayName\": \"Demo User API\",\n\t\"profileImage\": \"demo.jpg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/users/method/register",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"users",
+								"method",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users - Get",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5d9ae4af-a09b-4308-8055-46b839d7f379",
+								"exec": [
+									"pm.test(\"result is OK and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('user is valid', function() {",
+									"    pm.response.to.have.jsonSchema(pm.variables.get(\"schema\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9de2ef4f-fce6-4758-b0fc-ad1b46d42420",
+								"exec": [
+									"pm.sendRequest(pm.variables.get(\"userSchemaUrl\"), (error, response) => {\r",
+									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"userSchemaUrl\"));\r",
+									"    pm.variables.set(\"schema\", response.json())\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/users/method/get/{{username}}",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"users",
+								"method",
+								"get",
+								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users - Check Reg",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3ccadef3-985e-4a9f-8cf9-7eacb88530e7",
+								"exec": [
+									"pm.test(\"result is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "24cd0d7a-02e6-4b71-aa49-724926462cd4",
+								"exec": [
+									"pm.sendRequest(pm.variables.get(\"userSchemaUrl\"), (error, response) => {\r",
+									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"userSchemaUrl\"));\r",
+									"    pm.variables.set(\"schema\", response.json())\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/users/method/isregistered/{{username}}",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"users",
+								"method",
+								"isregistered",
+								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cart - Clear",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a454b45e-ba19-46af-a210-cc356a6fecda",
+								"exec": [
+									"pm.test(\"result is OK and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"returned cart is empty\", function () {",
+									"    pm.expect(pm.response.json().products).to.be.empty",
+									"    pm.expect(pm.response.json().forUser).to.be.equal(pm.variables.get(\"username\"))",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "94fb9c96-8e7f-4ffe-af87-02a1a5f5ffca",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/cart/method/clear/{{username}}",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"cart",
+								"method",
+								"clear",
+								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cart - Add Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f0baa202-df0a-49cb-90bd-2822af6e3cb7",
+								"exec": [
+									"pm.test(\"result is OK and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"product is in cart\", function () {",
+									"    pm.expect(pm.response.json().products).to.not.be.empty",
+									"    pm.expect(pm.response.json().products[\"prd001\"]).to.be.equal(3)",
+									"    pm.expect(pm.response.json().forUser).to.be.equal(pm.variables.get(\"username\"))",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f927619a-a81d-4c5d-8d52-5446cfc02988",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/cart/method/setProduct/{{username}}/prd001/3",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"cart",
+								"method",
+								"setProduct",
+								"{{username}}",
+								"prd001",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cart - Get Contents",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e537ec8d-576d-4c7f-86ea-40015c4cfb17",
+								"exec": [
+									"pm.test(\"result is OK and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"cart contains products\", function () {",
+									"    pm.expect(pm.response.json().products).to.not.be.empty",
+									"    pm.expect(pm.response.json().forUser).to.be.equal(pm.variables.get(\"username\"))",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "33f93e0f-b374-49ce-a1fa-d17c6634c046",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/cart/method/get/{{username}}",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"cart",
+								"method",
+								"get",
+								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cart - Submit Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3ba8745d-a09d-41df-9f48-27e82e356f3c",
+								"exec": [
+									"pm.test(\"result is OK and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"order is returned\", function () {",
+									"    var order = pm.response.json();",
+									"    pm.expect(order.id).to.have.lengthOf.at.least(4);",
+									"    pm.environment.set(\"orderId\", order.id);",
+									"});",
+									"",
+									"pm.test('order is valid', function() {",
+									"    const ajv = new require('ajv')({});",
+									"",
+									"    // Load both products and order schemas",
+									"    var validate = ajv.addSchema(pm.variables.get(\"schemaProd\")).compile(pm.variables.get(\"schema\"));",
+									"",
+									"    let valid = validate(pm.response.json());",
+									"    pm.expect(valid).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "4f7ef2af-6376-45a9-9097-0a9f8b747884",
+								"exec": [
+									"pm.sendRequest(pm.variables.get(\"orderSchemaUrl\"), (error, response) => {\r",
+									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"orderSchemaUrl\"));\r",
+									"    pm.variables.set(\"schema\", response.json())\r",
+									"});\r",
+									"\r",
+									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+									"    pm.variables.set(\"schemaProd\", response.json())\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\"{{username}}\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/cart/method/submit",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"cart",
+								"method",
+								"submit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Orders - Get by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2726d0b2-c2f0-4ada-893b-747439b72021",
+								"exec": [
+									"pm.test(\"result is OK and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test('order is valid', function() {",
+									"    const ajv = new require('ajv')({});",
+									"",
+									"    // Load both products and order schemas",
+									"    var validate = ajv.addSchema(pm.variables.get(\"schemaProd\")).compile(pm.variables.get(\"schema\"));",
+									"",
+									"    let valid = validate(pm.response.json())",
+									"    pm.expect(valid).to.be.true",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "3a5d988f-958d-4c95-af34-e1e3ba523131",
+								"exec": [
+									"pm.sendRequest(pm.variables.get(\"orderSchemaUrl\"), (error, response) => {\r",
+									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"orderSchemaUrl\"));\r",
+									"    pm.variables.set(\"schema\", response.json())\r",
+									"});\r",
+									"\r",
+									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+									"    pm.variables.set(\"schemaProd\", response.json())\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/orders/method/get/{{orderId}}",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"orders",
+								"method",
+								"get",
+								"{{orderId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Orders - Get for User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "31701d79-1b90-4dd9-b580-40629ad4fccd",
+								"exec": [
+									"pm.test(\"result is OK and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"result contains orders\", function () {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "314f581a-2eaa-4f85-a4f5-06e94c86a06f",
+								"exec": [
+									"pm.sendRequest(pm.variables.get(\"orderSchemaUrl\"), (error, response) => {\r",
+									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"orderSchemaUrl\"));\r",
+									"    pm.variables.set(\"schema\", response.json())\r",
+									"});\r",
+									"\r",
+									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+									"    pm.variables.set(\"schemaProd\", response.json())\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/orders/method/getForUser/{{username}}",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"orders",
+								"method",
+								"getForUser",
+								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Error Validation",
+			"item": [
+				{
+					"name": "Products - Get Invalid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fbe9bcc8-e942-4cc6-a729-69fb4db488d6",
+								"exec": [
+									"pm.test(\"result is 404 and JSON\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"result has already registered error\", function () {",
+									"    var error = pm.response.json();",
+									"    pm.expect(error.title).to.include('Not found')",
+									"    console.log(pm.response.json())",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "22c9ba88-83f5-4e66-8e9a-a07a80ca4171",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/get/blahblah",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"products",
+								"method",
+								"get",
+								"blahblah"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users - Register Again",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3c2190f0-1935-496d-9a33-cd56b6037f7c",
+								"exec": [
+									"pm.test(\"result is 400\", function () {",
+									"    var error = pm.response.json();",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"result has already registered error\", function () {",
+									"    var error = pm.response.json();",
+									"    pm.expect(error.title).to.include('already registered')",
+									"    console.log(pm.response.json())",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5abf498e-71b5-450b-9193-517147742290",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"{{username}}\",\n\t\"displayName\": \"Demo User API\",\n\t\"profileImage\": \"demo.jpg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{endpoint}}/v1.0/invoke/users/method/register",
+							"protocol": "http",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"v1.0",
+								"invoke",
+								"users",
+								"method",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "660f3cd2-9a4b-411f-b994-38a1916f6f2e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "77aa1fa1-5e06-4719-82e4-bb39e621a5cd",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "241280c5-bf7f-4bbe-a8bd-6c5b87192af5",
+			"key": "productSchemaUrl",
+			"value": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/products/spec/schema.json",
+			"type": "string"
+		},
+		{
+			"id": "c443d497-a766-4919-a121-227f3d67a979",
+			"key": "userSchemaUrl",
+			"value": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/users/spec/schema.json",
+			"type": "string"
+		},
+		{
+			"id": "eb4491b8-744b-436c-95a2-510b6dbeabb9",
+			"key": "orderSchemaUrl",
+			"value": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/orders/spec/schema.json",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/cart/spec/schema.json",
+  "type": "object",
+  "title": "Cart entity",
+  "required": [
+    "products",
+    "forUser"
+  ],
+  "properties": {
+    "products": {
+      "$id": "#/properties/products",
+      "type": "object",
+      "title": "The cart products and amounts",
+      "additionalProperties": { "type": "integer" }
+    },
+    "forUser": {
+      "$id": "#/properties/forUser",
+      "type": "string",
+      "title": "The cart owner"
+    }
+  }
+}
