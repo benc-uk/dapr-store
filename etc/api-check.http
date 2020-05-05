@@ -26,19 +26,19 @@ GET http://{{host}}/v1.0/invoke/products/method/search/tied
 # ===================================================================
 
 ### Add products to cart
-PUT http://{{host}}/v1.0/invoke/cart/method/setProduct/demo@example.net/1/6
+PUT http://{{host}}/v1.0/invoke/cart/method/setProduct/demo@example.net/prd001/6
 
 ### Get cart
-GET http://{{host}}/v1.0/invoke/cart/method/get/becolem@microsoft.com
+GET http://{{host}}/v1.0/invoke/cart/method/get/demo@example.net
 
 ### Clear cart
-PUT http://{{host}}/v1.0/invoke/cart/method/clear/becolem@microsoft.com
+PUT http://{{host}}/v1.0/invoke/cart/method/clear/demo@example.net
 
 ### Submit cart
 POST http://{{host}}/v1.0/invoke/cart/method/submit
 content-type: application/json
 
-"becolem@microsoft.com"
+"demo@example.net"
 
 
 

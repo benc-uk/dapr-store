@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
   "id": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/user/spec/schema.json",
   "type": "object",
   "title": "User entity",
