@@ -61,7 +61,7 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 
 	// Send success message back
 	resp.Header().Set("Content-Type", "application/json")
-	resp.Write([]byte(fmt.Sprintf(`{"registrationStatus":"success", "username":"%s"`, user.Username)))
+	resp.Write([]byte(fmt.Sprintf(`{"registrationStatus":"success", "username":"%s"}`, user.Username)))
 }
 
 //

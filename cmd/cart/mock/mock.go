@@ -1,9 +1,11 @@
 package mock
 
 import (
+	"encoding/json"
+	"io/ioutil"
+
 	cartspec "github.com/benc-uk/dapr-store/cmd/cart/spec"
 	orderspec "github.com/benc-uk/dapr-store/cmd/orders/spec"
-	productspec "github.com/benc-uk/dapr-store/cmd/products/spec"
 	"github.com/benc-uk/dapr-store/pkg/problem"
 )
 
@@ -11,9 +13,21 @@ import (
 type CartService struct {
 }
 
-var mockCart = &cartspec.Cart{
-	Products: map[string]int{},
-	ForUser:  "demo@example.net",
+// Load mock data
+var mockCarts []cartspec.Cart
+var mockOrders []orderspec.Order
+
+func init() {
+	mockJson, err := ioutil.ReadFile("../../etc/mock-data/carts.json")
+	if err != nil {
+		panic(err)
+	}
+	json.Unmarshal(mockJson, &mockCarts)
+	mockJson, err = ioutil.ReadFile("../../etc/mock-data/orders.json")
+	if err != nil {
+		panic(err)
+	}
+	json.Unmarshal(mockJson, &mockOrders)
 }
 
 //
@@ -26,7 +40,7 @@ func (s CartService) Get(username string) (*cartspec.Cart, error) {
 		cart.Products = make(map[string]int)
 		return cart, nil
 	}
-	return mockCart, nil
+	return &mockCarts[0], nil
 }
 
 //
@@ -37,27 +51,7 @@ func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 		return nil, problem.New("err://bad", "Cart empty", 400, "Cart empty", "mock-cart")
 	}
 
-	o := &orderspec.Order{
-		Title:   "Mock Order",
-		Amount:  12.34,
-		ForUser: cart.ForUser,
-		ID:      "order-01",
-		Status:  orderspec.OrderNew,
-		LineItems: []orderspec.LineItem{
-			{
-				Count: 1,
-				Product: productspec.Product{
-					ID:          "4",
-					Name:        "foo",
-					Cost:        12.34,
-					Description: "blah",
-					Image:       "blah.jpg",
-					OnOffer:     false,
-				},
-			},
-		},
-	}
-	return o, nil
+	return &mockOrders[0], nil
 }
 
 //
@@ -68,10 +62,10 @@ func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, coun
 		return problem.New("err://bad", "SetProductCount", 500, "count can not be negative", "mock-cart")
 	}
 	if count == 0 {
-		delete(mockCart.Products, productID)
+		delete(mockCarts[0].Products, productID)
 		return nil
 	}
-	mockCart.Products[productID] = count
+	mockCarts[0].Products[productID] = count
 	return nil
 }
 

@@ -10,7 +10,7 @@ sqlite3 cmd/products/sqlite.db "DROP TABLE IF EXISTS products"
 
 echo "### Creating products table"
 sqlite3 cmd/products/sqlite.db "CREATE TABLE products ( 
-  id integer not null primary key,
+  id TEXT not null primary key,
   name text NOT null,
   description TEXT,
   cost REAL,

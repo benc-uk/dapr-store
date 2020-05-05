@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/orders/spec/schema.json",
+  "type": "object",
+  "title": "Order entity",
+  "required": [
+    "id",
+    "title",
+    "amount",
+    "status",
+    "forUser",
+    "lineItems"
+  ],
+  "properties": {
+    "id": {
+      "$id": "#/properties/id",
+      "type": "string",
+      "title": "The order ID"
+    },
+    "title": {
+      "$id": "#/properties/title",
+      "type": "string",
+      "title": "The order title"
+    },
+    "amount": {
+      "$id": "#/properties/amount",
+      "type": "number",
+      "minimum": 0,
+      "title": "The order total amount"
+    },
+    "status": {
+      "$id": "#/properties/status",
+      "type": "string",
+      "title": "The order status",
+      "enum": ["new", "received", "processing", "complete"]
+    },
+    "forUser": {
+      "$id": "#/properties/forUser",
+      "type": "string",
+      "format": "email",
+      "title": "The username of the user order is for"
+    },
+    "lineItems": {
+      "$id": "#/properties/lineItems",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "$id": "#/properties/lineItems/count",
+            "type": "integer",
+            "minimum": 1,
+            "title": "The product count"
+          },
+          "product": {
+            "$id": "#/properties/lineItems/product",
+            "type": "object",
+            "title": "The product object",
+            "$ref": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/products/spec/schema.json"
+          }
+        }
+      },
+      "title": "The username of the user order is for"
+    }
+  }
+}

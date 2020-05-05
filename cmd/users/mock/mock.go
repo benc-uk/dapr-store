@@ -8,6 +8,9 @@
 package mock
 
 import (
+	"encoding/json"
+	"io/ioutil"
+
 	"github.com/benc-uk/dapr-store/cmd/users/spec"
 	"github.com/benc-uk/dapr-store/pkg/problem"
 )
@@ -16,17 +19,20 @@ import (
 type UserService struct {
 }
 
-var users = []spec.User{
-	{
-		DisplayName:  "Mock user",
-		Username:     "demo@example.net",
-		ProfileImage: "face.jpg",
-	},
+// Load mock data
+var mockUsers []spec.User
+
+func init() {
+	mockJson, err := ioutil.ReadFile("../../etc/mock-data/users.json")
+	if err != nil {
+		panic(err)
+	}
+	json.Unmarshal(mockJson, &mockUsers)
 }
 
 // GetUser mock
 func (s UserService) GetUser(username string) (*spec.User, error) {
-	for _, user := range users {
+	for _, user := range mockUsers {
 		if user.Username == username {
 			return &user, nil
 		}
@@ -42,6 +48,6 @@ func (s UserService) AddUser(user spec.User) error {
 		prob := problem.New("err://user-exists", user.Username+" already registered", 400, user.Username+" already registered", "users")
 		return prob
 	}
-	users = append(users, user)
+	mockUsers = append(mockUsers, user)
 	return nil
 }

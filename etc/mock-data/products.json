@@ -1,0 +1,26 @@
+[
+  {
+    "id": "prd1",
+    "name": "Top Hat (6″)",
+    "cost": 39.95,
+    "description": "Made from 100% wool and quite nice",
+    "image": "/img/catalog/1.jpg",
+    "onOffer": false
+  },
+  {
+    "id": "prd2",
+    "name": "Black & Gold Tie Set",
+    "cost": 18,
+    "description": "100% hand made silk includes tie, pocket square and cufflinks",
+    "image": "/img/catalog/2.jpg",
+    "onOffer": true
+  },
+  {
+    "id": "prd3",
+    "name": "Paisley Cravat Ascot Tie",
+    "cost": 11.2,
+    "description": "Black & Red Paisley Cravat",
+    "image": "/img/catalog/3.jpg",
+    "onOffer": false
+  }
+]

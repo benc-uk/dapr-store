@@ -1,0 +1,9 @@
+[
+  {
+    "products": {
+      "prd1": 2,
+      "prd3": 1
+    },
+    "forUser": "mock@example.net"
+  }
+]

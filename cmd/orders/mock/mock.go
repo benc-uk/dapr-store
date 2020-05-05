@@ -1,12 +1,13 @@
 package mock
 
 import (
+	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"log"
 	"time"
 
 	orderspec "github.com/benc-uk/dapr-store/cmd/orders/spec"
-	productspec "github.com/benc-uk/dapr-store/cmd/products/spec"
 	"github.com/benc-uk/dapr-store/pkg/problem"
 )
 
@@ -14,56 +15,27 @@ import (
 type OrderService struct {
 }
 
-// Orders is a set of mock order data
-var Orders = map[string]orderspec.Order{
-	"fake-order-01": {
-		Title: "A fake order",
-		ID:    "fake-order-01",
-		LineItems: []orderspec.LineItem{
-			{
-				Count: 1,
-				Product: productspec.Product{
-					ID:          "4",
-					Name:        "foo",
-					Cost:        12.34,
-					Description: "blah",
-					Image:       "fo.jpg",
-					OnOffer:     false,
-				},
-			},
-		},
-		ForUser: "demo@example.net",
-		Amount:  123.456,
-		Status:  orderspec.OrderNew,
-	},
+// Load mock data
+var MockOrders []orderspec.Order
+var mockUserOrders []string
 
-	"fake-order-02": {
-		Title: "Another fake order",
-		ID:    "fake-order-02",
-		LineItems: []orderspec.LineItem{
-			{
-				Count: 2,
-				Product: productspec.Product{
-					ID:          "7",
-					Name:        "bar",
-					Cost:        88.30,
-					Description: "bar blah",
-					Image:       "bar.jpg",
-					OnOffer:     true,
-				},
-			},
-		},
-		ForUser: "test@example.net",
-		Amount:  77.88,
-		Status:  orderspec.OrderComplete,
-	},
+func init() {
+	mockJson, err := ioutil.ReadFile("../../etc/mock-data/orders.json")
+	if err != nil {
+		panic(err)
+	}
+	json.Unmarshal(mockJson, &MockOrders)
+	mockJson, err = ioutil.ReadFile("../../etc/mock-data/user-orders.json")
+	if err != nil {
+		panic(err)
+	}
+	json.Unmarshal(mockJson, &mockUserOrders)
 }
 
 // GetOrder mock
 func (s OrderService) GetOrder(orderID string) (*orderspec.Order, error) {
-	order, exist := Orders[orderID]
-	if exist {
-		return &order, nil
+	if orderID == MockOrders[0].ID {
+		return &MockOrders[0], nil
 	}
 
 	return nil, problem.New("err://not-found", "No data returned", 404, "Order: '"+orderID+"' not found", "orders")
@@ -117,14 +89,14 @@ func (s OrderService) ProcessOrder(order orderspec.Order) error {
 
 // AddOrder mock
 func (s OrderService) AddOrder(order orderspec.Order) error {
-	Orders[order.ID] = order
+	MockOrders = append(MockOrders, order)
 	return nil
 }
 
 // SetStatus mock
 func (s OrderService) SetStatus(order *orderspec.Order, status orderspec.OrderStatus) error {
 	order.Status = status
-	Orders[order.ID] = *order
+	MockOrders[0] = *order
 	return nil
 }
 

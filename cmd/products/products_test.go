@@ -33,3 +33,59 @@ func TestProducts(t *testing.T) {
 
 	apitests.Run(t, router, testCases)
 }
+
+var testCases = []apitests.Test{
+	{
+		Name:           "search for 'Hat'",
+		URL:            "/search/Hat",
+		Method:         "GET",
+		Body:           "",
+		CheckBody:      `prd1`,
+		CheckBodyCount: 1,
+		CheckStatus:    200,
+	},
+	{
+		Name:           "search for cheese",
+		URL:            "/search/cheese",
+		Method:         "GET",
+		Body:           "",
+		CheckBody:      "\\[\\]",
+		CheckBodyCount: 1,
+		CheckStatus:    200,
+	},
+	{
+		Name:           "get product prd3",
+		URL:            "/get/prd3",
+		Method:         "GET",
+		Body:           "",
+		CheckBody:      "prd3",
+		CheckBodyCount: 1,
+		CheckStatus:    200,
+	},
+	{
+		Name:           "get on offer products",
+		URL:            "/offers",
+		Method:         "GET",
+		Body:           "",
+		CheckBody:      "prd2",
+		CheckBodyCount: 1,
+		CheckStatus:    200,
+	},
+	{
+		Name:           "get all products",
+		URL:            "/catalog",
+		Method:         "GET",
+		Body:           `"id"`,
+		CheckBodyCount: 3,
+		CheckStatus:    200,
+	},
+	{
+		Name:           "get non-existent product",
+		URL:            "/get/999",
+		Method:         "GET",
+		Body:           "",
+		CheckBody:      "",
+		CheckBodyCount: 0,
+		CheckStatus:    404,
+	},
+}

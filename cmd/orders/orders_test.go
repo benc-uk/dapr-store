@@ -57,7 +57,7 @@ func TestOrders(t *testing.T) {
 		t.Error("'process invalid order' failed")
 	}
 
-	goodOrder := mock.Orders["fake-order-01"]
+	goodOrder := mock.MockOrders[0]
 	err = mockOrdersSvc.ProcessOrder(goodOrder)
 	if err != nil {
 		t.Errorf("'process valid new order' failed %+v", err)
@@ -65,7 +65,7 @@ func TestOrders(t *testing.T) {
 		t.Log("'process valid new order' passed")
 	}
 
-	newOrder, err := mockOrdersSvc.GetOrder("fake-order-01")
+	newOrder, err := mockOrdersSvc.GetOrder("ord-mock")
 	if err != nil {
 		t.Errorf("'get new order' failed: %+v", err)
 	} else {
@@ -77,7 +77,7 @@ func TestOrders(t *testing.T) {
 	}
 
 	time.Sleep(time.Second * 3)
-	newOrder, err = mockOrdersSvc.GetOrder("fake-order-01")
+	newOrder, err = mockOrdersSvc.GetOrder("ord-mock")
 	if err != nil {
 		t.Errorf("'order processing completed' failed: %+v", err)
 	} else {
@@ -92,10 +92,10 @@ func TestOrders(t *testing.T) {
 var testCases = []apitests.Test{
 	{
 		"get an existing order",
-		"/get/fake-order-01",
+		"/get/ord-mock",
 		"GET",
 		"",
-		"fake-order-01",
+		"ord-mock",
 		1,
 		200,
 	},
