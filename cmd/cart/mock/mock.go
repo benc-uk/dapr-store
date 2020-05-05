@@ -18,16 +18,16 @@ var mockCarts []cartspec.Cart
 var mockOrders []orderspec.Order
 
 func init() {
-	mockJson, err := ioutil.ReadFile("../../etc/mock-data/carts.json")
+	mockJSON, err := ioutil.ReadFile("../../etc/mock-data/carts.json")
 	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal(mockJson, &mockCarts)
-	mockJson, err = ioutil.ReadFile("../../etc/mock-data/orders.json")
+	json.Unmarshal(mockJSON, &mockCarts)
+	mockJSON, err = ioutil.ReadFile("../../etc/mock-data/orders.json")
 	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal(mockJson, &mockOrders)
+	json.Unmarshal(mockJSON, &mockOrders)
 }
 
 //

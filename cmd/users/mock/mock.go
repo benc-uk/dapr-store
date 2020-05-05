@@ -23,11 +23,11 @@ type UserService struct {
 var mockUsers []spec.User
 
 func init() {
-	mockJson, err := ioutil.ReadFile("../../etc/mock-data/users.json")
+	mockJSON, err := ioutil.ReadFile("../../etc/mock-data/users.json")
 	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal(mockJson, &mockUsers)
+	json.Unmarshal(mockJSON, &mockUsers)
 }
 
 // GetUser mock

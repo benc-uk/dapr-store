@@ -24,11 +24,11 @@ type ProductsService struct {
 var mockProducts []spec.Product
 
 func init() {
-	mockJson, err := ioutil.ReadFile("../../etc/mock-data/products.json")
+	mockJSON, err := ioutil.ReadFile("../../etc/mock-data/products.json")
 	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal(mockJson, &mockProducts)
+	json.Unmarshal(mockJSON, &mockProducts)
 }
 
 // var products = []spec.Product{

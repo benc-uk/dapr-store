@@ -15,21 +15,21 @@ import (
 type OrderService struct {
 }
 
-// Load mock data
+// MockOrders is some fake orders
 var MockOrders []orderspec.Order
 var mockUserOrders []string
 
 func init() {
-	mockJson, err := ioutil.ReadFile("../../etc/mock-data/orders.json")
+	mockJSON, err := ioutil.ReadFile("../../etc/mock-data/orders.json")
 	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal(mockJson, &MockOrders)
-	mockJson, err = ioutil.ReadFile("../../etc/mock-data/user-orders.json")
+	json.Unmarshal(mockJSON, &MockOrders)
+	mockJSON, err = ioutil.ReadFile("../../etc/mock-data/user-orders.json")
 	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal(mockJson, &mockUserOrders)
+	json.Unmarshal(mockJSON, &mockUserOrders)
 }
 
 // GetOrder mock
