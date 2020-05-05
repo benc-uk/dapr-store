@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/user/spec/schema.json",
+  "type": "object",
+  "title": "User entity",
+  "required": [
+    "username",
+    "displayName",
+    "profileImage"
+  ],
+  "properties": {
+    "username": {
+      "$id": "#/properties/username",
+      "type": "string",
+      "title": "The user's username"
+    },
+    "displayName": {
+      "$id": "#/properties/displayName",
+      "type": "string",
+      "title": "The user's displayName"
+    },
+    "profileImage": {
+      "$id": "#/properties/profileImage",
+      "type": "string",
+      "title": "User image file URL"
+    }
+  }
+}
