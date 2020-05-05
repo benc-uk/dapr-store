@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "id": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/orders/spec/schema.json",
+  "$id": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/orders/spec/schema.json",
   "type": "object",
   "title": "Order entity",
   "required": [
@@ -57,7 +57,7 @@
             "$id": "#/properties/lineItems/product",
             "type": "object",
             "title": "The product object",
-            "$ref": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/products/spec/schema.json"
+            "$ref": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/products/spec/schema.json#"
           }
         }
       },
