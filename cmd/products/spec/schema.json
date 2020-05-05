@@ -28,7 +28,7 @@
       },
       "cost": {
           "$id": "#/properties/cost",
-          "type": "integer",
+          "type": "number",
           "title": "The cost schema",
           "description": "An explanation about the purpose of this instance."
       },
