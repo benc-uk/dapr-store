@@ -47,7 +47,7 @@ content-type: application/json
 # ===================================================================
 
 ### Get existing order
-GET http://{{host}}/v1.0/invoke/orders/method/get/CMAM2 
+GET http://{{host}}/v1.0/invoke/orders/method/get/eQovn 
 
 ### Get orders for user
 GET http://{{host}}/v1.0/invoke/orders/method/getForUser/demo@example.net
@@ -69,6 +69,6 @@ POST http://{{host}}/v1.0/invoke/users/method/register
 content-type: application/json
 
 {
-  "username": "benc.uk@outlook.com",
-  "displayName": "Ben API TEST"
+  "username": "demo@example.net",
+  "displayName": "API TEST"
 }

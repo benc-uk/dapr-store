@@ -22,9 +22,9 @@
             </b-card-title>
           </b-link>
           <b-card-text>
-            <h4>{{ product.description }}</h4>
-
-            £{{ product.cost }}
+            {{ product.description }}
+            <br><br>
+            <h4>£{{ product.cost }}</h4>
           </b-card-text>
 
           <b-button :disabled="!user.userName" href="#" variant="primary" class="d-none d-md-inline" @click="addToCart(product)">
@@ -34,6 +34,7 @@
         </b-col>
 
         <b-col class="flex-grow-0 d-none d-md-block">
+          <span v-if="product.onOffer" class="onsale">On Sale</span>
           <div class="product-img">
             <b-link :to="`/product/`+product.id">
               <img :src="product.image">
@@ -105,5 +106,21 @@ export default {
 .product-img img {
   width: 12rem;
   border-radius: 0.5rem;
+}
+.card-text {
+  font-size: 130%
+}
+.onsale {
+  display: inline-block;
+  position: absolute;
+  bottom: 0;
+  width: 12rem;
+  height: 1.5rem;
+  font-size: 1rem;
+  color: white;
+  background-color: rgb(185, 17, 17);
+  text-align: center;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
 }
 </style>

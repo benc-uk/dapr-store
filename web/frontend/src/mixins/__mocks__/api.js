@@ -9,66 +9,75 @@
 const fs = require('fs')
 
 // Load mock data, which we put beside the tests
-let mockJson = fs.readFileSync(__dirname+'/../../../tests/unit/mock-data.json')
-let mockData = JSON.parse(mockJson)
+let mockDataDir = __dirname+'/../../../../../etc/mock-data'
+let mockJson = fs.readFileSync(`${mockDataDir}/carts.json`)
+let mockCarts = JSON.parse(mockJson)
+mockJson = fs.readFileSync(`${mockDataDir}/orders.json`)
+let mockOrders = JSON.parse(mockJson)
+mockJson = fs.readFileSync(`${mockDataDir}/products.json`)
+let mockProducts = JSON.parse(mockJson)
+mockJson = fs.readFileSync(`${mockDataDir}/user-orders.json`)
+let mockUserOrders = JSON.parse(mockJson)
+mockJson = fs.readFileSync(`${mockDataDir}/users.json`)
+let mockUsers = JSON.parse(mockJson)
 
 export default {
   methods: {
 
     apiProductOffers: function() {
       return {
-        data: mockData.products.filter((p) => p.onOffer == true)
+        data: mockProducts.filter((p) => p.onOffer == true)
       }
     },
 
     apiProductCatalog: function() {
       return {
-        data: mockData.products
+        data: mockProducts
       }
     },
 
     apiProductGet: function(productId) {
       return new Promise((resolve) => {
-        resolve({ data: mockData.products.find((p) => p.id == productId) } )
+        resolve({ data: mockProducts.find((p) => p.id == productId) } )
       })
     },
 
     apiProductSearch: function(query) {
       return {
-        data: mockData.products.filter((p) => p.name.includes(query))
+        data: mockProducts.filter((p) => p.name.includes(query))
       }
     },
 
-    apiOrdersForUser: function(username) {
+    apiOrdersForUser: function() {
       return {
-        data: mockData.ordersForUser[username]
+        data: mockUserOrders
       }
     },
 
     apiUserGet: function() {
       return {
-        data: mockData.users[0]
+        data: mockUsers[0]
       }
     },
 
     apiOrderGet: function(orderId) {
       return {
-        data: mockData.orders.find((o) => o.id == orderId)
+        data: mockOrders.find((o) => o.id == orderId)
       }
     },
 
-    apiCartGet: function(username) {
+    apiCartGet: function() {
       return {
-        data: mockData.carts[username]
+        data: mockCarts[0]
       }
     },
 
-    apiCartAddAmount: function(username, productId, amount) {
-      let count = mockData.carts[username][productId]
+    apiCartAddAmount: function(_, productId, amount) {
+      let count = mockCarts[0][productId]
       count+=amount
-      mockData.carts[username][productId] = count
+      mockCarts[0][productId] = count
       return {
-        data: mockData.carts[username]
+        data: mockCarts[0]
       }
     },
 

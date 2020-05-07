@@ -16,10 +16,10 @@
       Status: <span class="text-capitalize order-status" :class="['order-'+order.status]">{{ order.status }}</span>
     </h2>
     <ul>
-      <li>Amount: £{{ order.amount }}</li>
       <li>
-        Order Id: <code>{{ order.id }}</code>
+        Order Id: {{ order.id }}
       </li>
+      <li>Amount: £{{ order.amount }}</li>
       <li>Items:</li>
       <ul>
         <li v-for="(line, index) in order.lineItems" :key="index">

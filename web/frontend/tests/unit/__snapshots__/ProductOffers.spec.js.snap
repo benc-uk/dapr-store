@@ -27,21 +27,21 @@ exports[`ProductOffers.vue renders products on offer 1`] = `
         <!---->
         <!---->
         <div class="row">
-          <div class="col"><a target="_self" href="/product/2" class="">
+          <div class="col"><a target="_self" href="/product/prd2" class="">
               <h4 class="card-title">
                 Black &amp; Gold Tie Set
               </h4>
             </a>
             <p class="card-text">
-            <h4>100% hand made silk includes tie, pocket square and cufflinks</h4>
-
-            £18
+              100% hand made silk includes tie, pocket square and cufflinks
+              <br><br>
+            <h4>£18</h4>
             </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled"><i icon="shopping-cart"></i>
               &nbsp; Add to Cart
             </a>
           </div>
-          <div class="flex-grow-0 d-none d-md-block col">
-            <div class="product-img"><a target="_self" href="/product/2" class=""><img src="/img/catalog/2.jpg"></a></div>
+          <div class="flex-grow-0 d-none d-md-block col"><span class="onsale">On Sale</span>
+            <div class="product-img"><a target="_self" href="/product/prd2" class=""><img src="/img/catalog/2.jpg"></a></div>
           </div>
         </div>
       </div>

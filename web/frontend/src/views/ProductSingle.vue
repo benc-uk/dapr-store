@@ -22,7 +22,10 @@
           <b-card-title>
             {{ product.name }}
           </b-card-title>
-          <br>
+          <div v-if="product.onOffer" class="onsale">
+            On Sale
+          </div>
+          <br><br><br>
           {{ product.description }}
           <br><br>
           £{{ product.cost }}
@@ -118,5 +121,16 @@ export default {
   .row {
     flex-direction: column;
   }
+}
+.onsale {
+  display: inline-block;
+  width: 100%;
+  height: 2rem;
+  font-size: 1.2rem;
+  line-height: 2rem;
+  color: rgb(97, 9, 9);
+  background-color: rgb(240, 216, 216);
+  text-align: center;
+  border-radius: 0.3rem;
 }
 </style>

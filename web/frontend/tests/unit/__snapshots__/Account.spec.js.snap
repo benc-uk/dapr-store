@@ -13,10 +13,10 @@ exports[`Account.vue renders user profile 1`] = `
     <!---->
     <div class="card-body">
       <!---->
-      <!----><img src="demo.jpg" class="profile d-none d-md-block">
+      <!----><img src="face.jpg" class="profile d-none d-md-block">
 
-      Display Name: <b>Demo User</b> <br>
-      Username: <b>demo@example.net</b></div>
+      Display Name: <b>Mock User</b> <br>
+      Username: <b>mock@example.net</b></div>
     <!---->
     <!---->
   </div> <br>
@@ -30,17 +30,22 @@ exports[`Account.vue renders user profile 1`] = `
     <!---->
     <div class="card-body">
       <!---->
-      <!----><a target="_self" href="/order/order123" class="">
+      <!----><a target="_self" href="/order/ord-mock" class="">
         <h2>Mock order</h2>
       </a>
       <h2>
-        Status: <span class="text-capitalize order-status order-complete">complete</span></h2>
+        Status: <span class="text-capitalize order-status order-new">new</span></h2>
       <ul>
-        <li>Amount: £140.6</li>
         <li>
-          Order Id: <code>order123</code></li>
+          Order Id: ord-mock
+        </li>
+        <li>Amount: £22.4</li>
         <li>Items:</li>
-        <ul></ul>
+        <ul>
+          <li>
+            2 x Paisley Cravat Ascot Tie — £11.2
+          </li>
+        </ul>
       </ul>
     </div>
     <!---->

@@ -64,9 +64,9 @@ The service provides some fake order processing activity so that orders are move
 ### Orders - Dapr Interaction
 - **Pub/Sub.** Subscribes to the `orders-queue` topic to receive new orders from the *cart* service
 - **State.** Stores and retrieves **Order** entities from the state service, keyed on OrderID. Also lists of orders per user, held as an array of OrderIDs and keyed on username
-- **Bindings.** All output bindings are optional
+- **Bindings.** All output bindings are *optional*
   - **Azure Blob.** For saving "order reports" as text files into Azure Blob storage
-  - **SendGrid.** For sending emails to users. *Note.* Not available yet, should be in next release of Dapr
+  - **SendGrid.** For sending emails to users via [SendGrid](https://sendgrid.com/)
 
 ## 👦 Users service
 This provides a simple user profile service to the Dapr Store. Only registered users can use the store to place orders etc.  

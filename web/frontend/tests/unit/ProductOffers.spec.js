@@ -17,14 +17,4 @@ describe('ProductOffers.vue', () => {
     await flushPromises()
     expect(wrapper).toMatchSnapshot()
   })
-
-  it('renders error messages', async () => {
-    const wrapper = mount(ProductOffers, {
-      localVue,
-      data: () => { return { error:'Bad thing' } }
-    })
-
-    await flushPromises()
-    expect(wrapper).toMatchSnapshot()
-  })
 })

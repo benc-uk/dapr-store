@@ -13,21 +13,22 @@ exports[`ProductSearch.vue renders search for Ascot 1`] = `
         <!---->
         <!---->
         <div class="row">
-          <div class="col"><a href="#/product/3" class="" target="_self">
+          <div class="col"><a href="#/product/prd3" class="" target="_self">
               <h4 class="card-title">
                 Paisley Cravat Ascot Tie
               </h4>
             </a>
             <p class="card-text">
-            <h4>Black &amp; Red Paisley Cravat</h4>
-
-            £11.2
+              Black &amp; Red Paisley Cravat
+              <br><br>
+            <h4>£11.2</h4>
             </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled"><i icon="shopping-cart"></i>
               &nbsp; Add to Cart
             </a>
           </div>
           <div class="flex-grow-0 d-none d-md-block col">
-            <div class="product-img"><a href="#/product/3" class="" target="_self"><img src="/img/catalog/6.jpg"></a></div>
+            <!---->
+            <div class="product-img"><a href="#/product/prd3" class="" target="_self"><img src="/img/catalog/3.jpg"></a></div>
           </div>
         </div>
       </div>

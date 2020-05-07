@@ -37,7 +37,7 @@ func NewService(serviceName string, router *mux.Router) *OrderService {
 		helper,
 		storeName,
 		"orders-email",
-		"orders-notify",
+		"orders-report",
 	}
 
 	// Dapr pub/sub specific
@@ -204,13 +204,15 @@ func (s *OrderService) EmailNotify(order spec.Order) error {
 
 // SaveReport uses Dapr Azure Blob output binding to store a order report
 func (s *OrderService) SaveReport(order spec.Order) error {
+	blobName := "order_" + order.ID + ".txt"
 	blobMetadata := map[string]string{
 		"ContentType": "text/plain",
-		"blobName":    "order_" + order.ID + ".txt",
+		"blobName":    blobName,
 	}
-	blobData := "----------\nOrder title:" + order.Title + "\nOrder ID: " + order.ID +
+	blobData := "----------\nTitle: " + order.Title + "\nOrder ID: " + order.ID +
 		"\nUser: " + order.ForUser + "\nAmount: " + fmt.Sprintf("%f", order.Amount) + "\n----------"
 
+	log.Printf("### Saving report to blob: %s", blobName)
 	prob := s.SendOutput(s.reportOutputName, blobData, blobMetadata)
 	if prob != nil {
 		log.Printf("### Problem sending to blob output: %+v", prob)

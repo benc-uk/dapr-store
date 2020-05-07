@@ -8,22 +8,19 @@ import VueRouter from 'vue-router'
 localVue.use(VueRouter)
 const router = new VueRouter()
 
-import ProductList from '@/components/ProductList.vue'
+import ViewOrder from '@/views/ViewOrder.vue'
 
 jest.mock('@/mixins/api')
 
-// Load mock data
-let mockJson = require('fs').readFileSync(__dirname+'/../../../../etc/mock-data/products.json')
-let mockProducts = JSON.parse(mockJson)
+const orderId = 'order123'
 
-describe('ProductList.vue', () => {
-  it('renders product list', async () => {
-    const wrapper = mount(ProductList, {
+describe('ProductSingle.vue', () => {
+  it('renders product details', async () => {
+    router.push({ name: 'view-order', params: { id: orderId } })
+
+    const wrapper = mount(ViewOrder, {
       localVue,
-      router,
-      propsData: {
-        products: mockProducts
-      }
+      router
     })
 
     await flushPromises()

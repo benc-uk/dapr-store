@@ -9,14 +9,25 @@ exports[`Cart.vue renders cart contents 1`] = `
   <!---->
   <!---->
   <div>
-    <h2>Cart total: £36.00 </h2>
+    <h2>Cart total: £91.10 </h2>
     <div class="card m-3 p-1">
       <!---->
-      <div class="card-header bg-primary text-white"><span>Black &amp; Gold Tie Set</span></div>
+      <div class="card-header bg-primary text-white"><span>Top&nbsp;Hat&nbsp;(6″)</span></div>
       <div class="card-body">
         <!---->
         <!---->
-        <h2>Count:</h2> <input type="text" readonly="readonly"> <button type="button" class="btn ml-5 mr-3 btn-warning btn-lg"><i icon="minus-circle"></i></button> <button type="button" class="btn btn-success btn-lg"><i icon="plus-circle"></i></button> <img src="/img/catalog/2.jpg" class="thumb">
+        <h2>Count:</h2> <input type="text" readonly="readonly"> <button type="button" class="btn ml-5 mr-3 btn-warning btn-lg"><i icon="minus-circle"></i></button> <button type="button" class="btn btn-success btn-lg"><i icon="plus-circle"></i></button> <img src="/img/catalog/1.jpg" class="thumb">
+      </div>
+      <!---->
+      <!---->
+    </div>
+    <div class="card m-3 p-1">
+      <!---->
+      <div class="card-header bg-primary text-white"><span>Paisley Cravat Ascot Tie</span></div>
+      <div class="card-body">
+        <!---->
+        <!---->
+        <h2>Count:</h2> <input type="text" readonly="readonly"> <button type="button" class="btn ml-5 mr-3 btn-warning btn-lg"><i icon="minus-circle"></i></button> <button type="button" class="btn btn-success btn-lg"><i icon="plus-circle"></i></button> <img src="/img/catalog/3.jpg" class="thumb">
       </div>
       <!---->
       <!---->
