@@ -8,6 +8,7 @@ The backend microservices are written in Go (however it's worth nothing that Dap
 This repo is a monorepo, containing the source for several discreet but closely linked codebases, one for each component of the project, as described below.  
 The ["Go Standard Project Layout"](https://github.com/golang-standards/project-layout) has been used. 
 
+:warning: The project is still in the MVP stage, with a high rate of change - expect breaking changes
 
 # Architecture
 The following diagram shows all the components of the application and main interactions. It also highlights which Dapr API/feature (aka Dapr building block) is used and where.
