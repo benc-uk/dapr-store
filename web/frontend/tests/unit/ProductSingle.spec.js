@@ -12,7 +12,7 @@ import ProductSingle from '@/views/ProductSingle.vue'
 
 jest.mock('@/mixins/api')
 
-const productId = '2'
+const productId = 'prd2'
 
 describe('ProductSingle.vue', () => {
   it('renders product details', async () => {

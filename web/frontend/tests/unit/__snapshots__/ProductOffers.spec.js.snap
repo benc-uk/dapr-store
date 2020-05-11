@@ -1,19 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ProductOffers.vue renders error messages 1`] = `
-<div>
-  <h1>On Sale</h1>
-  <div role="alert" aria-live="polite" aria-atomic="true" class="alert alert-warning">
-    <!---->
-    <h4>There was a problem 😥</h4>
-    <div class="errmsg">
-      Bad thing
-    </div>
-  </div>
-  <!---->
-</div>
-`;
-
 exports[`ProductOffers.vue renders products on offer 1`] = `
 <div>
   <h1>On Sale</h1>

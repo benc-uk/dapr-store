@@ -11,4 +11,10 @@ echo "### Starting nginx in docker"
 
 sed -i "s/localhost:[[:digit:]]\+; #dapr/localhost:$DAPR_HTTP_PORT; #dapr/g" dapr.conf
 
-docker run --rm --network host -p 9000:9000 --mount type=bind,source=$(pwd),target=/etc/nginx/conf.d/ --name api-gateway nginx:alpine
+# Disabled this nonsense for now, it was an attempt to get it working in a devcontainer
+# LOCAL_GW_DIR=$PWD
+# if [ ! -z "$PROJECT_PATH" ]; then
+#   LOCAL_GW_DIR="$PROJECT_PATH/scripts/local-gateway"
+# fi
+
+docker run --rm --network host -p 9000:9000 --mount type=bind,source=$PWD,target=/etc/nginx/conf.d/ --name api-gateway nginx:alpine

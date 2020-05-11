@@ -1,0 +1,52 @@
+{
+	"name": "Dapr Store",
+	"dockerFile": "Dockerfile",
+	"runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [9000],
+
+	// Use 'settings' to set *default* container specific settings.json values on container create. 
+	// You can edit these settings after create using File > Preferences > Settings > Remote.
+	"settings": { 
+		"terminal.integrated.shell.linux": "/bin/zsh",
+		"go.gopath": "/go",
+		"go.inferGopath": true,
+		"go.useLanguageServer": true,
+		"go.vetFlags": [
+			"-composites=false"
+		],
+	
+		// ESLint config for Vue
+		"editor.codeActionsOnSave": {
+			"source.fixAll.eslint": true
+		},
+		"eslint.format.enable": true,
+		"[typescript]": {
+			"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+		},
+		"eslint.workingDirectories": [
+			"./web/frontend"
+		]		
+	},
+
+	// Add the IDs of extensions you want installed when the container is created in the array below.
+	"extensions": [
+		"ms-vscode.go",
+		"dbaeumer.vscode-eslint",
+		"ms-azuretools.vscode-docker"
+	],
+	
+	// Uncomment the next line to run commands after the container is created.
+	"postCreateCommand": "cd web/frontend && npm install && dapr init",
+	
+	"mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
+
+	// Comment out the next line to run as root
+	//"remoteUser": "vscode"
+
+	"containerEnv": {
+		// We need this path to run the local-gateway 
+		"PROJECT_PATH": "${localWorkspaceFolder}",
+	}
+}

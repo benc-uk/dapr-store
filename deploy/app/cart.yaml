@@ -17,6 +17,7 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/id: "cart"
         dapr.io/port: "9001"
+        #dapr.io/config: "ratelimiting" # Uncomment to enable rate limiting
     spec:
       containers:
       - name: service

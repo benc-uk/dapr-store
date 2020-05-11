@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProductList.vue renders product list 1`] = `
+<div>
+  <!---->
+  <div class="card">
+    <!---->
+    <!---->
+    <div class="card-body">
+      <!---->
+      <!---->
+      <div class="row">
+        <div class="col"><a href="#/product/prd1" class="" target="_self">
+            <h4 class="card-title">
+              Top&nbsp;Hat&nbsp;(6″)
+            </h4>
+          </a>
+          <p class="card-text">
+            Made from 100% wool and quite nice
+            <br><br>
+          <h4>£39.95</h4>
+          </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled"><i icon="shopping-cart"></i>
+            &nbsp; Add to Cart
+          </a>
+        </div>
+        <div class="flex-grow-0 d-none d-md-block col">
+          <!---->
+          <div class="product-img"><a href="#/product/prd1" class="" target="_self"><img src="/img/catalog/1.jpg"></a></div>
+        </div>
+      </div>
+    </div>
+    <!---->
+    <!---->
+  </div>
+  <div class="card">
+    <!---->
+    <!---->
+    <div class="card-body">
+      <!---->
+      <!---->
+      <div class="row">
+        <div class="col"><a href="#/product/prd2" class="" target="_self">
+            <h4 class="card-title">
+              Black &amp; Gold Tie Set
+            </h4>
+          </a>
+          <p class="card-text">
+            100% hand made silk includes tie, pocket square and cufflinks
+            <br><br>
+          <h4>£18</h4>
+          </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled"><i icon="shopping-cart"></i>
+            &nbsp; Add to Cart
+          </a>
+        </div>
+        <div class="flex-grow-0 d-none d-md-block col"><span class="onsale">On Sale</span>
+          <div class="product-img"><a href="#/product/prd2" class="" target="_self"><img src="/img/catalog/2.jpg"></a></div>
+        </div>
+      </div>
+    </div>
+    <!---->
+    <!---->
+  </div>
+  <div class="card">
+    <!---->
+    <!---->
+    <div class="card-body">
+      <!---->
+      <!---->
+      <div class="row">
+        <div class="col"><a href="#/product/prd3" class="" target="_self">
+            <h4 class="card-title">
+              Paisley Cravat Ascot Tie
+            </h4>
+          </a>
+          <p class="card-text">
+            Black &amp; Red Paisley Cravat
+            <br><br>
+          <h4>£11.2</h4>
+          </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled"><i icon="shopping-cart"></i>
+            &nbsp; Add to Cart
+          </a>
+        </div>
+        <div class="flex-grow-0 d-none d-md-block col">
+          <!---->
+          <div class="product-img"><a href="#/product/prd3" class="" target="_self"><img src="/img/catalog/3.jpg"></a></div>
+        </div>
+      </div>
+    </div>
+    <!---->
+    <!---->
+  </div>
+</div>
+`;

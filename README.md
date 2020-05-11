@@ -19,7 +19,7 @@ The application uses the following [Dapr Building Blocks](https://github.com/dap
 - **State** — State is held for users and orders using the [Dapr state management API](https://github.com/dapr/docs/blob/master/concepts/state-management/README.md). The state provider used is Redis, however any other provider could be plugged in without any application code changes. 
 - **Pub/Sub** — The submission of new orders through the cart service, is decoupled from the order processing via pub/sub messaging and the [Dapr pub/sub messaging API](https://github.com/dapr/docs/blob/master/concepts/publish-subscribe-messaging/README.md). New orders are placed on a topic as messages, to be collected by the orders service. This allows the orders service to independently scale and separates our reads & writes 
 - **Output Bindings** — To communicate with downstream & 3rd party systems, the [Dapr Bindings API](https://github.com/dapr/docs/blob/master/concepts/bindings/README.md) is used. This allows the store to carry out tasks such as saving order details into external storage (e.g. Azure Blob) and notify uses with emails via SendGrid
-- **Middleware** — To be added later, e.g. to provide rate limiting, and possibly JWT validation
+- **Middleware** — Dapr supports a range of HTTP middleware, for this project traffic rate limiting can enabled on any of the APIs with a single Kubernetes annotation 
 
 
 # Components

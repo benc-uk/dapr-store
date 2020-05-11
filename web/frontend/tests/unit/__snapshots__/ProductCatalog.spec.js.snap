@@ -1,19 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ProductCatalog.vue renders error messages 1`] = `
-<div>
-  <h1>All Products</h1>
-  <div role="alert" aria-live="polite" aria-atomic="true" class="alert alert-warning">
-    <!---->
-    <h4>There was a problem 😥</h4>
-    <div class="errmsg">
-      Mock test error
-    </div>
-  </div>
-  <!---->
-</div>
-`;
-
 exports[`ProductCatalog.vue renders products in catalog 1`] = `
 <div>
   <h1>All Products</h1>

@@ -17,6 +17,7 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/id: "users"
         dapr.io/port: "9003"
+        #dapr.io/config: "ratelimiting" # Uncomment to enable rate limiting
     spec:
       containers:
       - name: service

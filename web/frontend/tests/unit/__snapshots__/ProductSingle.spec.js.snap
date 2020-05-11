@@ -4,7 +4,35 @@ exports[`ProductSingle.vue renders product details 1`] = `
 <div>
   <h1>Product Details</h1>
   <!---->
-  <div class="text-center"><span aria-hidden="true" class="spinner-border text-success" style="width: 5rem; height: 5rem;"><!----></span></div>
   <!---->
+  <div class="card">
+    <!---->
+    <!---->
+    <div class="card-body">
+      <!---->
+      <!---->
+      <div class="row d-flex">
+        <div class="mb-3 col">
+          <h4 class="card-title">
+            Black &amp; Gold Tie Set
+          </h4>
+          <div class="onsale">
+            On Sale
+          </div> <br><br><br>
+          100% hand made silk includes tie, pocket square and cufflinks
+          <br><br>
+          £18
+          <br><br> <button id="addBut" type="button" disabled="disabled" class="btn btn-primary disabled"><i icon="shopping-cart"></i>
+            &nbsp; Add to Cart
+          </button>
+        </div>
+        <div class="col">
+          <div class="product-img"><img src="/img/catalog/2.jpg"></div>
+        </div>
+      </div>
+    </div>
+    <!---->
+    <!---->
+  </div>
 </div>
 `;
