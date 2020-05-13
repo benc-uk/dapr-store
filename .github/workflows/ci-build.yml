@@ -53,4 +53,4 @@ jobs:
       if: github.event_name == 'push'
       run: |
         make push DOCKER_TAG=$DOCKER_TAG
-        make push DOCKER_TAG=auth
+        docker push $DOCKER_REG/$DOCKER_REPO/frontend-host:auth
