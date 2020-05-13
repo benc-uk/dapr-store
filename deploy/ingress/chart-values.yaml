@@ -1,4 +1,4 @@
-# helm install dapr-ingress stable/nginx-ingress -f ./deploy/ingress/ingress-values.yaml
+# helm install api-gateway stable/nginx-ingress -f ./deploy/ingress/ingress-values.yaml
 controller:
   ingressClass: "dapr"
   podAnnotations:

@@ -1,0 +1,32 @@
+name: Release Dockerhub Images
+
+on:
+  release:
+    types: [published]
+    
+env:
+  DOCKER_REPO: daprstore  
+  DOCKER_USER: bencuk
+  DOCKER_REG: docker.io
+  
+jobs:
+  releaseJob:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+      
+    - name: Run all builds
+      run: |
+        make docker DOCKER_TAG=${{ github.event.release.tag_name }} VERSION=${{ github.event.release.tag_name }}
+        make docker DOCKER_TAG=latest VERSION=${{ github.event.release.tag_name }}
+    
+    - name: Login to registry 
+      if: github.event_name == 'push'
+      run:  docker login $DOCKER_REG -u $DOCKER_USER -p ${{ secrets.DOCKER_PASSWORD }} 
+
+    - name: Push to Dockerhub
+      if: github.event_name == 'push'
+      run: |
+        make push DOCKER_TAG=${{ github.event.release.tag_name }}
+        make push DOCKER_TAG=latest

@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: daprstore/products:auth
+        image: daprstore/products:dev
         imagePullPolicy: Always
         resources:
           limits:

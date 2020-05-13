@@ -7,13 +7,11 @@ on:
     branches: [master]
     
 env:
-  DOCKER_TAG: latest
-  VERSION: 0.3.0
+  DOCKER_TAG: dev
+  VERSION: 0.0.0
   DOCKER_REPO: daprstore  
   DOCKER_USER: bencuk
   DOCKER_REG: docker.io
-  # DOCKER_USER: acr_name
-  # DOCKER_REG: acr_name.azurecr.io
 
 jobs:
   buildJob:
@@ -38,14 +36,14 @@ jobs:
       run: make test
 
     - name: Run all builds
-      run: make docker DOCKER_TAG=latest VERSION=$VERSION
+      run: make docker DOCKER_TAG=$DOCKER_TAG VERSION=$VERSION
 
     # =====================================================================
     # Steps after this are only run when merging or pushing into master
     # =====================================================================
 
-    - name: Run all builds with auth enabled
-      run: make docker DOCKER_TAG=auth VERSION=$VERSION CLIENT_ID="69972365-c1b6-494d-9579-5b9de2790fc3"
+    - name: Run all frontend with auth enabled and clientId set
+      run: make docker-frontend DOCKER_TAG=auth VERSION=$VERSION CLIENT_ID="69972365-c1b6-494d-9579-5b9de2790fc3"
     
     - name: Login to registry 
       if: github.event_name == 'push'
@@ -54,5 +52,5 @@ jobs:
     - name: Push to Dockerhub
       if: github.event_name == 'push'
       run: |
-        make push DOCKER_TAG=latest
+        make push DOCKER_TAG=$DOCKER_TAG
         make push DOCKER_TAG=auth

@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: daprstore/users:auth
+        image: daprstore/users:dev
         imagePullPolicy: Always
         env:
           - name: AUTH_CLIENT_ID

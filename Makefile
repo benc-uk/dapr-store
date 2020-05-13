@@ -101,6 +101,17 @@ docker :
 
 
 ################################################################################
+# Build Docker image for frontend only
+################################################################################
+.PHONY: docker-frontend
+docker-frontend :
+	docker build . -f build/frontend.Dockerfile \
+	--build-arg VERSION=$(VERSION) \
+	--build-arg CLIENT_ID=$(CLIENT_ID) \
+	-t $(DOCKER_PREFIX)/frontend-host:$(DOCKER_TAG)
+
+
+################################################################################
 # Push Docker images
 ################################################################################
 .PHONY: push

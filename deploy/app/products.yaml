@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: service
-        image: daprstore/products:0.1.0
+        image: daprstore/products:latest
         imagePullPolicy: Always
         resources:
           limits:
