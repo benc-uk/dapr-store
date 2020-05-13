@@ -22,11 +22,9 @@ jobs:
         make docker DOCKER_TAG=latest VERSION=${{ github.event.release.tag_name }}
     
     - name: Login to registry 
-      if: github.event_name == 'push'
       run:  docker login $DOCKER_REG -u $DOCKER_USER -p ${{ secrets.DOCKER_PASSWORD }} 
 
     - name: Push to Dockerhub
-      if: github.event_name == 'push'
       run: |
         make push DOCKER_TAG=${{ github.event.release.tag_name }}
         make push DOCKER_TAG=latest
