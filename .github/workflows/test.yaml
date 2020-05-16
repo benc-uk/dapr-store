@@ -9,9 +9,6 @@ jobs:
 
     steps:
       - name: Blah
-        if: ${{ github.event.project_card.column_url }}
+        if: contains(github.event.project_card.column_url, '9216245')
         run: |
-          echo ${{ github.event.project_card }}
-          echo ${{ github.event.project_card.column_url }}
           echo ${{ github.event.project_card.note }}
-          echo ${{ toJson(github.event) }}
