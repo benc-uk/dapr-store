@@ -4,13 +4,24 @@ Content-Type: application/json
 
 {
   "ref": "master",
-  "payload": {
-    "hello": "world"
-  },
   "description": "Deploy request from API",
-  "environment": "AKS",
-  "target_url": "https://example.net/deploy"
+  "environment": "AKS"
 }
+
+###
+
+POST https://api.github.com/repos/benc-uk/dapr-store/deployments/228959120/statuses
+Authorization: Basic benc-uk:{{$dotenv GITHUB_PAT}}
+Content-Type: application/json
+
+{
+  "environment": "production",
+  "state": "success",
+  "log_url": "https://example.com/deployment/42/output",
+  "environment_url": "https://example.com/wibble",
+  "description": "Deployment finished successfully."
+}
+
 
 ###
 
@@ -20,4 +31,9 @@ Authorization: Basic benc-uk:{{$dotenv GITHUB_PAT}}
 ###
 
 GET https://api.github.com/repos/benc-uk/dapr-store/deployments
+Authorization: Basic benc-uk:{{$dotenv GITHUB_PAT}}
+
+
+###
+GET https://api.github.com/repos/benc-uk/dapr-store/deployments/228957562/statuses
 Authorization: Basic benc-uk:{{$dotenv GITHUB_PAT}}
