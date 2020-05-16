@@ -1,0 +1,23 @@
+POST https://api.github.com/repos/benc-uk/dapr-store/deployments
+Authorization: Basic benc-uk:{{$dotenv GITHUB_PAT}}
+Content-Type: application/json
+
+{
+  "ref": "master",
+  "payload": {
+    "hello": "world"
+  },
+  "description": "Deploy request from API",
+  "environment": "AKS",
+  "target_url": "https://example.net"
+}
+
+###
+
+DELETE https://api.github.com/repos/benc-uk/dapr-store/deployments/228956025
+Authorization: Basic benc-uk:{{$dotenv GITHUB_PAT}}
+
+###
+
+GET https://api.github.com/repos/benc-uk/dapr-store/deployments
+Authorization: Basic benc-uk:{{$dotenv GITHUB_PAT}}

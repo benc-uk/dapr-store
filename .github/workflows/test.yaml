@@ -1,14 +1,16 @@
 name: Deploy 
 
 on:
-  project_card:
+ deployment:
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Blah
-        if: contains(github.event.project_card.column_url, '9216245')
-        run: |
-          echo ${{ github.event.project_card.note }}
+      - uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: "${{ github.token }}"
+          target_url: http://example.com
+          state: "success"
+          deployment_id: ${{ github.event.deployment.id }}

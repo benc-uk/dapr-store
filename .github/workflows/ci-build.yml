@@ -2,9 +2,11 @@ name: CI Build Images
 
 on: 
   push: 
-    branches: [master]
+    #branches: [master]
+    branches: [zzzzzzz]
   pull_request:
-    branches: [master]
+    branches: [zzzzzzz]
+    #branches: [master]
     
 env:
   DOCKER_TAG: dev
