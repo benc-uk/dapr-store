@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: chrnorm/deployment-status@master
+      - uses: benc-uk/deployment-status@master
         with:
           token: "${{ github.token }}"
           state: "success"
