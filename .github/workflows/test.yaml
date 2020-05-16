@@ -11,6 +11,7 @@ jobs:
       - uses: chrnorm/deployment-status@releases/v1
         with:
           token: "${{ github.token }}"
-          target_url: http://example.com
           state: "success"
           deployment_id: ${{ github.event.deployment.id }}
+          target_url: "http://example.com/blah"
+          environment_url: "http://example.com/env"

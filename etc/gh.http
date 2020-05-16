@@ -9,7 +9,7 @@ Content-Type: application/json
   },
   "description": "Deploy request from API",
   "environment": "AKS",
-  "target_url": "https://example.net"
+  "target_url": "https://example.net/deploy"
 }
 
 ###
