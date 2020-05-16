@@ -8,10 +8,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: benc-uk/deployment-status@master
+      - run: echo ${{ toJson(github.event) }}
+
+      - uses: benc-uk/deployment-status@v1
         with:
           token: "${{ github.token }}"
           state: "success"
           deployment_id: ${{ github.event.deployment.id }}
-          target_url: "http://example.com/blah"
           environment_url: "http://example.com/env"
