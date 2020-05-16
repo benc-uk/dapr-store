@@ -5,6 +5,7 @@ on:
 
 jobs:
   deployStaging:
+    if: github.event.deployment.environment == "Kubernetes"
     runs-on: ubuntu-latest
 
     steps:

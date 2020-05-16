@@ -63,7 +63,6 @@ jobs:
       uses: abendigo/create-deployment@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        payload: 
-          imageTag: ${{ env.DOCKER_TAG }}
-        description: "Deploy to AKS demo environment"
-        environment: "AKS"
+        payload: '"imageTag": "${{ env.DOCKER_TAG }}"'
+        description: "Deploy to Kubernetes demo environment"
+        environment: "Kubernetes"
