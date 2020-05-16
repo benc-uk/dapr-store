@@ -1,10 +1,10 @@
-name: Deploy 
+name: Deploy To Kubernetes
 
 on:
  deployment:
 
 jobs:
-  test:
+  deployStaging:
     runs-on: ubuntu-latest
 
     steps:

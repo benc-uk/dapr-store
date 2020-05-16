@@ -4,11 +4,10 @@ Content-Type: application/json
 
 {
   "ref": "master",
-  "description": "Deploy request from API",
+  "description": "Deploy to AKS demo environment",
   "environment": "AKS",
   "payload": {
-    "imageTag": "foo123",
-    "blah": "blah"
+    "imageTag": "foo123"
   }
 }
 
@@ -29,7 +28,7 @@ Content-Type: application/json
 
 ###
 
-DELETE https://api.github.com/repos/benc-uk/dapr-store/deployments/228956025
+DELETE https://api.github.com/repos/benc-uk/dapr-store/deployments/228977468
 Authorization: Basic benc-uk:{{$dotenv GITHUB_PAT}}
 
 ###
@@ -37,7 +36,3 @@ Authorization: Basic benc-uk:{{$dotenv GITHUB_PAT}}
 GET https://api.github.com/repos/benc-uk/dapr-store/deployments
 Authorization: Basic benc-uk:{{$dotenv GITHUB_PAT}}
 
-
-###
-GET https://api.github.com/repos/benc-uk/dapr-store/deployments/228957562/statuses
-Authorization: Basic benc-uk:{{$dotenv GITHUB_PAT}}
