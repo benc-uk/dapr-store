@@ -87,6 +87,7 @@ func main() {
 		indexPath:  "index.html",
 	}
 
+	router.HandleFunc("/config", routeConfig)
 	router.PathPrefix("/").Handler(spa)
 
 	serverPort := env.GetEnvInt("PORT", defaultPort)
@@ -101,4 +102,19 @@ func main() {
 	log.Printf("### Static content path: %v\n", spa.staticPath)
 	log.Printf("### Server listening on: %v\n", serverPort)
 	log.Fatal(srv.ListenAndServe())
+}
+
+//
+// Simple config endpoint, returns API_ENDPOINT & AUTH_CLIENT_ID vars to front end
+//
+func routeConfig(resp http.ResponseWriter, req *http.Request) {
+	config := map[string]string{
+		"API_ENDPOINT":   env.GetEnvString("API_ENDPOINT", "/"),
+		"AUTH_CLIENT_ID": env.GetEnvString("AUTH_CLIENT_ID", ""),
+	}
+
+	configJSON, _ := json.Marshal(config)
+	resp.Header().Set("Access-Control-Allow-Origin", "*")
+	resp.Header().Add("Content-Type", "application/json")
+	resp.Write([]byte(configJSON))
 }

@@ -5,10 +5,8 @@
 // Dapr Store frontend - API helper to call the various backend microservices
 // ----------------------------------------------------------------------------
 
-import { userProfile } from '../main'
+import { userProfile, config } from '../main'
 import axios from 'axios'
-
-const API_ENDPOINT = process.env.VUE_APP_API_ENDPOINT || '/'
 
 export default {
   methods: {
@@ -96,6 +94,7 @@ export default {
     // ===== Base Axios wrapper =====
     //
     _apiRawCall: function(apiPath, method = 'get', data = null) {
+      const API_ENDPOINT = config.API_ENDPOINT || '/'
       let apiUrl = `${API_ENDPOINT}${apiPath}`
       console.log(`### API CALL ${method} ${apiUrl}`)
 

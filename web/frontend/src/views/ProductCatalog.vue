@@ -40,7 +40,11 @@ export default {
   async mounted() {
     try {
       let resp = await this.apiProductCatalog()
-      this.products = resp.data
+      if (resp.data && typeof resp.data === 'object') {
+        this.products = resp.data
+      } else {
+        throw new Error('Failed to fetch products')
+      }
     } catch (err) {
       this.error = this.apiDecodeError(err)
     }

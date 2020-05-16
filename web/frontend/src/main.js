@@ -8,6 +8,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import * as msal from 'msal'
+import Axios from 'axios'
 import App from './App.vue'
 import { User } from './user'
 
@@ -32,29 +33,55 @@ Vue.use(VueRouter)
 let userProfile = new User()
 export { userProfile }
 
-// MSAL config used for signing in users with MS identity platform
+// Global stuff populated by call to appStartup
+export let config = {}
 export let msalApp = {}
 export let accessTokenRequest = {}
-if (process.env.VUE_APP_AUTH_CLIENT_ID) {
-  console.log(`### USER SIGN-IN ENABLED. Using clientId: ${process.env.VUE_APP_AUTH_CLIENT_ID}`)
-  msalApp = new msal.UserAgentApplication({
-    auth: {
-      clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
-      redirectUri: window.location.origin
+
+appStartup()
+
+//
+// Most of the app config & initialization moved here
+// To be synchronized with the config API call
+//
+async function appStartup() {
+  // Load config at runtime from special `/config` endpoint on frontend-host
+  try {
+    let resp = await Axios.get('/config')
+    config = resp.data
+  } catch (err) {
+    console.warn('### Failed to fetch \'/config\' endpoint. Defaults will be used')
+    config = {
+      API_ENDPOINT: '/',
+      AUTH_CLIENT_ID: ''
     }
-  })
-  accessTokenRequest = {
-    scopes: [ `api://${process.env.VUE_APP_AUTH_CLIENT_ID}/store-api` ]
   }
-} else {
-  console.log('### USER SIGN-IN DISABLED. Will run in demo mode, with dummy users')
-}
 
-if (process.env.VUE_APP_API_ENDPOINT) {
-  console.log(`### API_ENDPOINT overridden: ${process.env.VUE_APP_API_ENDPOINT}`)
-}
+  console.log('### ==== Config ====')
+  console.log(config)
 
-new Vue({
-  router,
-  render: (h) => h(App),
-}).$mount('#app')
+  // MSAL config used for signing in users with MS identity platform
+  if (config.AUTH_CLIENT_ID) {
+    console.log(`### USER SIGN-IN ENABLED. Using clientId: ${config.AUTH_CLIENT_ID}`)
+    msalApp = new msal.UserAgentApplication({
+      auth: {
+        clientId: config.AUTH_CLIENT_ID,
+        redirectUri: window.location.origin
+      }
+    })
+    accessTokenRequest = {
+      scopes: [ `api://${config.AUTH_CLIENT_ID}/store-api` ]
+    }
+  } else {
+    console.log('### USER SIGN-IN DISABLED. Will run in demo mode, with dummy users')
+  }
+
+  if (config.API_ENDPOINT != '/') {
+    console.log(`### API_ENDPOINT. Overridden with '${config.API_ENDPOINT}'`)
+  }
+
+  new Vue({
+    router,
+    render: (h) => h(App),
+  }).$mount('#app')
+}

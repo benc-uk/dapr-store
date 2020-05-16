@@ -10,7 +10,7 @@ env:
   DOCKER_REG: docker.io
   
 jobs:
-  releaseJob:
+  releaseToDockerhub:
     runs-on: ubuntu-latest
 
     steps:

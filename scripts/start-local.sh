@@ -12,6 +12,10 @@ pushd web/frontend
 npm run serve &
 popd
 
+# pushd cmd/frontend-host
+# source ./run.sh &
+# popd
+
 pushd cmd/orders
 source ./run.sh &
 popd

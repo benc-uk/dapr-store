@@ -11,7 +11,7 @@
   <b-container>
     <error-box :error="error" />
     <b-alert v-if="demoMode" show dismissible>
-      Real user sign-in disabled, due to lack of client-id configuration. <br>Running in demo mode, using a dummy user account
+      Real user sign-in disabled, as AUTH_CLIENT_ID was not set. <br>Running in demo mode, using a dummy user account
     </b-alert>
     <b-overlay :show="inprogress && !error" rounded="sm">
       <b-row class="m-1">
@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { userProfile, msalApp, accessTokenRequest } from '../main'
+import { userProfile, msalApp, accessTokenRequest, config } from '../main'
 import api from '../mixins/api'
 import { User, demoUserName } from '../user'
 import ErrorBox from '../components/ErrorBox'
@@ -95,13 +95,14 @@ export default {
 
   created() {
     // Demo mode is on when no AUTH_CLIENT_ID is provided
-    this.demoMode = process.env.VUE_APP_AUTH_CLIENT_ID ? false : true
+    this.demoMode = config.AUTH_CLIENT_ID ? false : true
   },
 
   methods: {
     async register() {
       this.error = null
       this.inprogress = true
+
       let authUser = await this.authenicateUser()
       let regUserRequest = {
         'username': authUser.userName,
@@ -117,13 +118,18 @@ export default {
         // Sidetracked by getting user's photo, resulted in Base64 encoding hell
         // let graphTokenResp = await msalApp.acquireTokenSilent({ scopes: [ 'user.read' ] })
         // let graphPhoto = await axios.get('https://graph.microsoft.com/beta/me/photo/$value', { headers: { Authorization: `Bearer ${graphTokenResp.accessToken}` } })
-        await this.apiUserRegister(regUserRequest)
+        let resp = await this.apiUserRegister(regUserRequest)
+        if (resp.data && resp.data.registrationStatus == 'success') {
+          console.log(`## Registered user ${regUserRequest.username}`)
+        } else {
+          throw new Error('Something went wrong while registering user')
+        }
         this.$router.replace({ path: '/' })
       } catch (err) {
         Object.assign(userProfile, new User())
         localStorage.removeItem('user')
         let errMsg = this.apiDecodeError(err)
-        console.log(JSON.stringify(errMsg))
+        console.error(JSON.stringify(errMsg))
 
         this.error = JSON.stringify(errMsg).includes('already registered') ? 'You have already registered, please sign-in' : errMsg
       }
