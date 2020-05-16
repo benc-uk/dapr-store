@@ -1,0 +1,14 @@
+name: Deploy 
+
+on:
+  project_card:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Blah
+        run: |
+          echo ${{ github.event.release.tag_name }}
+          echo ${{ github.event.project_card }}
