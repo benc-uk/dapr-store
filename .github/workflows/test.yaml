@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: echo ${{ toJson(github.event) }}
+      - run: echo ${{ github.event.deployment.payload.imageTag }}
 
       - uses: benc-uk/deployment-status@v1
         with:
