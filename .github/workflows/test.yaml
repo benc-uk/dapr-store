@@ -9,7 +9,9 @@ jobs:
 
     steps:
       - name: Blah
+        if: ${{ github.event.project_card.column_url }}
         run: |
           echo ${{ github.event.project_card }}
           echo ${{ github.event.project_card.column_url }}
           echo ${{ github.event.project_card.note }}
+          echo ${{ toJson(github.event) }}
