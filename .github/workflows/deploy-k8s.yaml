@@ -5,38 +5,45 @@ on:
 
 jobs:
   deployStaging:
-    if: github.event.deployment.environment == 'Kubernetes'
+    if: startsWith(github.event.deployment.environment, 'Kubernetes')
     runs-on: ubuntu-latest
+
+    env:
+      STATIC_IP: "40.127.220.129"
+      STATIC_IP_RG: "MC_Demo.AKS_bcdemo_northeurope"
 
     steps:
       - name: Checkout source
         uses: actions/checkout@v1
 
-      - name: 'Helm dep update'
+      - name: Helm dependency update
         run: |
           helm dep update ./deploy/helm/daprstore
 
-      - name: 'Helm Deploy'
-        uses: 'deliverybot/helm@v1'
+      - name: Helm deploy to staging
+        uses: deliverybot/helm@v1
         env:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
         with:
-          helm: 'helm3'
-          release: 'staging'
-          namespace: 'daprstore-stg'
-          chart: './deploy/helm/daprstore'
-          #token: '${{ github.token }}'
+          helm: helm3
+          release: staging
+          namespace: daprstore-stg
+          chart: ./deploy/helm/daprstore
           values: |
+            image:
+              registry: bcdemo.azurecr.io
+              repo: daprstore
+              tag: ${{ github.event.deployment.payload.imageTag }}
             apiGateway:
               staticIP:
-                address: "40.127.220.129"
-                resourceGroup: MC_Demo.AKS_bcdemo_northeurope
+                address: "${{ env.STATIC_IP }}"
+                resourceGroup: "${{ env.STATIC_IP_RG }}"
 
       - name: Set deployment status - success
         if: ${{ success() }}
         uses: benc-uk/deployment-status@v1
         with:
-          token: "${{ github.token }}"
-          state: "success"
+          token: ${{ github.token }}
+          state: success
           deployment_id: ${{ github.event.deployment.id }}
-          environment_url: "http://40.127.220.129/"
+          environment_url: http://${{ env.STATIC_IP }}/
