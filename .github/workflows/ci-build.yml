@@ -66,9 +66,8 @@ jobs:
     # =====================================================================
 
     - name: Trigger deployment
-      uses: abendigo/create-deployment@v1
+      uses: peter-evans/repository-dispatch@v1
       with:
         token: ${{ secrets.DEPLOYMENT_PAT }}
-        payload: '"imageTag": "${{ env.DOCKER_TAG }}"'
-        description: "Deploy to Kubernetes demo environment"
-        environment: "Kubernetes"
+        event-type: 'Continuous Deployment'
+        client-payload: '{"imageTag": "${{ env.DOCKER_TAG }}"}'        

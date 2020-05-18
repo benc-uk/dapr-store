@@ -1,10 +1,8 @@
 name: Deploy To Kubernetes
 
-#on:
-# deployment:
 on:
   repository_dispatch:
-    types: [deploy]
+    types: [ 'Continuous Deployment' ]
 
 env:
   STATIC_IP_RG: 'MC_Demo.AKS_bcdemo_northeurope'
@@ -18,24 +16,24 @@ jobs:
     env:
       STATIC_IP: '20.191.56.121'
       ENV_NAME: "Kubernetes: Staging"
-      NAMESPACE: 'daprstore-stg'
+      NAMESPACE: 'daprstore-stage'
 
     steps:
-      - name: Start deployment
+      - name: 'Start deployment'
         id: deploy
         uses: abendigo/create-deployment@v1
         with:
           token: ${{ github.token }}
           environment: ${{ env.ENV_NAME }}
 
-      - name: Checkout source
+      - name: 'Checkout source'
         uses: actions/checkout@v1
 
-      - name: Helm dependency update
+      - name: 'Helm dependency update'
         run: |
           helm dep update ./deploy/helm/daprstore
 
-      - name: Helm deploy to staging
+      - name: 'Helm deploy to: ${{ env.ENV_NAME }}'
         uses: deliverybot/helm@v1
         env:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
@@ -54,7 +52,7 @@ jobs:
                 address: "${{ env.STATIC_IP }}"
                 resourceGroup: "${{ env.STATIC_IP_RG }}"
 
-      - name: Set deployment status - success
+      - name: 'End deployment - success'
         if: ${{ success() }}
         uses: benc-uk/deployment-status@v1
         with:
@@ -63,7 +61,7 @@ jobs:
           deployment_id: ${{ steps.deploy.outputs.id }}
           environment_url: http://${{ env.STATIC_IP }}/
 
-      - name: Set deployment status - failure
+      - name: 'End deployment - failure'
         if: ${{ failure() }}
         uses: benc-uk/deployment-status@v1
         with:
@@ -79,25 +77,25 @@ jobs:
 
     env:
       STATIC_IP: '20.191.56.9'
-      ENV_NAME: 'Kubernetes: Staging'
-      NAMESPACE: 'daprstore'
+      ENV_NAME: 'Kubernetes: Production'
+      NAMESPACE: 'daprstore-prod'
 
     steps:
-      - name: Start deployment
+      - name: 'Start deployment'
         id: deploy
         uses: abendigo/create-deployment@v1
         with:
           token: ${{ github.token }}
           environment: ${{ env.ENV_NAME }}
 
-      - name: Checkout source
+      - name: 'Checkout source'
         uses: actions/checkout@v1
 
-      - name: Helm dependency update
+      - name: 'Helm dependency update'
         run: |
           helm dep update ./deploy/helm/daprstore
 
-      - name: Helm deploy to production
+      - name: 'Helm deploy to: ${{ env.ENV_NAME }}'
         uses: deliverybot/helm@v1
         env:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
@@ -116,7 +114,7 @@ jobs:
                 address: "${{ env.STATIC_IP }}"
                 resourceGroup: "${{ env.STATIC_IP_RG }}"
 
-      - name: Set deployment status - success
+      - name: 'End deployment - success'
         if: ${{ success() }}
         uses: benc-uk/deployment-status@v1
         with:
@@ -125,7 +123,7 @@ jobs:
           deployment_id: ${{ steps.deploy.outputs.id }}  
           environment_url: http://${{ env.STATIC_IP }}/
 
-      - name: Set deployment status - failure
+      - name: 'End deployment - failure'
         if: ${{ failure() }}
         uses: benc-uk/deployment-status@v1
         with:

@@ -17,3 +17,4 @@ cmd/frontend-host/frontend-host
 
 # Code coverage
 web/frontend/coverage
+**/node_modules/**
