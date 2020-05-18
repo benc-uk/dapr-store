@@ -8,7 +8,8 @@ Content-Type: application/json
   "environment": "Kubernetes",
   "payload": {
     "imageTag": "foo123"
-  }
+  },
+  "required_contexts": []
 }
 
 ###
