@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      STATIC_IP: '40.127.220.129'
+      STATIC_IP: '20.191.56.121'
       STATIC_IP_RG: 'MC_Demo.AKS_bcdemo_northeurope'
 
     steps:
@@ -39,6 +39,52 @@ jobs:
                 address: "${{ env.STATIC_IP }}"
                 resourceGroup: "${{ env.STATIC_IP_RG }}"
 
+      - name: Set deployment status - failure
+        if: ${{ failure() }}
+        uses: benc-uk/deployment-status@v1
+        with:
+          token: ${{ github.token }}
+          state: failure
+          deployment_id: ${{ github.event.deployment.id }}       
+
+# ==============================================================================================
+
+  deployProduction:
+    if: startsWith(github.event.deployment.environment, 'Kubernetes')
+    runs-on: ubuntu-latest
+    needs: deployStaging
+
+    env:
+      STATIC_IP: '20.191.56.9'
+      STATIC_IP_RG: 'MC_Demo.AKS_bcdemo_northeurope'
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v1
+
+      - name: Helm dependency update
+        run: |
+          helm dep update ./deploy/helm/daprstore
+
+      - name: Helm deploy to production
+        uses: deliverybot/helm@v1
+        env:
+          KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
+        with:
+          helm: helm3
+          release: production
+          namespace: daprstore
+          chart: ./deploy/helm/daprstore
+          values: |
+            image:
+              registry: bcdemo.azurecr.io
+              repo: daprstore
+              tag: "${{ github.event.deployment.payload.imageTag }}"
+            apiGateway:
+              staticIP:
+                address: "${{ env.STATIC_IP }}"
+                resourceGroup: "${{ env.STATIC_IP_RG }}"
+
       - name: Set deployment status - success
         if: ${{ success() }}
         uses: benc-uk/deployment-status@v1
@@ -54,4 +100,4 @@ jobs:
         with:
           token: ${{ github.token }}
           state: failure
-          deployment_id: ${{ github.event.deployment.id }}       
+          deployment_id: ${{ github.event.deployment.id }}     
