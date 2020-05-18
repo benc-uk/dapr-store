@@ -3,6 +3,13 @@ name: CI Build Images
 on: 
   push: 
     branches: [master]
+    paths-ignore:
+    - 'docs/**'
+    - '.github/**'
+    - 'etc/**'
+    - 'scripts/**'
+    - 'recycle-bin/**'
+    - '.vscode/**'
   pull_request:
     branches: [master]
     
