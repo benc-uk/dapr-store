@@ -21,8 +21,6 @@ jobs:
       NAMESPACE: 'daprstore-stg'
 
     steps:
-      - run: echo ${{ toJSON(github.event) }}
-
       - name: Start deployment
         id: deploy
         uses: abendigo/create-deployment@v1
@@ -50,7 +48,7 @@ jobs:
             image:
               registry: ${{ env.IMAGE_REG }}
               repo: ${{ env.IMAGE_REPO }}
-              tag: "${{ github.event.repository_dispatch.client_payload.imageTag }}"
+              tag: "${{ github.event.client_payload.imageTag }}"
             apiGateway:
               staticIP:
                 address: "${{ env.STATIC_IP }}"
@@ -112,7 +110,7 @@ jobs:
             image:
               registry: ${{ env.IMAGE_REG }}
               repo: ${{ env.IMAGE_REPO }}
-              tag: "${{ github.event.repository_dispatch.client_payload.imageTag }}"
+              tag: "${{ github.event.client_payload.imageTag }}"
             apiGateway:
               staticIP:
                 address: "${{ env.STATIC_IP }}"
