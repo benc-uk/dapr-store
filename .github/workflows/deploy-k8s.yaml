@@ -9,9 +9,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout source
+        uses: actions/checkout@v1
+
       - name: 'Helm dep update'
         run: |
-          helm dep update deploy/helm/daprstore
+          helm dep update ./deploy/helm/daprstore
 
       - name: 'Helm Deploy'
         uses: 'deliverybot/helm@v1'
@@ -20,7 +23,7 @@ jobs:
         with:
           release: 'staging'
           namespace: 'daprstore-stg'
-          chart: 'deploy/helm/daprstore'
+          chart: './deploy/helm/daprstore'
           token: '${{ github.token }}'
           values: |
             apiGateway:
