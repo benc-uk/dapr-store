@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      STATIC_IP: "40.127.220.129"
-      STATIC_IP_RG: "MC_Demo.AKS_bcdemo_northeurope"
+      STATIC_IP: '40.127.220.129'
+      STATIC_IP_RG: 'MC_Demo.AKS_bcdemo_northeurope'
 
     steps:
       - name: Checkout source
@@ -33,7 +33,7 @@ jobs:
             image:
               registry: bcdemo.azurecr.io
               repo: daprstore
-              tag: ${{ github.event.deployment.payload.imageTag }}
+              tag: "${{ github.event.deployment.payload.imageTag }}"
             apiGateway:
               staticIP:
                 address: "${{ env.STATIC_IP }}"
@@ -47,3 +47,11 @@ jobs:
           state: success
           deployment_id: ${{ github.event.deployment.id }}
           environment_url: http://${{ env.STATIC_IP }}/
+
+      - name: Set deployment status - failure
+        if: ${{ failure() }}
+        uses: benc-uk/deployment-status@v1
+        with:
+          token: ${{ github.token }}
+          state: failure
+          deployment_id: ${{ github.event.deployment.id }}       
