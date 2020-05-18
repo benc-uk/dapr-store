@@ -25,17 +25,18 @@ jobs:
           release: 'staging'
           namespace: 'daprstore-stg'
           chart: './deploy/helm/daprstore'
-          token: '${{ github.token }}'
+          #token: '${{ github.token }}'
           values: |
             apiGateway:
               staticIP:
                 address: "40.127.220.129"
                 resourceGroup: MC_Demo.AKS_bcdemo_northeurope
 
-      # - name: Set deployment status - success
-      #   uses: benc-uk/deployment-status@v1
-      #   with:
-      #     token: "${{ github.token }}"
-      #     state: "success"
-      #     deployment_id: ${{ github.event.deployment.id }}
-      #     environment_url: "http://example.com/env"
+      - name: Set deployment status - success
+        if: ${{ success() }}
+        uses: benc-uk/deployment-status@v1
+        with:
+          token: "${{ github.token }}"
+          state: "success"
+          deployment_id: ${{ github.event.deployment.id }}
+          environment_url: "http://40.127.220.129/"
