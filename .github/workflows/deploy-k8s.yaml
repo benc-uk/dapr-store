@@ -1,18 +1,33 @@
 name: Deploy To Kubernetes
 
+#on:
+# deployment:
 on:
- deployment:
+  repository_dispatch:
+    types: [deploy]
+
+env:
+  STATIC_IP_RG: 'MC_Demo.AKS_bcdemo_northeurope'
+  IMAGE_REG: bcdemo.azurecr.io
+  IMAGE_REPO: daprstore
 
 jobs:
   deployStaging:
-    if: startsWith(github.event.deployment.environment, 'Kubernetes')
     runs-on: ubuntu-latest
 
     env:
       STATIC_IP: '20.191.56.121'
-      STATIC_IP_RG: 'MC_Demo.AKS_bcdemo_northeurope'
+      ENV_NAME: "Kubernetes: Staging"
+      NAMESPACE: 'daprstore-stg'
 
     steps:
+      - name: Start deployment
+        id: deploy
+        uses: abendigo/create-deployment@v1
+        with:
+          token: ${{ github.token }}
+          environment: ${{ env.ENV_NAME }}
+
       - name: Checkout source
         uses: actions/checkout@v1
 
@@ -26,18 +41,27 @@ jobs:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
         with:
           helm: helm3
-          release: staging
-          namespace: daprstore-stg
+          release: daprstore
+          namespace: ${{ env.NAMESPACE }}
           chart: ./deploy/helm/daprstore
           values: |
             image:
-              registry: bcdemo.azurecr.io
-              repo: daprstore
-              tag: "${{ github.event.deployment.payload.imageTag }}"
+              registry: ${{ env.IMAGE_REG }}
+              repo: ${{ env.IMAGE_REPO }}
+              tag: "${{ github.event.repository_dispatch.client_payload.imageTag }}"
             apiGateway:
               staticIP:
                 address: "${{ env.STATIC_IP }}"
                 resourceGroup: "${{ env.STATIC_IP_RG }}"
+
+      - name: Set deployment status - success
+        if: ${{ success() }}
+        uses: benc-uk/deployment-status@v1
+        with:
+          token: ${{ github.token }}
+          state: success
+          deployment_id: ${{ steps.deploy.outputs.id }}
+          environment_url: http://${{ env.STATIC_IP }}/
 
       - name: Set deployment status - failure
         if: ${{ failure() }}
@@ -45,20 +69,27 @@ jobs:
         with:
           token: ${{ github.token }}
           state: failure
-          deployment_id: ${{ github.event.deployment.id }}       
+          deployment_id: ${{ steps.deploy.outputs.id }}       
 
 # ==============================================================================================
 
   deployProduction:
-    if: startsWith(github.event.deployment.environment, 'Kubernetes')
     runs-on: ubuntu-latest
     needs: deployStaging
 
     env:
       STATIC_IP: '20.191.56.9'
-      STATIC_IP_RG: 'MC_Demo.AKS_bcdemo_northeurope'
+      ENV_NAME: 'Kubernetes: Staging'
+      NAMESPACE: 'daprstore'
 
     steps:
+      - name: Start deployment
+        id: deploy
+        uses: abendigo/create-deployment@v1
+        with:
+          token: ${{ github.token }}
+          environment: ${{ env.ENV_NAME }}
+
       - name: Checkout source
         uses: actions/checkout@v1
 
@@ -72,14 +103,14 @@ jobs:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
         with:
           helm: helm3
-          release: production
-          namespace: daprstore
+          release: daprstore
+          namespace: ${{ env.NAMESPACE }}
           chart: ./deploy/helm/daprstore
           values: |
             image:
-              registry: bcdemo.azurecr.io
-              repo: daprstore
-              tag: "${{ github.event.deployment.payload.imageTag }}"
+              registry: ${{ env.IMAGE_REG }}
+              repo: ${{ env.IMAGE_REPO }}
+              tag: "${{ github.event.repository_dispatch.client_payload.imageTag }}"
             apiGateway:
               staticIP:
                 address: "${{ env.STATIC_IP }}"
@@ -91,7 +122,7 @@ jobs:
         with:
           token: ${{ github.token }}
           state: success
-          deployment_id: ${{ github.event.deployment.id }}
+          deployment_id: ${{ steps.deploy.outputs.id }}  
           environment_url: http://${{ env.STATIC_IP }}/
 
       - name: Set deployment status - failure
@@ -100,4 +131,4 @@ jobs:
         with:
           token: ${{ github.token }}
           state: failure
-          deployment_id: ${{ github.event.deployment.id }}     
+          deployment_id: ${{ steps.deploy.outputs.id }}    
