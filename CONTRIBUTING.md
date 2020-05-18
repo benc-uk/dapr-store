@@ -4,7 +4,7 @@ Hello! Thanks for taking an interest in my project/repo.
 Contributions to this project are welcome of course, otherwise I wouldn't have put it on GitHub 😃 however there's a few things I'd like to point out:
 
 - This is a personal project, it is not maintained by a team or group.
-- The code here is not production grade, you won't see many unit tests or other 'robust' practices in the code base.
+- The code here is not production grade, things like unit tests or other 'best' practices may not be present
 - I might have written things a certain way either by ignorance of a better/faster/cooler approach, maybe by design or just simple pragmatism.
 - It might take me a long time (weeks) to reply to issues or review PRs, I have a day job & I might not have looked at the code for a while.
 
