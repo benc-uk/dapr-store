@@ -21,8 +21,8 @@ jobs:
       NAMESPACE: 'daprstore-stg'
 
     steps:
-      - run: echo ${{ toJSON(github.event.repository_dispatch) }}
-      
+      - run: echo ${{ toJSON(github.event) }}
+
       - name: Start deployment
         id: deploy
         uses: abendigo/create-deployment@v1
