@@ -1,0 +1,49 @@
+{{- $tlsEnabled := (or .Values.ingressRules.certIssuer .Values.ingressRules.certName) -}}
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "daprstore.fullname" . }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingressRules.class }}
+    {{ if .Values.ingressRules.certIssuer }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingressRules.certIssuer }}
+    {{ end }}
+    {{ if $tlsEnabled }}
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    {{ else }}
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    {{ end }}
+  labels:
+{{ include "daprstore.labels" . | indent 4 }}
+
+spec:
+  {{ if $tlsEnabled }}
+  tls:
+  - hosts:
+    - "{{ include "daprstore.fullname" . }}.{{ .Values.ingressRules.hostDnsSuffix }}"
+    {{ if .Values.ingressRules.certName }}
+    secretName: {{ .Values.ingressRules.certName }}
+    {{ else }}
+    secretName: {{ include "daprstore.fullname" . }}
+    {{ end }}
+  {{ end }}
+
+  rules:
+  {{ if .Values.ingressRules.hostDnsSuffix }}
+    - host: "{{ include "daprstore.fullname" . }}.{{ .Values.ingressRules.hostDnsSuffix }}"
+      http:
+  {{ else }}
+    - http:
+  {{ end }}
+        paths:
+          # Only expose the Dapr invoke API, lets us call our services and nothing more
+          - path: /v1.0/invoke/
+            backend:
+              serviceName: api-gateway-dapr
+              servicePort: 80                
+          # Everything else falls through to the frontend-host for serving the SPA         
+          - path: /
+            backend:
+              serviceName: {{ include "daprstore.fullname" . }}-frontend-host
+              servicePort: 8000      

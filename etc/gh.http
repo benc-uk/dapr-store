@@ -5,7 +5,7 @@ Content-Type: application/json
 {
   "ref": "master",
   "description": "Deploy to AKS demo environment",
-  "environment": "AKS",
+  "environment": "Kubernetes",
   "payload": {
     "imageTag": "foo123"
   }

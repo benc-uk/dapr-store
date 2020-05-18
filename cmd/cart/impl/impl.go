@@ -2,6 +2,7 @@ package impl
 
 import (
 	"encoding/json"
+	"log"
 	"math/rand"
 	"os"
 	"time"
@@ -32,6 +33,9 @@ func NewService(serviceName string) *CartService {
 	}
 	topicName := env.GetEnvString("DAPR_ORDERS_TOPIC", "orders-queue")
 	storeName := env.GetEnvString("DAPR_STORE_NAME", "statestore")
+
+	log.Printf("### Dapr pub/sub topic name: %s\n", topicName)
+	log.Printf("### Dapr state store name:   %s\n", storeName)
 
 	return &CartService{
 		helper,

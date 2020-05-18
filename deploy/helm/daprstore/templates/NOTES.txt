@@ -1,0 +1,11 @@
+
+╭──────────────────────────╮
+│     🎩 Dapr Store 👔     │
+╰──────────────────────────╯
+
+▶▶▶ 🚀 Dapr Store has been installed into your cluster! 
+▶▶▶ 🧩 Release name: {{ .Release.Name }}
+
+{{- if .Values.apiGateway.staticIP.address }}
+▶▶▶ 🌍 To access the store, go to http://{{ .Values.apiGateway.staticIP.address }}/
+{{ end }}

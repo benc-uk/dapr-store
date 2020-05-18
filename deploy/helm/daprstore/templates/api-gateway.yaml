@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-api-gateway
+  labels:
+    {{- include "daprstore.labels" . | nindent 4 }}
+    daprstore: api-gateway
+    
+spec:
+  replicas: {{ .Values.apiGateway.replicas }}
+  selector:
+    matchLabels:
+      daprstore: api-gateway
+  template:
+    metadata:
+      labels:
+        daprstore: api-gateway
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/id: "api-gateway"
+        dapr.io/port: "9000"
+      {{- with .Values.apiGateway.annotations }}
+          {{- toYaml . | nindent 8 }}
+      {{- end }}            
+    spec:
+    {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}    
+
+      containers:
+      - name: server
+        image: {{ .Values.image.registry }}/{{ .Values.image.repo }}/api-gateway:{{ .Values.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9000        
+           
+        resources:
+        {{- with .Values.resources }}
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 9000
+            httpHeaders:
+              - name: "No-Log"
+                value: "true"
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  {{- if .Values.apiGateway.staticIP.resourceGroup }}
+  annotations: 
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: {{ .Values.apiGateway.staticIP.resourceGroup }}
+  {{- end }} 
+  name: {{ .Chart.Name }}-api-gateway
+  labels:
+    {{- include "daprstore.labels" . | nindent 4 }}
+    daprstore: api-gateway
+spec:
+  selector:
+    daprstore: api-gateway
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9000
+  type: LoadBalancer
+  {{- if .Values.apiGateway.staticIP.address }}
+  loadBalancerIP: {{ .Values.apiGateway.staticIP.address }}
+  {{- end }} 
+  

@@ -99,6 +99,8 @@ docker :
 	--build-arg CLIENT_ID=$(CLIENT_ID) \
 	-t $(DOCKER_PREFIX)/frontend-host:$(DOCKER_TAG)
 
+	docker build . -f build/api-gateway.Dockerfile \
+	-t $(DOCKER_PREFIX)/api-gateway:$(DOCKER_TAG)
 
 ################################################################################
 # Build Docker image for frontend only
@@ -121,6 +123,7 @@ push :
 	docker push $(DOCKER_PREFIX)/users:$(DOCKER_TAG)
 	docker push $(DOCKER_PREFIX)/orders:$(DOCKER_TAG)
 	docker push $(DOCKER_PREFIX)/frontend-host:$(DOCKER_TAG)
+	docker push $(DOCKER_PREFIX)/api-gateway:$(DOCKER_TAG)
 	
 
 ################################################################################

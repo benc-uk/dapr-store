@@ -9,11 +9,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: echo ${{ github.event.deployment.payload.imageTag }}
-
-      - uses: benc-uk/deployment-status@v1
+      - name: 'Connect to cluster'
+        uses: azure/aks-set-context@v1
         with:
-          token: "${{ github.token }}"
-          state: "success"
-          deployment_id: ${{ github.event.deployment.id }}
-          environment_url: "http://example.com/env"
+          creds: '${{ secrets.AZURE_CREDENTIALS }}' # Azure credentials
+          resource-group: '${{ env.RES_GRP }}'
+          cluster-name: '${{ env.AKS_NAME }}'
+        id: login
+
+      - name: 'Helm dep update'
+        run: |
+          helm dep update ./deploy/helm/daprstore
+
+      - name: 'Helm Deploy'
+        uses: 'deliverybot/helm@v1'
+        env:
+          KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
+        with:
+          release: 'staging'
+          namespace: 'daprstore-stg'
+          chart: './deploy/helm/daprstore'
+          token: '${{ github.token }}'
+          values: |
+            apiGateway:
+              staticIP:
+                address: "40.127.220.129"
+                resourceGroup: MC_Demo.AKS_bcdemo_northeurope
+
+      # - name: Set deployment status - success
+      #   uses: benc-uk/deployment-status@v1
+      #   with:
+      #     token: "${{ github.token }}"
+      #     state: "success"
+      #     deployment_id: ${{ github.event.deployment.id }}
+      #     environment_url: "http://example.com/env"

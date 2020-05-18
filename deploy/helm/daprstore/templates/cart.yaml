@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-cart
+  labels:
+    {{- include "daprstore.labels" . | nindent 4 }}
+    daprstore: cart
+spec:
+  replicas: {{ .Values.cart.replicas }}
+  selector:
+    matchLabels:
+      daprstore: cart
+  template:
+    metadata:
+      labels:
+        daprstore: cart
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/id: "cart"
+        dapr.io/port: "9001"
+      {{- with .Values.cart.annotations }}
+          {{- toYaml . | nindent 8 }}
+      {{- end }}            
+    spec:
+    {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}    
+
+      containers:
+      - name: server
+        image: {{ .Values.image.registry }}/{{ .Values.image.repo }}/cart:{{ .Values.image.tag }}
+        imagePullPolicy: Always
+        
+        {{- if .Values.auth.clientId }}
+        env:
+          - name: AUTH_CLIENT_ID
+            value: {{ .Values.auth.clientId }}
+        {{- end }}
+           
+        resources:
+        {{- with .Values.resources }}
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 9001
+            httpHeaders:
+              - name: "No-Log"
+                value: "true"

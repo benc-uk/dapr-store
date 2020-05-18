@@ -1,0 +1,59 @@
+# Default values for dapr-store.
+
+image:
+  registry: docker.io
+  repo: daprstore
+  tag: latest
+  pullSecrets: []
+
+auth:
+  clientId: 
+  
+resources:
+  limits:
+    cpu: 100m
+    memory: 200M
+
+cart:
+  annotations: 
+  replicas: 1
+
+orders:
+  annotations: 
+  replicas: 1
+
+products:
+  annotations: 
+  replicas: 1
+
+users:
+  annotations: 
+  replicas: 1
+
+frontendHost:
+  annotations: 
+  replicas: 1
+
+apiGateway:
+  annotations: 
+  replicas: 1
+  staticIP:
+    address: 
+    resourceGroup: 
+
+daprComponents:
+  deploy: true
+  state:
+    name: statestore
+  pubsub:
+    name: messagebus
+
+redis: 
+  fullnameOverride: daprstore-redis
+  enabled: true
+  usePassword: false
+  cluster:
+    enabled: false
+  master:
+    persistence:
+      enabled: false

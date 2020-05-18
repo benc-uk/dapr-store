@@ -1,0 +1,13 @@
+{{- if .Values.daprComponents.deploy }}
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: {{ .Values.daprComponents.state.name }}
+spec:
+  type: state.redis
+  metadata:
+  - name: redisHost
+    value: {{ .Chart.Name }}-redis-master:6379
+  - name: redisPassword
+    value: ""
+{{ end }}

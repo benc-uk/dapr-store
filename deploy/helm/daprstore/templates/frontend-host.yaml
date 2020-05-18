@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-frontend-host
+  labels:
+    {{- include "daprstore.labels" . | nindent 4 }}
+    daprstore: frontend-host
+    
+spec:
+  replicas: {{ .Values.frontendHost.replicas }}
+  selector:
+    matchLabels:
+      daprstore: frontend-host
+  template:
+    metadata:
+      labels:
+        daprstore: frontend-host
+      annotations:
+      {{- with .Values.frontendHost.annotations }}
+          {{- toYaml . | nindent 8 }}
+      {{- end }}            
+    spec:
+    {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}    
+
+      containers:
+      - name: server
+        image: {{ .Values.image.registry }}/{{ .Values.image.repo }}/frontend-host:{{ .Values.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+
+        {{- if .Values.auth.clientId }}
+        env:
+          - name: AUTH_CLIENT_ID
+            value: {{ .Values.auth.clientId }}
+        {{- end }}
+           
+        resources:
+        {{- with .Values.resources }}
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000
+            httpHeaders:
+              - name: "No-Log"
+                value: "true"
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Chart.Name }}-frontend-host
+  labels:
+    {{- include "daprstore.labels" . | nindent 4 }}
+    daprstore: frontend-host
+spec:
+  selector:
+    daprstore: frontend-host
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+  type: ClusterIP

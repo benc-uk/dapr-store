@@ -24,3 +24,4 @@ pkill orders
 pkill cart
 pkill products
 pkill users
+pkill main
