@@ -3,6 +3,7 @@ package mock
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 
 	cartspec "github.com/benc-uk/dapr-store/cmd/cart/spec"
 	orderspec "github.com/benc-uk/dapr-store/cmd/orders/spec"
@@ -34,19 +35,23 @@ func init() {
 // Get fetches saved cart for a given user, if not exists an empty cart is returned
 //
 func (s CartService) Get(username string) (*cartspec.Cart, error) {
-	if username != "demo@example.net" {
-		cart := &cartspec.Cart{}
-		cart.ForUser = username
-		cart.Products = make(map[string]int)
-		return cart, nil
+	for _, cart := range mockCarts {
+		if cart.ForUser == username {
+			return &cart, nil
+		}
 	}
-	return &mockCarts[0], nil
+
+	cart := &cartspec.Cart{}
+	cart.ForUser = username
+	cart.Products = make(map[string]int)
+	return cart, nil
 }
 
 //
 // Submit a cart and turn into an order
 //
 func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
+	log.Printf("%+v", cart)
 	if len(cart.Products) == 0 {
 		return nil, problem.New("err://bad", "Cart empty", 400, "Cart empty", "mock-cart")
 	}
@@ -74,5 +79,10 @@ func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, coun
 //
 func (s CartService) Clear(cart *cartspec.Cart) error {
 	cart.Products = map[string]int{}
+	for i, c := range mockCarts {
+		if c.ForUser == cart.ForUser {
+			mockCarts[i] = *cart
+		}
+	}
 	return nil
 }

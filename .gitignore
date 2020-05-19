@@ -15,6 +15,7 @@ cmd/frontend-host/frontend-host
 # My configs
 **/my*.yaml
 
-# Code coverage
+# Code coverage & test output
 web/frontend/coverage
 **/node_modules/**
+output/**

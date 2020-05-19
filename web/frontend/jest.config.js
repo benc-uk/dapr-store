@@ -4,5 +4,8 @@ module.exports = {
     '\\.(css)$': 'identity-obj-proxy'
   },
   setupFiles: ['<rootDir>/tests/unit/setup.js'],
-  verbose: true
+  verbose: true,
+  collectCoverage: true,
+  coverageDirectory: '../../output/web-coverage',
+  coverageReporters: ['html', 'text-summary']
 }

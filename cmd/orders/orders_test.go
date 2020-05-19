@@ -38,55 +38,57 @@ func TestOrders(t *testing.T) {
 
 	// Rest of tests don't go through the router/api
 
-	emptyOrder := spec.Order{}
-	err := mockOrdersSvc.ProcessOrder(emptyOrder)
-	if err != nil && strings.Contains(err.Error(), "validation") {
-		t.Log("'process empty order' passed")
-	} else {
-		t.Error("'process empty order' failed")
-	}
-
-	badOrder := spec.Order{
-		LineItems: []spec.LineItem{},
-		ForUser:   "",
-	}
-	err = mockOrdersSvc.ProcessOrder(badOrder)
-	if err != nil && strings.Contains(err.Error(), "validation") {
-		t.Log("'process invalid order' passed")
-	} else {
-		t.Error("'process invalid order' failed")
-	}
-
-	goodOrder := mock.MockOrders[0]
-	err = mockOrdersSvc.ProcessOrder(goodOrder)
-	if err != nil {
-		t.Errorf("'process valid new order' failed %+v", err)
-	} else {
-		t.Log("'process valid new order' passed")
-	}
-
-	newOrder, err := mockOrdersSvc.GetOrder("ord-mock")
-	if err != nil {
-		t.Errorf("'get new order' failed: %+v", err)
-	} else {
-		if newOrder.Status != spec.OrderReceived {
-			t.Error("'get new order' failed")
+	t.Run("process empty order", func(t *testing.T) {
+		emptyOrder := spec.Order{}
+		err := mockOrdersSvc.ProcessOrder(emptyOrder)
+		if err != nil && strings.Contains(err.Error(), "validation") {
 		} else {
-			t.Log("'get new order' passed")
+			t.Error("'process empty order' failed")
 		}
-	}
+	})
 
-	time.Sleep(time.Second * 3)
-	newOrder, err = mockOrdersSvc.GetOrder("ord-mock")
-	if err != nil {
-		t.Errorf("'order processing completed' failed: %+v", err)
-	} else {
-		if newOrder.Status != spec.OrderComplete {
-			t.Error("'order processing completed' failed")
-		} else {
-			t.Log("'order processing completed' passed")
+	t.Run("process invalid order", func(t *testing.T) {
+		badOrder := spec.Order{
+			LineItems: []spec.LineItem{},
+			ForUser:   "",
 		}
-	}
+		err := mockOrdersSvc.ProcessOrder(badOrder)
+		if err != nil && strings.Contains(err.Error(), "validation") {
+		} else {
+			t.Error("'process invalid order' failed")
+		}
+	})
+
+	t.Run("process valid new order", func(t *testing.T) {
+		goodOrder := mock.MockOrders[0]
+		err := mockOrdersSvc.ProcessOrder(goodOrder)
+		if err != nil {
+			t.Errorf("'process valid new order' failed %+v", err)
+		}
+	})
+
+	t.Run("get new order", func(t *testing.T) {
+		newOrder, err := mockOrdersSvc.GetOrder("ord-mock")
+		if err != nil {
+			t.Errorf("'get new order' failed: %+v", err)
+		} else {
+			if newOrder.Status != spec.OrderReceived {
+				t.Error("'get new order' failed")
+			}
+		}
+	})
+
+	t.Run("order processing completed", func(t *testing.T) {
+		time.Sleep(time.Second * 3)
+		newOrder, err := mockOrdersSvc.GetOrder("ord-mock")
+		if err != nil {
+			t.Errorf("'order processing completed' failed: %+v", err)
+		} else {
+			if newOrder.Status != spec.OrderComplete {
+				t.Error("'order processing completed' failed")
+			}
+		}
+	})
 }
 
 var testCases = []apitests.Test{

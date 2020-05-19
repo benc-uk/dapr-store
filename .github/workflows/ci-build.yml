@@ -6,7 +6,9 @@ on:
     paths-ignore:
     - 'docs/**'
     - '.github/**'
+    - '!.github/workflows/ci-build.yml'
     - 'etc/**'
+    - 'testing/**'
     - 'scripts/**'
     - 'recycle-bin/**'
     - '.vscode/**'
@@ -19,9 +21,13 @@ env:
   DOCKER_REPO: daprstore  
   DOCKER_USER: bcdemo
   DOCKER_REG: bcdemo.azurecr.io
+  STORAGE_ACCT_NAME: bcmisc
 
 jobs:
-  buildImages:
+  #
+  # ===== Testing & code checking ======
+  #
+  runTestsLinting:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,14 +39,41 @@ jobs:
       with:
         go-version: '^1.14.0'
 
-    - name: Install any extra tools
-      run: go get -u golang.org/x/lint/golint
+    - name: Install extra test & build tools
+      run: |
+        go get -u golang.org/x/lint/golint
+        go get gotest.tools/gotestsum
+        npm i --prefix $HOME/tmp xunit-viewer
 
-    - name: Check code with gofmt, golint and ESLint
+    - name: Check code - gofmt, golint & ESLint
       run: make lint gofmt
 
-    - name: Run unit tests
-      run: make test
+    - name: Run all unit tests
+      run: make test-output
+
+    - name: Generate test & code coverage reports
+      if: ${{ success() || failure() }}
+      run: make reports
+
+    - name: Upload reports
+      if: ${{ success() || failure() }}
+      run: |
+        az storage blob upload-batch --account-name $STORAGE_ACCT_NAME --account-key ${{ secrets.STORAGE_KEY }} --source ./output --destination \$web/${{ github.run_id }}
+        echo -e "\n\n================================================================================================================"
+        echo -e "📜🌍✅ Test reports uploaded and viewable here - https://$STORAGE_ACCT_NAME.z6.web.core.windows.net/${{ github.run_id }}/"
+        echo -e "================================================================================================================\n\n"
+        echo "::warning ::Test results URL: https://$STORAGE_ACCT_NAME.z6.web.core.windows.net/${{ github.run_id }}/"
+        
+  #
+  # ===== Build container images ======
+  #
+  buildImages:
+    runs-on: ubuntu-latest
+    needs: runTestsLinting
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v1
 
     - name: Run all builds
       run: |
@@ -50,7 +83,7 @@ jobs:
     # =====================================================================
     # Steps after this are only run when merging or pushing into master
     # =====================================================================
-    
+
     - name: Login to registry 
       if: github.event_name == 'push'
       run:  docker login $DOCKER_REG -u $DOCKER_USER -p ${{ secrets.ACR_PASSWORD }} 
@@ -66,6 +99,7 @@ jobs:
     # =====================================================================
 
     - name: Trigger deployment
+      if: github.event_name == 'push'
       uses: peter-evans/repository-dispatch@v1
       with:
         token: ${{ secrets.DEPLOYMENT_PAT }}

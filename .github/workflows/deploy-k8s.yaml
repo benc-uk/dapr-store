@@ -16,11 +16,12 @@ jobs:
       STATIC_IP: '20.191.56.121'
       ENV_NAME: "Kubernetes: Staging"
       NAMESPACE: 'daprstore-stage'
+      HOST: 'staging.daprstore.benco.io'
 
     steps:
       - name: 'Start deployment'
         id: deploy
-        uses: abendigo/create-deployment@v1
+        uses: chrnorm/deployment-action@v1.2.0
         with:
           token: ${{ github.token }}
           environment: ${{ env.ENV_NAME }}
@@ -28,30 +29,30 @@ jobs:
       - name: 'Checkout source'
         uses: actions/checkout@v1
 
-      - name: 'Helm dependency update'
-        run: |
-          helm dep update ./deploy/helm/daprstore
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-
-      - name: 'Helm deploy ingress to staging'
-        uses: deliverybot/helm@v1
+      - name: 'Helm deploy Redis to staging'
+        uses: deliverybot/helm@master
         env:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
         with:
           helm: helm3
-          release: api-gateway-stage
+          release: redis
           namespace: ${{ env.NAMESPACE }}
-          chart: ingress-nginx/ingress-nginx 
-          value-files: ./deploy/ingress/chart-values.yaml
+          chart: redis
+          repository: https://charts.bitnami.com/bitnami
           values: |
-            controller:
-              service:
-                loadBalancerIP: "${{ env.STATIC_IP }}"
-              scope:
-                namespace: ${{ env.NAMESPACE }}
+            fullnameOverride: daprstore-redis
+            enabled: true
+            usePassword: false
+            cluster:
+              enabled: false
+            master:
+              persistence:
+                enabled: false
+
+      - run: sleep 10
 
       - name: 'Helm deploy Daprstore to staging'
-        uses: deliverybot/helm@v1
+        uses: deliverybot/helm@master
         env:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
         with:
@@ -64,23 +65,49 @@ jobs:
               registry: ${{ env.IMAGE_REG }}
               repo: ${{ env.IMAGE_REPO }}
               tag: "${{ github.event.client_payload.imageTag }}"
+            ingress:
+              host: "${{ env.HOST }}"
+
+      - name: 'Helm deploy Nginx ingress to staging'
+        uses: deliverybot/helm@master
+        env:
+          KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
+        with:
+          helm: helm3
+          release: api-gateway-stage
+          namespace: ${{ env.NAMESPACE }}
+          repository: https://kubernetes.github.io/ingress-nginx
+          chart: ingress-nginx
+          value-files: ./deploy/ingress/chart-values.yaml
+          values: |
+            controller:
+              service:
+                loadBalancerIP: "${{ env.STATIC_IP }}"
+              scope:
+                namespace: ${{ env.NAMESPACE }}
+
+      - name: 'Run API tests'
+        uses: matt-ball/newman-action@master
+        with:
+          collection: ./testing/postman_collection.json
+          environment: ./testing/postman_env_staging.json
 
       - name: 'End deployment - success'
         if: ${{ success() }}
-        uses: benc-uk/deployment-status@v1
+        uses: chrnorm/deployment-status@v1.0.0
         with:
           token: ${{ github.token }}
           state: success
-          deployment_id: ${{ steps.deploy.outputs.id }}
-          environment_url: http://${{ env.STATIC_IP }}/
+          deployment_id: ${{ steps.deploy.outputs.deployment_id }}
+          environment_url: http://${{ env.HOST }}/
 
       - name: 'End deployment - failure'
         if: ${{ failure() }}
-        uses: benc-uk/deployment-status@v1
+        uses: chrnorm/deployment-status@v1.0.0
         with:
           token: ${{ github.token }}
           state: failure
-          deployment_id: ${{ steps.deploy.outputs.id }}       
+          deployment_id: ${{ steps.deploy.outputs.deployment_id }}    
 
 # ==============================================================================================
 
@@ -92,11 +119,13 @@ jobs:
       STATIC_IP: '20.191.56.9'
       ENV_NAME: 'Kubernetes: Production'
       NAMESPACE: 'daprstore-prod'
+      HOST: 'production.daprstore.benco.io'
+      CERT_NAME: 'production-daprstore-cert'
 
     steps:
       - name: 'Start deployment'
         id: deploy
-        uses: abendigo/create-deployment@v1
+        uses: chrnorm/deployment-action@v1.2.0
         with:
           token: ${{ github.token }}
           environment: ${{ env.ENV_NAME }}
@@ -104,30 +133,30 @@ jobs:
       - name: 'Checkout source'
         uses: actions/checkout@v1
 
-      - name: 'Helm dependency update'
-        run: |
-          helm dep update ./deploy/helm/daprstore
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-
-      - name: 'Helm deploy ingress to production'
-        uses: deliverybot/helm@v1
+      - name: 'Helm deploy Redis to staging'
+        uses: deliverybot/helm@master
         env:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
         with:
           helm: helm3
-          release: api-gateway-prod
+          release: redis
           namespace: ${{ env.NAMESPACE }}
-          chart: ingress-nginx/ingress-nginx
-          value-files: ./deploy/ingress/chart-values.yaml          
+          chart: redis
+          repository: https://charts.bitnami.com/bitnami
           values: |
-            controller:
-              service:
-                loadBalancerIP: "${{ env.STATIC_IP }}"
-              scope:
-                namespace: ${{ env.NAMESPACE }}
+            fullnameOverride: daprstore-redis
+            enabled: true
+            usePassword: false
+            cluster:
+              enabled: false
+            master:
+              persistence:
+                enabled: true
+
+      - run: sleep 10
 
       - name: 'Helm deploy Daprstore to production'
-        uses: deliverybot/helm@v1
+        uses: deliverybot/helm@master
         env:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
         with:
@@ -142,20 +171,41 @@ jobs:
               registry: ${{ env.IMAGE_REG }}
               repo: ${{ env.IMAGE_REPO }}
               tag: "${{ github.event.client_payload.imageTag }}"
+            ingress:
+              host: "${{ env.HOST }}"
+              certName: "${{ env.CERT_NAME }}"
+
+      - name: 'Helm deploy ingress to production'
+        uses: deliverybot/helm@master
+        env:
+          KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
+        with:
+          helm: helm3
+          release: api-gateway-prod
+          namespace: ${{ env.NAMESPACE }}
+          repository: https://kubernetes.github.io/ingress-nginx
+          chart: ingress-nginx
+          value-files: ./deploy/ingress/chart-values.yaml          
+          values: |
+            controller:
+              service:
+                loadBalancerIP: "${{ env.STATIC_IP }}"
+              scope:
+                namespace: ${{ env.NAMESPACE }}
 
       - name: 'End deployment - success'
         if: ${{ success() }}
-        uses: benc-uk/deployment-status@v1
+        uses: chrnorm/deployment-status@v1.0.0
         with:
           token: ${{ github.token }}
           state: success
-          deployment_id: ${{ steps.deploy.outputs.id }}  
-          environment_url: http://${{ env.STATIC_IP }}/
+          deployment_id: ${{ steps.deploy.outputs.deployment_id }}  
+          environment_url: http://${{ env.HOST }}/
 
       - name: 'End deployment - failure'
         if: ${{ failure() }}
-        uses: benc-uk/deployment-status@v1
+        uses: chrnorm/deployment-status@v1.0.0
         with:
           token: ${{ github.token }}
           state: failure
-          deployment_id: ${{ steps.deploy.outputs.id }}    
+          deployment_id: ${{ steps.deploy.outputs.deployment_id }}    

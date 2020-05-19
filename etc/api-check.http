@@ -1,4 +1,4 @@
-@host = localhost:9000
+@host = staging.daprstore.benco.io
 #@host = daprstore.kube.benco.io
 
 # ===================================================================
@@ -26,7 +26,7 @@ GET http://{{host}}/v1.0/invoke/products/method/search/tied
 # ===================================================================
 
 ### Add products to cart
-PUT http://{{host}}/v1.0/invoke/cart/method/setProduct/demo@example.net/prd001/6
+PUT http://{{host}}/v1.0/invoke/cart/method/setProduct/sdadasda@example.net/prd001/6
 
 ### Get cart
 GET http://{{host}}/v1.0/invoke/cart/method/get/demo@example.net

@@ -42,6 +42,26 @@ test :
 
 
 ################################################################################
+# Run tests with output
+################################################################################
+.PHONY: test-output
+test-output : 
+	rm -rf output && mkdir -p output
+	gotestsum --junitfile ./output/unit-tests.xml ./cmd/cart ./cmd/users ./cmd/products ./cmd/orders --coverprofile ./output/coverage
+	@cd $(FRONTEND_DIR); NODE_ENV=test npm run test -- --ci
+
+
+################################################################################
+# Prepare HTML reports from test output
+################################################################################
+.PHONY: reports
+reports : 
+	./web/frontend/node_modules/xunit-viewer/bin/xunit-viewer -r ./output/unit-tests.xml -o ./output/unit-tests.html
+	go tool cover -html=./output/coverage -o ./output/cover.html
+	cp testing/reports.html output/index.html
+
+
+################################################################################
 # Gofmt
 ################################################################################
 .PHONY: gofmt
@@ -99,8 +119,6 @@ docker :
 	--build-arg CLIENT_ID=$(CLIENT_ID) \
 	-t $(DOCKER_PREFIX)/frontend-host:$(DOCKER_TAG)
 
-	docker build . -f build/api-gateway.Dockerfile \
-	-t $(DOCKER_PREFIX)/api-gateway:$(DOCKER_TAG)
 
 ################################################################################
 # Build Docker image for frontend only
@@ -123,7 +141,6 @@ push :
 	docker push $(DOCKER_PREFIX)/users:$(DOCKER_TAG)
 	docker push $(DOCKER_PREFIX)/orders:$(DOCKER_TAG)
 	docker push $(DOCKER_PREFIX)/frontend-host:$(DOCKER_TAG)
-	docker push $(DOCKER_PREFIX)/api-gateway:$(DOCKER_TAG)
 	
 
 ################################################################################

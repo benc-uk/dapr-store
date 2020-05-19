@@ -8,7 +8,12 @@ image:
 
 auth:
   clientId: 
-  
+
+ingress:
+  host:
+  certName:
+  certIssuer:
+
 resources:
   limits:
     cpu: 100m

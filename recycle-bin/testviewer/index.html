@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    .pass {
+      color: rgb(7, 153, 7);
+    }
+    .fail {
+      color: rgb(207, 32, 47);
+    }
+    body {
+      padding: 20px;
+    }
+    .pkg {
+      background-color: #eee;
+      padding: 10px;
+    }
+    .test {
+      font-size: 120%;
+    }
+    .subtest {
+      font-size: 100%;
+    }    
+    .box {
+      border: 4px solid rgb(167, 167, 167);
+      margin-bottom: 20px;
+      border-radius: 5px;
+      box-shadow: 0px 10px 14px -4px rgba(0,0,0,0.55);
+    }
+    pre {
+      background-color: rgb(26, 26, 39);
+      color:rgb(207, 207, 207);
+      white-space: pre-wrap;
+      word-break: keep-all;
+      padding: 10px;
+      font-size: 12px !important;
+      margin: 5px 30px !important;
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Go Test Result Viewer</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    const STORAGE_ENDPOINT = 'https://bcmisc.blob.core.windows.net/gotests'
+
+    var app = new Vue({
+      el: '#app',
+  
+      data() {
+        return {
+          results: {},
+          files: [],
+          selectedFile: '',
+          icons: {
+            pass: '✅',
+            fail: '❌'
+          }
+        }
+      },
+  
+      async mounted() {
+        let resp = await fetch(`${STORAGE_ENDPOINT}?restype=container&comp=list`)
+        let blobListXML = await resp.text()
+        var data = new DOMParser().parseFromString(blobListXML, "application/xml")
+        
+        for(let blob of data.getElementsByTagName('Blob')) {
+          let file = blob.getElementsByTagName('Name')[0].textContent
+          this.files.push(file)
+        }
+      },
+
+      methods: {
+        loadData: async function(file) {
+          this.results = {}
+          try {
+            let resp = await fetch(`${STORAGE_ENDPOINT}/${file}`)
+            let rawDataText = await resp.text()
+            let rawData = rawDataText.split('\n')
+            rawData = rawData.reverse()
+            for(let line of rawData) {
+              let dataLine 
+              try {
+                dataLine = JSON.parse(line)
+              } catch(err) {
+                continue
+              }
+                
+              if(dataLine.Action == "pass" || dataLine.Action == "fail") {
+                let package = dataLine.Package
+                let status = dataLine.Action
+
+                if(!this.results[package])
+                  this.results[package] = { status: status, tests: {} }
+
+                if(dataLine.Test && dataLine.Test.includes('/')) {
+                  test = dataLine.Test.split('/')[0]
+                  subtest = dataLine.Test.split('/')[1]
+                  if(!this.results[package]['tests'][test]['subtests'][subtest]) 
+                    this.results[package]['tests'][test]['subtests'][subtest] = { status: status, output: [] }
+                } else if(dataLine.Test) {
+                  if(!this.results[package]['tests'][dataLine.Test])
+                    this.results[package]['tests'][dataLine.Test] = { status: status, subtests:{} }
+                }
+              }
+
+              if(dataLine.Action == 'output' && dataLine.Test && dataLine.Test.includes('/')) {
+                test = dataLine.Test.split('/')[0]
+                subtest = dataLine.Test.split('/')[1]
+                if(!dataLine.Output.includes('=== RUN')) {
+                  this.results[dataLine.Package]['tests'][test]['subtests'][subtest].output.unshift(dataLine.Output.trim())
+                }
+              }
+            }
+
+            this.$forceUpdate()      
+          } catch(err) {
+            console.error(err)
+          }
+        },
+      },
+  
+      template: `
+        <div>
+          <h1>📜 Go Test Result Reporter</h1>
+          Pick result file: <select v-model="selectedFile" @change="loadData(selectedFile)">
+            <option v-for="file in files" :value="file">{{file}}</option>
+          </select>
+          <br><br>
+          <div v-for="(pkg, packageName) in results" class="box">
+            <h3 :class="pkg.status" class="pkg">📦 {{ packageName }}</h3>
+            <ul>
+              <li v-for="(test, testName) in pkg.tests" class="test" :class="test.status">
+                {{ icons[test.status] }} {{ testName }}
+                <ul>
+                  <li v-for="(subTest, subTestName) in test.subtests" class="subtest" :class="subTest.status">
+                    {{ icons[subTest.status] }} {{ subTestName.replace(/_/g, ' ') }}
+                    <br>
+                    <pre v-if="subTest.status == 'fail'" >{{ subTest.output.join("\\n") }}</pre>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>`
+    })
+  </script>  
+</body>
+</html>

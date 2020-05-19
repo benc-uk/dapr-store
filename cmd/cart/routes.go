@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/benc-uk/dapr-store/cmd/cart/spec"
 	"github.com/benc-uk/dapr-store/pkg/auth"
 	"github.com/benc-uk/dapr-store/pkg/problem"
 
@@ -36,21 +35,6 @@ func (api API) addRoutes(router *mux.Router) {
 func (api API) setProductCount(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	cart, err := api.service.Get(vars["username"])
-	if err != nil {
-		prob := err.(*problem.Problem)
-
-		// Special case for first time / new cart
-		if prob.Status == 404 {
-			// New empty cart
-			cart = &spec.Cart{
-				ForUser:  vars["username"],
-				Products: map[string]int{},
-			}
-		} else {
-			prob.Send(resp)
-			return
-		}
-	}
 
 	count, err := strconv.Atoi(vars["count"])
 	if err != nil {

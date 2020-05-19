@@ -10,10 +10,10 @@ version: 0.1.0
 # This is the version number of the application being deployed.
 appVersion: 0.4.0
 
-dependencies:
-- name: redis
-  version: "^10.6.13"
-  repository: "https://charts.bitnami.com/bitnami"
+# dependencies:
+# - name: redis
+#   version: "^10.6.13"
+#   repository: "https://charts.bitnami.com/bitnami"
 
 # - name: ingress-nginx
 #   version: "^2.1.0"
