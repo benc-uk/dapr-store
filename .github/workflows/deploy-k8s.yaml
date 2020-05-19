@@ -42,6 +42,7 @@ jobs:
           release: api-gateway-stage
           namespace: ${{ env.NAMESPACE }}
           chart: ingress-nginx/ingress-nginx 
+          value-files: ./deploy/ingress/chart-values.yaml
           values: |
             controller:
               service:
@@ -116,7 +117,8 @@ jobs:
           helm: helm3
           release: api-gateway-prod
           namespace: ${{ env.NAMESPACE }}
-          chart: ingress-nginx/ingress-nginx 
+          chart: ingress-nginx/ingress-nginx
+          value-files: ./deploy/ingress/chart-values.yaml          
           values: |
             controller:
               service:
