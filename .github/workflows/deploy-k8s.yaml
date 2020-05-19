@@ -5,7 +5,6 @@ on:
     types: [ 'Continuous Deployment' ]
 
 env:
-  STATIC_IP_RG: 'MC_Demo.AKS_bcdemo_northeurope'
   IMAGE_REG: bcdemo.azurecr.io
   IMAGE_REPO: daprstore
 
@@ -32,8 +31,25 @@ jobs:
       - name: 'Helm dependency update'
         run: |
           helm dep update ./deploy/helm/daprstore
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 
-      - name: 'Helm deploy to: staging'
+      - name: 'Helm deploy ingress to staging'
+        uses: deliverybot/helm@v1
+        env:
+          KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
+        with:
+          helm: helm3
+          release: api-gateway-stage
+          namespace: ${{ env.NAMESPACE }}
+          chart: ingress-nginx/ingress-nginx 
+          values: |
+            controller:
+              service:
+                loadBalancerIP: "${{ env.STATIC_IP }}"
+              scope:
+                namespace: ${{ env.NAMESPACE }}
+
+      - name: 'Helm deploy Daprstore to staging'
         uses: deliverybot/helm@v1
         env:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
@@ -47,10 +63,6 @@ jobs:
               registry: ${{ env.IMAGE_REG }}
               repo: ${{ env.IMAGE_REPO }}
               tag: "${{ github.event.client_payload.imageTag }}"
-            apiGateway:
-              staticIP:
-                address: "${{ env.STATIC_IP }}"
-                resourceGroup: "${{ env.STATIC_IP_RG }}"
 
       - name: 'End deployment - success'
         if: ${{ success() }}
@@ -94,8 +106,25 @@ jobs:
       - name: 'Helm dependency update'
         run: |
           helm dep update ./deploy/helm/daprstore
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 
-      - name: 'Helm deploy to production'
+      - name: 'Helm deploy ingress to production'
+        uses: deliverybot/helm@v1
+        env:
+          KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
+        with:
+          helm: helm3
+          release: api-gateway-prod
+          namespace: ${{ env.NAMESPACE }}
+          chart: ingress-nginx/ingress-nginx 
+          values: |
+            controller:
+              service:
+                loadBalancerIP: "${{ env.STATIC_IP }}"
+              scope:
+                namespace: ${{ env.NAMESPACE }}
+
+      - name: 'Helm deploy Daprstore to production'
         uses: deliverybot/helm@v1
         env:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
@@ -111,10 +140,6 @@ jobs:
               registry: ${{ env.IMAGE_REG }}
               repo: ${{ env.IMAGE_REPO }}
               tag: "${{ github.event.client_payload.imageTag }}"
-            apiGateway:
-              staticIP:
-                address: "${{ env.STATIC_IP }}"
-                resourceGroup: "${{ env.STATIC_IP_RG }}"
 
       - name: 'End deployment - success'
         if: ${{ success() }}

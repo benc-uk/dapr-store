@@ -5,3 +5,6 @@ controller:
     dapr.io/enabled: "true"
     dapr.io/id: "api-gateway"
     dapr.io/port: "80"
+  scope:
+    enabled: true
+  #   namespace: "daprstore-prod"
