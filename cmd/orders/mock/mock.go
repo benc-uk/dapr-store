@@ -20,12 +20,12 @@ var MockOrders []orderspec.Order
 var mockUserOrders []string
 
 func init() {
-	mockJSON, err := ioutil.ReadFile("../../etc/mock-data/orders.json")
+	mockJSON, err := ioutil.ReadFile("../../testing/mock-data/orders.json")
 	if err != nil {
 		panic(err)
 	}
 	json.Unmarshal(mockJSON, &MockOrders)
-	mockJSON, err = ioutil.ReadFile("../../etc/mock-data/user-orders.json")
+	mockJSON, err = ioutil.ReadFile("../../testing/mock-data/user-orders.json")
 	if err != nil {
 		panic(err)
 	}

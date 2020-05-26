@@ -24,7 +24,7 @@ type ProductsService struct {
 var mockProducts []spec.Product
 
 func init() {
-	mockJSON, err := ioutil.ReadFile("../../etc/mock-data/products.json")
+	mockJSON, err := ioutil.ReadFile("../../testing/mock-data/products.json")
 	if err != nil {
 		panic(err)
 	}
