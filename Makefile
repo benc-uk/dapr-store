@@ -9,6 +9,7 @@
 CGO := 0
 SERVICE_DIR := cmd
 FRONTEND_DIR := web/frontend
+OUTPUT_DIR := ./output
 VERSION ?= 0.0.1
 
 # Most likely want to override these when calling `make docker`
@@ -46,8 +47,8 @@ test :
 ################################################################################
 .PHONY: test-output
 test-output : 
-	rm -rf output && mkdir -p output
-	gotestsum --junitfile ./output/unit-tests.xml ./cmd/cart ./cmd/users ./cmd/products ./cmd/orders --coverprofile ./output/coverage
+	rm -rf $(OUTPUT_DIR) && mkdir -p $(OUTPUT_DIR)
+	gotestsum --junitfile $(OUTPUT_DIR)/unit-tests.xml ./cmd/cart ./cmd/users ./cmd/products ./cmd/orders --coverprofile $(OUTPUT_DIR)/coverage
 	@cd $(FRONTEND_DIR); NODE_ENV=test npm run test -- --ci
 
 
@@ -56,9 +57,10 @@ test-output :
 ################################################################################
 .PHONY: reports
 reports : 
-	./web/frontend/node_modules/xunit-viewer/bin/xunit-viewer -r ./output/unit-tests.xml -o ./output/unit-tests.html
-	go tool cover -html=./output/coverage -o ./output/cover.html
-	cp testing/reports.html output/index.html
+	./web/frontend/node_modules/xunit-viewer/bin/xunit-viewer -r $(OUTPUT_DIR)/unit-tests.xml -o $(OUTPUT_DIR)/unit-tests.html
+	./web/frontend/node_modules/xunit-viewer/bin/xunit-viewer -r $(OUTPUT_DIR)/unit-tests-frontend.xml -o $(OUTPUT_DIR)/unit-tests-frontend.html
+	go tool cover -html=$(OUTPUT_DIR)/coverage -o $(OUTPUT_DIR)/cover.html
+	cp testing/reports.html $(OUTPUT_DIR)/index.html
 
 
 ################################################################################

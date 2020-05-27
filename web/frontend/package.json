@@ -42,7 +42,8 @@
     "identity-obj-proxy": "^3.0.0",
     "json-server": "^0.16.1",
     "vue-template-compiler": "^2.6.11",
-    "xunit-viewer": "^6.3.6"
+    "xunit-viewer": "^6.3.6",
+    "jest-junit": "^10.0.0"    
   },
   "browserslist": [
     "> 1%",

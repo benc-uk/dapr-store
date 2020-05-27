@@ -7,5 +7,13 @@ module.exports = {
   verbose: true,
   collectCoverage: true,
   coverageDirectory: '../../output/web-coverage',
-  coverageReporters: ['html', 'text-summary']
+  coverageReporters: ['html', 'text-summary'],
+  reporters: [
+    'default', [
+      'jest-junit', {
+        outputName: 'unit-tests-frontend.xml',
+        outputDirectory: '../../output'
+      }
+    ]
+  ]
 }
