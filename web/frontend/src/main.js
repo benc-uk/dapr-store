@@ -7,10 +7,9 @@
 
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import * as msal from 'msal'
 import Axios from 'axios'
 import App from './App.vue'
-import { User } from './user'
+import auth from './mixins/auth'
 
 // Use Vue Bootstrap and theme
 import BootstrapVue from 'bootstrap-vue'
@@ -29,23 +28,16 @@ Vue.component('fa', FontAwesomeIcon)
 import router from './router'
 Vue.use(VueRouter)
 
-// Global user & auth details
-let userProfile = new User()
-export { userProfile }
-
-// Global stuff populated by call to appStartup
-export let config = {}
-export let msalApp = {}
-export let accessTokenRequest = {}
-
+// Let's go!
 appStartup()
 
 //
 // Most of the app config & initialization moved here
-// To be synchronized with the config API call
+// So it can be synchronized with the config API call
 //
 async function appStartup() {
   // Load config at runtime from special `/config` endpoint on frontend-host
+  let config = {}
   try {
     let resp = await Axios.get('/config')
     config = resp.data
@@ -54,32 +46,33 @@ async function appStartup() {
     config = {
       API_ENDPOINT: '/',
       AUTH_CLIENT_ID: ''
+      //AUTH_CLIENT_ID: '69972365-c1b6-494d-9579-5b9de2790fc3'
     }
   }
 
-  console.log('### ==== Config ====')
-  console.log(config)
+  console.log('### Config:', config)
+  Vue.prototype.$config = config
 
   // MSAL config used for signing in users with MS identity platform
   if (config.AUTH_CLIENT_ID) {
-    console.log(`### USER SIGN-IN ENABLED. Using clientId: ${config.AUTH_CLIENT_ID}`)
-    msalApp = new msal.UserAgentApplication({
-      auth: {
-        clientId: config.AUTH_CLIENT_ID,
-        redirectUri: window.location.origin
-      }
-    })
-    accessTokenRequest = {
-      scopes: [ `api://${config.AUTH_CLIENT_ID}/store-api` ]
-    }
+    console.log(`### Azure AD sign-in: enabled. Using clientId: ${config.AUTH_CLIENT_ID}`)
+    auth.methods.authInitMsal(config.AUTH_CLIENT_ID)
   } else {
-    console.log('### USER SIGN-IN DISABLED. Will run in demo mode, with dummy users')
+    console.log('### Azure AD sign-in: disabled. Will run in demo mode')
   }
 
-  if (config.API_ENDPOINT != '/') {
-    console.log(`### API_ENDPOINT. Overridden with '${config.API_ENDPOINT}'`)
+  // Re-login any stored user if there is one
+  if (auth.methods.authStoredUsername()) {
+    try {
+      // Try to refresh the token for the stored user
+      // If it fails - remove the stored local user forcing a re-login again
+      await auth.methods.authLogin(false)
+    } catch (err) {
+      auth.methods.authUnsetUser()
+    }
   }
 
+  // Actually mount & start the Vue app
   new Vue({
     router,
     render: (h) => h(App),

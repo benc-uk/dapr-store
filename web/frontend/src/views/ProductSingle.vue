@@ -30,7 +30,7 @@
           <br><br>
           £{{ product.cost }}
           <br><br>
-          <b-button id="addBut" :disabled="!user.userName" variant="primary" @click="addToCart">
+          <b-button id="addBut" :disabled="!user().userName" variant="primary" @click="addToCart">
             <fa icon="shopping-cart" />
             &nbsp; Add to Cart
           </b-button>
@@ -49,7 +49,7 @@
 <script>
 import ErrorBox from '../components/ErrorBox'
 import api from '../mixins/api'
-import { userProfile } from '../main'
+import auth from '../mixins/auth'
 
 export default {
   name: 'ProductSingle',
@@ -58,13 +58,12 @@ export default {
     'error-box': ErrorBox
   },
 
-  mixins: [ api ],
+  mixins: [ api, auth ],
 
   data() {
     return {
       product: null,
-      error: null,
-      user: userProfile
+      error: null
     }
   },
 
@@ -82,7 +81,7 @@ export default {
   methods: {
     async addToCart() {
       try {
-        await this.apiCartAddAmount(userProfile.userName, this.product.id, +1)
+        await this.apiCartAddAmount(this.user().userName, this.product.id, +1)
         this.showToast('Added to your cart!', 'success')
       } catch (err) {
         this.showToast('Error adding to cart 😫 '+err.toString(), 'danger')

@@ -2,7 +2,8 @@
 
 exports[`Cart.vue renders cart contents 1`] = `
 <div>
-  <h1><i icon="shopping-cart"></i> &nbsp; Shopping Cart
+  <h1>
+    <fa icon="shopping-cart"></fa> &nbsp; Shopping Cart
   </h1> <br>
   <!---->
   <!---->
@@ -16,7 +17,11 @@ exports[`Cart.vue renders cart contents 1`] = `
       <div class="card-body">
         <!---->
         <!---->
-        <h2>Count:</h2> <input type="text" readonly="readonly"> <button type="button" class="btn ml-5 mr-3 btn-warning btn-lg"><i icon="minus-circle"></i></button> <button type="button" class="btn btn-success btn-lg"><i icon="plus-circle"></i></button> <img src="/img/catalog/1.jpg" class="thumb">
+        <h2>Count:</h2> <input type="text" readonly="readonly"> <button type="button" class="btn ml-5 mr-3 btn-warning btn-lg">
+          <fa icon="minus-circle"></fa>
+        </button> <button type="button" class="btn btn-success btn-lg">
+          <fa icon="plus-circle"></fa>
+        </button> <img src="/img/catalog/1.jpg" class="thumb">
       </div>
       <!---->
       <!---->
@@ -27,15 +32,21 @@ exports[`Cart.vue renders cart contents 1`] = `
       <div class="card-body">
         <!---->
         <!---->
-        <h2>Count:</h2> <input type="text" readonly="readonly"> <button type="button" class="btn ml-5 mr-3 btn-warning btn-lg"><i icon="minus-circle"></i></button> <button type="button" class="btn btn-success btn-lg"><i icon="plus-circle"></i></button> <img src="/img/catalog/3.jpg" class="thumb">
+        <h2>Count:</h2> <input type="text" readonly="readonly"> <button type="button" class="btn ml-5 mr-3 btn-warning btn-lg">
+          <fa icon="minus-circle"></fa>
+        </button> <button type="button" class="btn btn-success btn-lg">
+          <fa icon="plus-circle"></fa>
+        </button> <img src="/img/catalog/3.jpg" class="thumb">
       </div>
       <!---->
       <!---->
     </div>
-  </div> <button type="button" class="btn btn-primary btn-lg"><i icon="shopping-basket"></i> &nbsp; CHECKOUT
+  </div> <button type="button" class="btn btn-primary btn-lg">
+    <fa icon="shopping-basket"></fa> &nbsp; CHECKOUT
   </button>
   &nbsp;
-  <button type="button" class="btn float-right btn-warning btn-lg"><i icon="trash-alt"></i> &nbsp; EMPTY CART
+  <button type="button" class="btn float-right btn-warning btn-lg">
+    <fa icon="trash-alt"></fa> &nbsp; EMPTY CART
   </button>
 </div>
 `;

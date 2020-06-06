@@ -13,7 +13,6 @@
       <fa icon="shopping-cart" /> &nbsp; Shopping Cart
     </h1>
     <br>
-
     <error-box :error="error" />
 
     <div v-if="!cart && !error" class="text-center">
@@ -65,9 +64,9 @@
 </template>
 
 <script>
-import { userProfile } from '../main'
 import ErrorBox from '../components/ErrorBox'
 import api from '../mixins/api'
+import auth from '../mixins/auth'
 
 export default {
   name: 'Cart',
@@ -76,11 +75,10 @@ export default {
     'error-box': ErrorBox
   },
 
-  mixins: [ api ],
+  mixins: [ api, auth ],
 
   data() {
     return {
-      user: userProfile,
       error: null,
       newOrder: null,
       cart: null,
@@ -102,7 +100,7 @@ export default {
 
   async mounted() {
     try {
-      let resp = await this.apiCartGet(userProfile.userName)
+      let resp = await this.apiCartGet(this.user().userName)
       if (resp.data) {
         this.cart = resp.data
         this.cartProducts = []
@@ -124,9 +122,9 @@ export default {
   methods: {
     async submitOrder() {
       try {
-        let resp = await this.apiCartSubmit(userProfile.userName)
+        let resp = await this.apiCartSubmit(this.user().userName)
         this.newOrder = resp.data
-        resp = await this.apiCartClear(userProfile.userName)
+        resp = await this.apiCartClear(this.user().userName)
         this.cart = resp.data
         this.cartProducts = []
       } catch (err) {
@@ -136,7 +134,7 @@ export default {
 
     async clearCart() {
       try {
-        let resp = await this.apiCartClear(userProfile.userName)
+        let resp = await this.apiCartClear(this.user().userName)
         this.cart = resp.data
         this.cartProducts = []
       } catch (err) {
@@ -146,7 +144,7 @@ export default {
 
     async addSubProduct(productId, amount) {
       try {
-        let resp = await this.apiCartAddAmount(userProfile.userName, productId, amount)
+        let resp = await this.apiCartAddAmount(this.user().userName, productId, amount)
 
         this.cart = resp.data
         // Fiddly nonsense to remove from cartProducts if removed from products.cart

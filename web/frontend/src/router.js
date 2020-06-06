@@ -7,7 +7,7 @@
 
 import VueRouter from 'vue-router'
 
-import { userProfile } from './main'
+import auth from './mixins/auth'
 
 import ProductCatalog from './views/ProductCatalog'
 import ProductOffers from './views/ProductOffers'
@@ -73,13 +73,14 @@ const router = new VueRouter({
     {
       name: 'view-order',
       path: '/order/:id',
-      component: ViewOrder
+      component: ViewOrder,
+      beforeEnter: signedInCheck
     },
   ]
 })
 
 function signedInCheck(to, from, next) {
-  if (!userProfile.userName) {
+  if (!auth.methods.user() || !auth.methods.user().userName) {
     next('/login')
   } else {
     next()

@@ -27,7 +27,7 @@
             <h4>£{{ product.cost }}</h4>
           </b-card-text>
 
-          <b-button :disabled="!user.userName" href="#" variant="primary" class="d-none d-md-inline" @click="addToCart(product)">
+          <b-button :disabled="!user().userName" href="#" variant="primary" class="d-none d-md-inline" @click="addToCart(product)">
             <fa icon="shopping-cart" />
             &nbsp; Add to Cart
           </b-button>
@@ -47,14 +47,13 @@
 </template>
 
 <script>
-// import api from '../mixins/api'
-import { userProfile } from '../main'
 import api from '../mixins/api'
+import auth from '../mixins/auth'
 
 export default {
   name: 'ProductList',
 
-  mixins: [ api ],
+  mixins: [ api, auth ],
 
   props: {
     products: {
@@ -63,16 +62,10 @@ export default {
     }
   },
 
-  data() {
-    return {
-      user: userProfile
-    }
-  },
-
   methods: {
     async addToCart(product) {
       try {
-        await this.apiCartAddAmount(userProfile.userName, product.id, +1)
+        await this.apiCartAddAmount(this.user().userName, product.id, +1)
         this.showToast('Added to your cart!', 'success', product)
       } catch (err) {
         this.showToast('Error adding to cart 😫 '+err.toString(), 'danger', product)

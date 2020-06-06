@@ -25,13 +25,13 @@
         </b-navbar-nav>
 
         <b-navbar-nav class="ml-auto">
-          <b-nav-item v-if="!user.userName" to="/login" variant="info">
+          <b-nav-item v-if="!user() || !user().userName" to="/login" variant="info">
             <fa icon="user" /> &nbsp; Login
           </b-nav-item>
-          <b-nav-item v-if="user.userName" to="/cart" variant="info" active-class="active">
+          <b-nav-item v-if="user() && user().userName" to="/cart" variant="info" active-class="active">
             <fa icon="shopping-cart" /> &nbsp; Cart
           </b-nav-item>
-          <b-nav-item v-if="user.userName" to="/account" variant="info" active-class="active">
+          <b-nav-item v-if="user() && user().userName" to="/account" variant="info" active-class="active">
             <fa icon="id-card" /> &nbsp; Account
           </b-nav-item>
         </b-navbar-nav>
@@ -48,51 +48,17 @@
 </template>
 
 <script>
-import { userProfile, msalApp, accessTokenRequest } from './main'
-import { User, demoUserName } from './user'
+import auth from './mixins/auth'
 
 export default {
   name: 'App',
 
+  mixins: [ auth ],
+
   data() {
     return {
-      user: userProfile,
       version: require('../package.json').version,
       query: ''
-    }
-  },
-
-  async mounted() {
-    // Try to refresh the token for the stored user
-    // If it works great, if not we remove the stored local user
-    // and the user will need to login again
-    let storedUser = localStorage.getItem('user')
-
-    // Skip token if demo user in use
-    if (storedUser == demoUserName) {
-      Object.assign(userProfile, new User('', { name: 'Demo User' }, demoUserName))
-      console.log('### App.vue: MSAL aquireToken skipped for demo user')
-      return
-    }
-
-    if (storedUser) {
-      try {
-        let tokenResp = await msalApp.acquireTokenSilent(accessTokenRequest)
-
-        if (tokenResp) {
-          Object.assign(userProfile, new User(tokenResp.accessToken, msalApp.getAccount(), msalApp.getAccount().userName || msalApp.getAccount().preferred_username))
-          console.log(`### App.vue: MSAL user ${userProfile.userName} is logged & has token`)
-          localStorage.setItem('user', userProfile.userName)
-        } else {
-          console.log('### acquireTokenSilent returned no token - removing stored user')
-          Object.assign(userProfile, new User())
-          localStorage.removeItem('user')
-        }
-      } catch (err) {
-        console.log(`### Error acquireTokenSilent ${err} - removing stored user`)
-        Object.assign(userProfile, new User())
-        localStorage.removeItem('user')
-      }
     }
   },
 

@@ -5,7 +5,8 @@ exports[`Account.vue renders user profile 1`] = `
   <!---->
   <h1>
     User Account
-    <button type="button" class="btn float-right btn-danger btn-lg"><i icon="sign-out-alt"></i> &nbsp; LOGOUT
+    <button type="button" class="btn float-right btn-danger btn-lg">
+      <fa icon="sign-out-alt"></fa> &nbsp; LOGOUT
     </button></h1> <br>
   <!---->
   <div class="card details">
@@ -22,7 +23,8 @@ exports[`Account.vue renders user profile 1`] = `
   </div> <br>
   <h1>
     Orders
-    <button type="button" class="btn float-right btn-success btn-lg"><i icon="redo-alt"></i> &nbsp; Refresh
+    <button type="button" class="btn float-right btn-success btn-lg">
+      <fa icon="redo-alt"></fa> &nbsp; Refresh
     </button></h1>
   <!---->
   <div class="card order">

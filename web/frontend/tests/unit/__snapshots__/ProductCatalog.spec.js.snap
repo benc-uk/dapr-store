@@ -22,7 +22,8 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
               Made from 100% wool and quite nice
               <br><br>
             <h4>£39.95</h4>
-            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled"><i icon="shopping-cart"></i>
+            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled">
+              <fa icon="shopping-cart"></fa>
               &nbsp; Add to Cart
             </a>
           </div>
@@ -51,7 +52,8 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
               100% hand made silk includes tie, pocket square and cufflinks
               <br><br>
             <h4>£18</h4>
-            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled"><i icon="shopping-cart"></i>
+            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled">
+              <fa icon="shopping-cart"></fa>
               &nbsp; Add to Cart
             </a>
           </div>
@@ -79,7 +81,8 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
               Black &amp; Red Paisley Cravat
               <br><br>
             <h4>£11.2</h4>
-            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled"><i icon="shopping-cart"></i>
+            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled">
+              <fa icon="shopping-cart"></fa>
               &nbsp; Add to Cart
             </a>
           </div>

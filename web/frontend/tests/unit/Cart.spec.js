@@ -7,12 +7,11 @@ localVue.use(BootstrapVue)
 import Cart from '@/views/Cart.vue'
 
 jest.mock('@/mixins/api')
+jest.mock('@/mixins/auth')
 
-import { userProfile } from '@/main.js'
 
 describe('Cart.vue', () => {
   it('renders cart contents', async () => {
-    userProfile.userName = 'demo@example.net'
     const wrapper = mount(Cart, {
       localVue
     })

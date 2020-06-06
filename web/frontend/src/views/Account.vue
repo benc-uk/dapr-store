@@ -46,9 +46,8 @@
 </template>
 
 <script>
-import { userProfile, msalApp } from '../main'
 import api from '../mixins/api'
-import { User, demoUserName } from '../user'
+import auth from '../mixins/auth'
 import ErrorBox from '../components/ErrorBox'
 import Order from '../components/Order'
 
@@ -60,7 +59,7 @@ export default {
     'order': Order
   },
 
-  mixins: [ api ],
+  mixins: [ api, auth ],
 
   data() {
     return {
@@ -73,7 +72,7 @@ export default {
 
   async created() {
     try {
-      let resp = await this.apiUserGet(userProfile.userName)
+      let resp = await this.apiUserGet(this.user().userName)
       if (resp.data) {
         this.registeredUser = resp.data
       }
@@ -86,12 +85,7 @@ export default {
 
   methods: {
     async logout() {
-      let isDemo = userProfile.userName == demoUserName
-      Object.assign(userProfile, new User())
-      localStorage.removeItem('user')
-      if (!isDemo) {
-        await msalApp.logout()
-      }
+      await this.authLogout()
 
       this.$router.push({ name: 'home' })
     },
@@ -102,7 +96,7 @@ export default {
       let orderList = []
 
       try {
-        let resp = await this.apiOrdersForUser(userProfile.userName)
+        let resp = await this.apiOrdersForUser(this.user().userName)
         if (resp.data) {
           orderList = resp.data
         }

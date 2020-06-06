@@ -5,8 +5,9 @@
 // Dapr Store frontend - API helper to call the various backend microservices
 // ----------------------------------------------------------------------------
 
-import { userProfile, config } from '../main'
+//import { config } from '../main'
 import axios from 'axios'
+import auth from './auth'
 
 export default {
   methods: {
@@ -94,16 +95,17 @@ export default {
     // ===== Base Axios wrapper =====
     //
     _apiRawCall: function(apiPath, method = 'get', data = null) {
-      const API_ENDPOINT = config.API_ENDPOINT || '/'
+      const API_ENDPOINT = this.$config.API_ENDPOINT || '/'
       let apiUrl = `${API_ENDPOINT}${apiPath}`
       console.log(`### API CALL ${method} ${apiUrl}`)
 
       let headers = {}
 
+      let user = auth.methods.user()
       // Send token as per the OAuth 2.0 bearer token scheme
-      if (userProfile.token) {
+      if (user && user.token) {
         headers = {
-          'Authorization': `Bearer ${userProfile.token}`
+          'Authorization': `Bearer ${user.token}`
         }
       }
 

@@ -71,9 +71,8 @@
 </template>
 
 <script>
-import { userProfile, msalApp, accessTokenRequest, config } from '../main'
 import api from '../mixins/api'
-import { User, demoUserName } from '../user'
+import auth from '../mixins/auth'
 import ErrorBox from '../components/ErrorBox'
 
 export default {
@@ -83,7 +82,7 @@ export default {
     'error-box': ErrorBox
   },
 
-  mixins: [ api ],
+  mixins: [ api, auth ],
 
   data() {
     return {
@@ -95,7 +94,7 @@ export default {
 
   created() {
     // Demo mode is on when no AUTH_CLIENT_ID is provided
-    this.demoMode = config.AUTH_CLIENT_ID ? false : true
+    this.demoMode = this.$config.AUTH_CLIENT_ID ? false : true
   },
 
   methods: {
@@ -103,34 +102,26 @@ export default {
       this.error = null
       this.inprogress = true
 
-      let authUser = await this.authenicateUser()
-      let regUserRequest = {
-        'username': authUser.userName,
-        'displayName': authUser.account.name || 'Unknown Name',
-        'profileImage': 'img/placeholder-profile.jpg'
-      }
-
       try {
-        // Moved in front of apiUserRegister call so we have a bearer token
-        Object.assign(userProfile, authUser)
-        localStorage.setItem('user', userProfile.userName)
+        await this.authLogin(true)
 
-        // Sidetracked by getting user's photo, resulted in Base64 encoding hell
-        // let graphTokenResp = await msalApp.acquireTokenSilent({ scopes: [ 'user.read' ] })
-        // let graphPhoto = await axios.get('https://graph.microsoft.com/beta/me/photo/$value', { headers: { Authorization: `Bearer ${graphTokenResp.accessToken}` } })
-        let resp = await this.apiUserRegister(regUserRequest)
+        let resp = await this.apiUserRegister({
+          'username': this.user().userName,
+          'displayName': this.user().account.name || 'Unknown Name',
+          'profileImage': 'img/placeholder-profile.jpg'
+        })
         if (resp.data && resp.data.registrationStatus == 'success') {
-          console.log(`## Registered user ${regUserRequest.username}`)
+          console.log(`## Registered user ${this.user().userName}`)
         } else {
           throw new Error('Something went wrong while registering user')
         }
+        this.$forceUpdate()
         this.$router.replace({ path: '/' })
       } catch (err) {
-        Object.assign(userProfile, new User())
-        localStorage.removeItem('user')
-        let errMsg = this.apiDecodeError(err)
-        console.error(JSON.stringify(errMsg))
+        console.error(err)
 
+        this.authUnsetUser()
+        let errMsg = this.apiDecodeError(err)
         this.error = JSON.stringify(errMsg).includes('already registered') ? 'You have already registered, please sign-in' : errMsg
       }
     },
@@ -138,71 +129,24 @@ export default {
     async login() {
       this.inprogress = true
       this.error = null
-      let authUser = await this.authenicateUser()
-
-      if (authUser && authUser.userName) {
-        try {
-          try {
-            await this.apiUserCheckReg(authUser.userName)
-          } catch (err) {
-            throw new Error('Sorry, you aren\'t a registered user, please use the registation option below')
-          }
-
-          Object.assign(userProfile, authUser)
-          localStorage.setItem('user', userProfile.userName)
-
-          this.$router.replace({ path: '/' })
-        } catch (err) {
-          Object.assign(userProfile, new User())
-          localStorage.removeItem('user')
-
-          this.error = this.apiDecodeError(err)
-        }
-      }
-    },
-
-    async authenicateUser() {
-      this.error = null
-
-      // In demo mode only one fake account is supported, it has no token
-      if (this.demoMode) {
-        let dummyUser = new User('', { name: 'Demo User' }, demoUserName)
-        dummyUser.dummy = true
-        return dummyUser
-      }
-
-      let loginRequest = { scopes: [ 'user.read' ], prompt: 'select_account' }
 
       try {
-        let tokenResp
+        await this.authLogin(true)
 
-        // 1. Login with popup
-        await msalApp.loginPopup(loginRequest)
-        console.log('### MSAL loginPopup was successful')
-        try {
-          // 2. Try to aquire token silently
-          tokenResp = await msalApp.acquireTokenSilent(accessTokenRequest)
-          console.log('### MSAL acquireTokenSilent was successful')
-        } catch (tokenErr) {
-          // 3. Silent process might have failed so try via popup
-          tokenResp = await msalApp.acquireTokenPopup(accessTokenRequest)
-          console.log('### MSAL acquireTokenPopup was successful')
+        if (this.user() && this.user().userName) {
+          try {
+            await this.apiUserCheckReg(this.user().userName)
+          } catch (err) {
+            this.authUnsetUser()
+            throw new Error('Sorry, you aren\'t a registered user, please use the registration option below')
+          }
+          this.$forceUpdate()
+          this.$router.replace({ path: '/' })
         }
-
-        // Just in case check, probably never triggers
-        if (!tokenResp.accessToken) {
-          throw new Error('Failed to aquire access token')
-        }
-
-        // Build user object to return
-        let authUser = new User(tokenResp.accessToken, msalApp.getAccount(), msalApp.getAccount().userName || msalApp.getAccount().preferred_username)
-        console.log(`### MSAL user ${authUser.userName} has authenticated`)
-        return authUser
       } catch (err) {
-        console.error(`### MSAL error! ${err.toString()}`)
         this.error = this.apiDecodeError(err)
       }
-    }
+    },
   }
 }
 </script>

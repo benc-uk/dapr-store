@@ -29,7 +29,6 @@
 <script>
 import ErrorBox from '../components/ErrorBox'
 import api from '../mixins/api'
-import { userProfile } from '../main'
 import Order from '../components/Order'
 
 export default {
@@ -45,8 +44,7 @@ export default {
   data() {
     return {
       order: null,
-      error: null,
-      user: userProfile
+      error: null
     }
   },
 
@@ -69,7 +67,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>
