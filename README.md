@@ -106,21 +106,27 @@ None
 This provides a cart service to the Dapr Store. The currently implementation is very minimal.  
 It is written in Go, source is in `cmd/cart` and it exposes the following API routes:
 ```
-/submit    POST a new order to be submitted
+/setProduct/{username}/{productId}/{count}    PUT a number of products in the cart of given user
+/get/{username}                               GET cart for user 
+/submit                                       POST submit a cart, and turn it into an 'Order'
+/clear/{username}                             PUT clear a user's cart
+
 ```
 See `pkg/models` for details of the **Order** struct.
 
-The service currently is little more than gateway API for publishing new orders onto the `orders-queue`. The cart is not persisted server side (it's held in the client in local storage), this leaves room for future improvement.
+The service is responsible for maintaining shopping carts for each user and persisting them. Submitting a cart will validate the contents and turn it into a order, which is sent to the Orders service for processing
 
 ### Cart - Dapr Interaction
 - **Pub/Sub.** The cart pushes **Order** entities to the `orders-queue` topic to be collected by the *orders* service
+- **State.** Stores and retrieves **Cart** entities from the state service, keyed on username.
+- **Service Invocation.** Cross service call to Products API to lookup and check products in the cart
 
 ## 💻 Frontend 
 This is the frontend accessed by users of store and visitors to the site. It is a single-page application (SPA) as such it runs entirely client side in the browser. It was created using the [Vue CLI](https://cli.vuejs.org/) and written in Vue.js
 
 It follows the standard SPA pattern of being served via static hosting (the 'frontend host' described below) and all data is fetched via a REST API endpoint. Note. [Vue Router](https://router.vuejs.org/) is used to provide client side routing, as such it needs to be served from a host that is configured to support it.
 
-The default API endpoint is `/` and it makes calls to the Dapr invoke API, namely `/v1.0/invoke/{service}` via the *API gateway*
+The default API endpoint is `/` and it makes calls to the Dapr invoke API, namely `/v1.0/invoke/{service}` this is routed via the *API gateway* to the various services.
 
 ## 📡 Frontend host
 A very basic / minimal static server using gorilla/mux. See https://github.com/gorilla/mux#static-files. It simply serves up the static bundled files output from the build process of the frontend, it expects to find these files in `./dist` directory but this is configurable 
@@ -130,7 +136,7 @@ This component is critical but consists of no code. It's a NGINX reverse proxy c
 - Forward specific calls to the relevant services via Dapr
 - Direct requests to the *frontend host*
 
-> Note. This is not to be confused with Azure API Management, Azure App Gateway or AWS API Gateway 
+> Note. This is not to be confused with Azure API Management, Azure App Gateway or AWS API Gateway 😀
 
 This is done with path based routing, it aggregates the various APIs and frontend SPA into a single endpoint or host, making configuration much easier (and the reason the API endpoint for the SPA can simply be `/`)
 
@@ -199,9 +205,6 @@ sudo dapr init
 ### Clone repo
 ```bash
 git clone https://github.com/benc-uk/dapr-store/
-# Make all scripts executable (only needed after first clone)
-cd dapr-store
-find . -name '*.sh' -print0 |xargs -0 chmod +x
 ```
 
 ### Run all services

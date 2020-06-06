@@ -39,7 +39,6 @@ RUN npm install --silent
 # Copy in the Vue.js app source
 COPY web/frontend/.eslintrc.js .
 COPY web/frontend/babel.config.js .
-COPY web/frontend/.env.production .
 COPY web/frontend/public ./public
 COPY web/frontend/src ./src
 

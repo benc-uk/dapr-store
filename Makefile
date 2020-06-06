@@ -79,6 +79,7 @@ clean :
 	rm -rf $(FRONTEND_DIR)/node_modules
 	rm -rf $(FRONTEND_DIR)/dist
 	rm -rf $(FRONTEND_DIR)/coverage
+	rm -rf output
 	rm -rf $(SERVICE_DIR)/cart/cart
 	rm -rf $(SERVICE_DIR)/orders/orders
 	rm -rf $(SERVICE_DIR)/users/users
