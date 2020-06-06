@@ -22,7 +22,7 @@ exports[`ProductSearch.vue renders search for Ascot 1`] = `
               Black &amp; Red Paisley Cravat
               <br><br>
             <h4>£11.2</h4>
-            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled">
+            </p> <a role="button" aria-disabled="true" tabindex="-1" href="#" target="_self" class="btn d-none d-md-inline disabled btn-primary disabled">
               <fa icon="shopping-cart"></fa>
               &nbsp; Add to Cart
             </a>

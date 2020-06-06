@@ -13,7 +13,7 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
         <!---->
         <!---->
         <div class="row">
-          <div class="col"><a target="_self" href="/product/prd1" class="">
+          <div class="col"><a href="/product/prd1" target="_self" class="">
               <h4 class="card-title">
                 Top&nbsp;Hat&nbsp;(6″)
               </h4>
@@ -22,14 +22,14 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
               Made from 100% wool and quite nice
               <br><br>
             <h4>£39.95</h4>
-            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled">
+            </p> <a role="button" aria-disabled="true" tabindex="-1" href="#" target="_self" class="btn d-none d-md-inline disabled btn-primary disabled">
               <fa icon="shopping-cart"></fa>
               &nbsp; Add to Cart
             </a>
           </div>
           <div class="flex-grow-0 d-none d-md-block col">
             <!---->
-            <div class="product-img"><a target="_self" href="/product/prd1" class=""><img src="/img/catalog/1.jpg"></a></div>
+            <div class="product-img"><a href="/product/prd1" target="_self" class=""><img src="/img/catalog/1.jpg"></a></div>
           </div>
         </div>
       </div>
@@ -43,7 +43,7 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
         <!---->
         <!---->
         <div class="row">
-          <div class="col"><a target="_self" href="/product/prd2" class="">
+          <div class="col"><a href="/product/prd2" target="_self" class="">
               <h4 class="card-title">
                 Black &amp; Gold Tie Set
               </h4>
@@ -52,13 +52,13 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
               100% hand made silk includes tie, pocket square and cufflinks
               <br><br>
             <h4>£18</h4>
-            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled">
+            </p> <a role="button" aria-disabled="true" tabindex="-1" href="#" target="_self" class="btn d-none d-md-inline disabled btn-primary disabled">
               <fa icon="shopping-cart"></fa>
               &nbsp; Add to Cart
             </a>
           </div>
           <div class="flex-grow-0 d-none d-md-block col"><span class="onsale">On Sale</span>
-            <div class="product-img"><a target="_self" href="/product/prd2" class=""><img src="/img/catalog/2.jpg"></a></div>
+            <div class="product-img"><a href="/product/prd2" target="_self" class=""><img src="/img/catalog/2.jpg"></a></div>
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
         <!---->
         <!---->
         <div class="row">
-          <div class="col"><a target="_self" href="/product/prd3" class="">
+          <div class="col"><a href="/product/prd3" target="_self" class="">
               <h4 class="card-title">
                 Paisley Cravat Ascot Tie
               </h4>
@@ -81,14 +81,14 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
               Black &amp; Red Paisley Cravat
               <br><br>
             <h4>£11.2</h4>
-            </p> <a role="button" aria-disabled="true" tabindex="-1" target="_self" href="#" class="btn d-none d-md-inline disabled btn-primary disabled">
+            </p> <a role="button" aria-disabled="true" tabindex="-1" href="#" target="_self" class="btn d-none d-md-inline disabled btn-primary disabled">
               <fa icon="shopping-cart"></fa>
               &nbsp; Add to Cart
             </a>
           </div>
           <div class="flex-grow-0 d-none d-md-block col">
             <!---->
-            <div class="product-img"><a target="_self" href="/product/prd3" class=""><img src="/img/catalog/3.jpg"></a></div>
+            <div class="product-img"><a href="/product/prd3" target="_self" class=""><img src="/img/catalog/3.jpg"></a></div>
           </div>
         </div>
       </div>

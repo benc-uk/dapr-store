@@ -249,9 +249,10 @@ The services support the following environmental variables. All settings are opt
 - `AUTH_CLIENT_ID` - Used to enable [security and authentication](/docs/security.md). Default is *blank*, which is no security
 - `DAPR_STORE_NAME` - Name of the Dapr state component to use. Default is `statestore`
 - `DAPR_ORDERS_TOPIC` - Name of the Dapr pub/sub topic to use for orders. Default is `orders-queue"`
-- `STATIC_DIR` - (Frontend host only) The path to serve static content from, i.e. the bundled Vue.js SPA output. Default is `./dist`
 
-The frontend has no runtime configuration, but can be configured at build time, see the `.env.production` and `.env.development` in [web/frontend](./web/frontend/).
+Frontend host config: 
+- `STATIC_DIR` - The path to serve static content from, i.e. the bundled Vue.js SPA output. Default is `./dist`
+- `API_ENDPOINT` - To point the frontend at a different endpoint. It's very unlikely you'll ever need to set this. Default is `/`
 
 ## Default ports
 - 9000 - NGINX API gateway (reverse proxy)

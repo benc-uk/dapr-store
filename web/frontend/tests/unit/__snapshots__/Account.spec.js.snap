@@ -32,7 +32,7 @@ exports[`Account.vue renders user profile 1`] = `
     <!---->
     <div class="card-body">
       <!---->
-      <!----><a target="_self" href="/order/ord-mock" class="">
+      <!----><a href="/order/ord-mock" target="_self" class="">
         <h2>Mock order</h2>
       </a>
       <h2>
