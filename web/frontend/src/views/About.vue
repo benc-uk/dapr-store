@@ -14,8 +14,9 @@
     A demonstration app built using microservices and the Dapr framework<br>
     <b>Ben Coleman, 2020 [MIT License]</b><br>
     <br>
-    v{{ version }}
-    <br><br>
+    Version: {{ version }}<br>
+    Build Info: <pre>{{ buildInfo }}</pre>
+    <br>
     &bull; Learn more about Dapr - <a href="https://dapr.io/" target="_blank">dapr.io</a><br>
     &bull; GitHub project - <a href="https://github.com/benc-uk/dapr-store" target="_blank">github.com/benc-uk/dapr-store</a>
   </div>
@@ -26,6 +27,7 @@ export default {
   data() {
     return {
       version: require('../../package.json').version,
+      buildInfo: (process.env.VUE_APP_BUILD_INFO || 'N/A VUE_APP_BUILD_INFO is unset').replace(/\s\/\s/g, '\n')
     }
   }
 }
@@ -33,6 +35,13 @@ export default {
 
 
 <style scoped>
+pre {
+  margin-left:2rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  width: 50%;
+  font-size: 70%
+}
 h1 {
   font-weight: bold;
   font-size: 250%;

@@ -27,8 +27,9 @@ RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build \
 FROM node:12-alpine as frontend-build
 
 ARG VERSION="0.0.1"
-ARG CLIENT_ID=""
-ENV VUE_APP_AUTH_CLIENT_ID=$CLIENT_ID
+ARG BUILD_INFO="Not provided"
+
+ENV VUE_APP_BUILD_INFO=${BUILD_INFO}
 WORKDIR /build
 
 # Install all the Vue.js dev tools & CLI, and our app dependencies 
