@@ -11,6 +11,7 @@ SERVICE_DIR := cmd
 FRONTEND_DIR := web/frontend
 OUTPUT_DIR := ./output
 VERSION ?= 0.0.1
+BUILD_INFO ?= "Makefile build"
 
 # Most likely want to override these when calling `make docker`
 DOCKER_REG ?= docker.io
@@ -94,12 +95,14 @@ clean :
 docker :
 	docker build . -f build/service.Dockerfile \
 	--build-arg VERSION=$(VERSION) \
+	--build-arg BUILD_INFO='$(BUILD_INFO)' \
 	--build-arg SERVICE_NAME=cart \
 	--build-arg SERVICE_PORT=9001 \
 	-t $(DOCKER_PREFIX)/cart:$(DOCKER_TAG)
 	
 	docker build . -f build/service.Dockerfile \
 	--build-arg VERSION=$(VERSION) \
+	--build-arg BUILD_INFO='$(BUILD_INFO)' \
 	--build-arg SERVICE_NAME=products \
 	--build-arg SERVICE_PORT=9002 \
 	--build-arg CGO_ENABLED=1 \
@@ -107,12 +110,14 @@ docker :
 
 	docker build . -f build/service.Dockerfile \
 	--build-arg VERSION=$(VERSION) \
+	--build-arg BUILD_INFO='$(BUILD_INFO)' \
 	--build-arg SERVICE_NAME=users \
 	--build-arg SERVICE_PORT=9003 \
 	-t $(DOCKER_PREFIX)/users:$(DOCKER_TAG)
 
 	docker build . -f build/service.Dockerfile \
 	--build-arg VERSION=$(VERSION) \
+	--build-arg BUILD_INFO='$(BUILD_INFO)' \
 	--build-arg SERVICE_NAME=orders \
 	--build-arg SERVICE_PORT=9004 \
 	-t $(DOCKER_PREFIX)/orders:$(DOCKER_TAG)

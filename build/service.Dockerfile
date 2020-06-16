@@ -5,7 +5,7 @@ FROM golang:1.14-alpine as go-build
 
 ARG SERVICE_NAME="SET_ON_COMMAND_LINE"
 ARG VERSION="0.0.1"
-ARG BUILD_INFO="Manual build"
+ARG BUILD_INFO="Not provided"
 ARG CGO_ENABLED=0
 
 WORKDIR /build
