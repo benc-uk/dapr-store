@@ -26,7 +26,7 @@ export default {
       return user
     },
 
-    authStoredUsername() {
+    authGetStoredUsername() {
       return localStorage.getItem('user')
     }
   }

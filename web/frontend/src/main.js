@@ -33,7 +33,7 @@ appStartup()
 
 //
 // Most of the app config & initialization moved here
-// So it can be synchronized with the config API call
+// So it can be synchronized using await with the config API call
 //
 async function appStartup() {
   // Load config at runtime from special `/config` endpoint on frontend-host
@@ -45,8 +45,8 @@ async function appStartup() {
     console.warn('### Failed to fetch \'/config\' endpoint. Defaults will be used')
     config = {
       API_ENDPOINT: '/',
-      AUTH_CLIENT_ID: ''
-      //AUTH_CLIENT_ID: '69972365-c1b6-494d-9579-5b9de2790fc3'
+      //AUTH_CLIENT_ID: ''
+      AUTH_CLIENT_ID: '69972365-c1b6-494d-9579-5b9de2790fc3'
     }
   }
 
@@ -61,18 +61,11 @@ async function appStartup() {
     console.log('### Azure AD sign-in: disabled. Will run in demo mode')
   }
 
-  // Re-login any stored user if there is one
-  if (auth.methods.authStoredUsername()) {
-    try {
-      // Try to refresh the token for the stored user
-      // If it fails - remove the stored local user forcing a re-login again
-      await auth.methods.authLogin(false)
-    } catch (err) {
-      auth.methods.authUnsetUser()
-    }
-  }
+  // Re-login any locally cached user, if there is one
+  // Note, we're using a mixin *outside* a component, so the slightly strange access
+  await auth.methods.authTryCachedUser()
 
-  // Actually mount & start the Vue app
+  // Actually mount & start the Vue app, kinda important
   new Vue({
     router,
     render: (h) => h(App),

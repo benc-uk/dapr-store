@@ -52,7 +52,7 @@
         <b-link to="/about">
           <b-card
             overlay
-            img-src="https://i.picsum.photos/id/5/600/600.jpg"
+            img-src="photo/about.jpg"
             img-alt="About"
             text-variant="white"
             title="About Us"

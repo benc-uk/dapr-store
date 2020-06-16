@@ -21,6 +21,9 @@ export default {
         auth: {
           clientId: clientId,
           redirectUri: window.location.origin
+        },
+        cache: {
+          cacheLocation: 'localStorage'
         }
       })
 
@@ -30,26 +33,52 @@ export default {
     },
 
     authLogout: async function() {
-      let userName = user.userName
       this.authUnsetUser()
-      if (userName != demoUserName) {
+      if (msalApp) {
         await msalApp.logout()
       }
     },
 
-    authLogin: async function(doLogin = false) {
+    authTryCachedUser: async function() {
+      // Skip real login and return cached demo/dummy user
       if (!msalApp) {
-        user = new User('', { name: 'Demo User' }, demoUserName)
-        localStorage.setItem('user', user.userName)
+        let storedUser = localStorage.getItem('user')
+        if (storedUser) {
+          user = JSON.parse(storedUser)
+        }
         return
       }
 
-      if (doLogin) {
-        await msalApp.loginPopup({
-          scopes: [ 'user.read' ],
-          prompt: 'select_account'
-        })
+      try {
+        // Only try if there is a cached user
+        if (msalApp.getAccount()) {
+          let tokenResp = await msalApp.acquireTokenSilent(accessTokenRequest)
+          console.log('### MSAL acquireTokenSilent from cache was successful')
+
+          if (tokenResp){
+            user = new User(tokenResp.accessToken, msalApp.getAccount(), msalApp.getAccount().userName || msalApp.getAccount().preferred_username)
+          } else {
+            this.authUnsetUser()
+          }
+        }
+      } catch (err) {
+        console.log('### authTryCachedUser failed, which is OK')
       }
+    },
+
+    authLogin: async function() {
+      // Skip real login and set demo user, also save in storage
+      if (!msalApp) {
+        user = new User('', { name: 'Demo User' }, demoUserName)
+        localStorage.setItem('user', JSON.stringify(user))
+        return
+      }
+
+      // Login step
+      await msalApp.loginPopup({
+        scopes: [ 'user.read' ],
+        prompt: 'select_account'
+      })
 
       let tokenResp
       try {
@@ -67,24 +96,17 @@ export default {
         throw new Error('Failed to acquire access token')
       }
 
-      //return tokenResp.accessToken
       user = new User(tokenResp.accessToken, msalApp.getAccount(), msalApp.getAccount().userName || msalApp.getAccount().preferred_username)
-      console.log(user)
-
-      localStorage.setItem('user', user.userName)
     },
 
     authUnsetUser() {
       user = null
       localStorage.removeItem('user')
+      msalApp.cacheStorage.clear()
     },
 
     user() {
       return user
     },
-
-    authStoredUsername() {
-      return localStorage.getItem('user')
-    }
   }
 }

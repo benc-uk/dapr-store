@@ -95,8 +95,7 @@ export default {
     // ===== Base Axios wrapper =====
     //
     _apiRawCall: function(apiPath, method = 'get', data = null) {
-      const API_ENDPOINT = this.$config.API_ENDPOINT || '/'
-      let apiUrl = `${API_ENDPOINT}${apiPath}`
+      let apiUrl = `${(this.$config.API_ENDPOINT || '/')}${apiPath}`
       console.log(`### API CALL ${method} ${apiUrl}`)
 
       let headers = {}

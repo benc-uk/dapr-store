@@ -103,7 +103,7 @@ export default {
       this.inprogress = true
 
       try {
-        await this.authLogin(true)
+        await this.authLogin()
 
         let resp = await this.apiUserRegister({
           'username': this.user().userName,
