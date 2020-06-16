@@ -136,6 +136,7 @@ docker :
 docker-frontend :
 	docker build . -f build/frontend.Dockerfile \
 	--build-arg VERSION=$(VERSION) \
+	--build-arg BUILD_INFO='$(BUILD_INFO)' \	
 	--build-arg CLIENT_ID=$(CLIENT_ID) \
 	-t $(DOCKER_PREFIX)/frontend-host:$(DOCKER_TAG)
 
