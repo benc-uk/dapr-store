@@ -79,9 +79,9 @@ jobs:
 
     - name: Run all builds
       run: |
-        echo BUILD_INFO=[ $BUILD_INFO ]
-        make docker DOCKER_TAG=${{ github.run_id }} VERSION=$VERSION BUILD_INFO="$BUILD_INFO"
-        make docker DOCKER_TAG=latest VERSION=$VERSION BUILD_INFO="$BUILD_INFO"
+        echo "Build Info String=> $BUILD_INFO / Date:$(date +%F_%T)"
+        make docker DOCKER_TAG=${{ github.run_id }} VERSION=$VERSION BUILD_INFO="$BUILD_INFO / Date:$(date +%F_%T)"
+        make docker DOCKER_TAG=latest VERSION=$VERSION BUILD_INFO="$BUILD_INFO / Date:$(date +%F_%T)"
 
     # =====================================================================
     # Steps after this are only run when merging or pushing into master
