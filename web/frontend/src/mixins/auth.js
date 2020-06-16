@@ -102,7 +102,7 @@ export default {
     authUnsetUser() {
       user = null
       localStorage.removeItem('user')
-      msalApp.cacheStorage.clear()
+      if (msalApp) { msalApp.cacheStorage.clear() }
     },
 
     user() {
