@@ -22,7 +22,7 @@ env:
   DOCKER_USER: bcdemo
   DOCKER_REG: bcdemo.azurecr.io
   STORAGE_ACCT_NAME: bcmisc
-  BUILD_INFO: '${{ github.workflow }} / ${{ github.run_id }} / ${{ github.ref }} / ${{ github.sha }}'
+  BUILD_INFO: 'Workflow:${{ github.workflow }} / RunId:${{ github.run_id }} / Ref:${{ github.ref }} / SHA:${{ github.sha }}'
 
 jobs:
   #
@@ -79,6 +79,7 @@ jobs:
 
     - name: Run all builds
       run: |
+        echo BUILD_INFO=[ $BUILD_INFO ]
         make docker DOCKER_TAG=${{ github.run_id }} VERSION=$VERSION BUILD_INFO="$BUILD_INFO"
         make docker DOCKER_TAG=latest VERSION=$VERSION BUILD_INFO="$BUILD_INFO"
 
