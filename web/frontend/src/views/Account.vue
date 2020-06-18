@@ -72,9 +72,11 @@ export default {
 
   async created() {
     try {
-      let resp = await this.apiUserGet(this.user().userName)
-      if (resp.data) {
-        this.registeredUser = resp.data
+      if (this.user()){
+        let resp = await this.apiUserGet(this.user().userName)
+        if (resp.data) {
+          this.registeredUser = resp.data
+        }
       }
     } catch (err) {
       this.error = this.apiDecodeError(err)

@@ -30,7 +30,7 @@
           <br><br>
           £{{ product.cost }}
           <br><br>
-          <b-button id="addBut" :disabled="!user().userName" variant="primary" @click="addToCart">
+          <b-button id="addBut" :disabled="!user()" variant="primary" @click="addToCart">
             <fa icon="shopping-cart" />
             &nbsp; Add to Cart
           </b-button>
@@ -81,6 +81,8 @@ export default {
   methods: {
     async addToCart() {
       try {
+        if (!this.user()) { return }
+
         await this.apiCartAddAmount(this.user().userName, this.product.id, +1)
         this.showToast('Added to your cart!', 'success')
       } catch (err) {
