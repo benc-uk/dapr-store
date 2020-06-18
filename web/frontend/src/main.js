@@ -56,14 +56,14 @@ async function appStartup() {
   // MSAL config used for signing in users with MS identity platform
   if (config.AUTH_CLIENT_ID) {
     console.log(`### Azure AD sign-in: enabled. Using clientId: ${config.AUTH_CLIENT_ID}`)
-    auth.methods.authInitMsal(config.AUTH_CLIENT_ID)
+    auth.methods.authInitMsal(config.AUTH_CLIENT_ID, ['store-api'])
   } else {
     console.log('### Azure AD sign-in: disabled. Will run in demo mode')
   }
 
   // Re-login any locally cached user, if there is one
   // Note, we're using a mixin *outside* a component, so the slightly strange access
-  await auth.methods.authTryCachedUser()
+  await auth.methods.authRestoreUser()
 
   // Actually mount & start the Vue app, kinda important
   new Vue({

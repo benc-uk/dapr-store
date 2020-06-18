@@ -107,7 +107,7 @@ export default {
 
         let resp = await this.apiUserRegister({
           'username': this.user().userName,
-          'displayName': this.user().account.name || 'Unknown Name',
+          'displayName': this.user().name || 'Unknown Name',
           'profileImage': 'img/placeholder-profile.jpg'
         })
         if (resp.data && resp.data.registrationStatus == 'success') {
