@@ -28,8 +28,8 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
             </a>
           </div>
           <div class="flex-grow-0 d-none d-md-block col">
-            <!---->
-            <div class="product-img"><a href="/product/prd1" target="_self" class=""><img src="/img/catalog/1.jpg"></a></div>
+            <div class="product-img">
+              <!----> <a href="/product/prd1" target="_self" class=""><img src="/img/catalog/1.jpg"></a></div>
           </div>
         </div>
       </div>
@@ -57,8 +57,8 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
               &nbsp; Add to Cart
             </a>
           </div>
-          <div class="flex-grow-0 d-none d-md-block col"><span class="onsale">On Sale</span>
-            <div class="product-img"><a href="/product/prd2" target="_self" class=""><img src="/img/catalog/2.jpg"></a></div>
+          <div class="flex-grow-0 d-none d-md-block col">
+            <div class="product-img"><span class="onsale">On Sale</span> <a href="/product/prd2" target="_self" class=""><img src="/img/catalog/2.jpg"></a></div>
           </div>
         </div>
       </div>
@@ -87,8 +87,8 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
             </a>
           </div>
           <div class="flex-grow-0 d-none d-md-block col">
-            <!---->
-            <div class="product-img"><a href="/product/prd3" target="_self" class=""><img src="/img/catalog/3.jpg"></a></div>
+            <div class="product-img">
+              <!----> <a href="/product/prd3" target="_self" class=""><img src="/img/catalog/3.jpg"></a></div>
           </div>
         </div>
       </div>
