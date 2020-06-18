@@ -45,8 +45,8 @@ async function appStartup() {
     console.warn('### Failed to fetch \'/config\' endpoint. Defaults will be used')
     config = {
       API_ENDPOINT: '/',
-      //AUTH_CLIENT_ID: ''
-      AUTH_CLIENT_ID: '69972365-c1b6-494d-9579-5b9de2790fc3'
+      AUTH_CLIENT_ID: ''
+      //AUTH_CLIENT_ID: '69972365-c1b6-494d-9579-5b9de2790fc3'
     }
   }
 
