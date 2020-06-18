@@ -99,12 +99,10 @@ export default {
       console.log(`### API CALL ${method} ${apiUrl}`)
 
       let headers = {}
-
-      let user = auth.methods.user()
       // Send token as per the OAuth 2.0 bearer token scheme
-      if (user && user.token) {
+      if (auth.data().accessToken) {
         headers = {
-          'Authorization': `Bearer ${user.token}`
+          'Authorization': `Bearer ${auth.data().accessToken}`
         }
       }
 

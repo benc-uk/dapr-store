@@ -25,15 +25,17 @@
         </b-navbar-nav>
 
         <b-navbar-nav class="ml-auto">
-          <b-nav-item v-if="!user() || !user().userName" to="/login" variant="info">
+          <b-nav-item v-if="!user()" to="/login" variant="info">
             <fa icon="user" /> &nbsp; Login
           </b-nav-item>
-          <b-nav-item v-if="user() && user().userName" to="/cart" variant="info" active-class="active">
-            <fa icon="shopping-cart" /> &nbsp; Cart
-          </b-nav-item>
-          <b-nav-item v-if="user() && user().userName" to="/account" variant="info" active-class="active">
-            <fa icon="id-card" /> &nbsp; Account
-          </b-nav-item>
+          <template v-else>
+            <b-nav-item to="/cart" variant="info" active-class="active">
+              <fa icon="shopping-cart" /> &nbsp; Cart
+            </b-nav-item>
+            <b-nav-item to="/account" variant="info" active-class="active">
+              <fa icon="id-card" /> &nbsp; Account
+            </b-nav-item>
+          </template>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -58,7 +60,8 @@ export default {
   data() {
     return {
       version: require('../package.json').version,
-      query: ''
+      query: '',
+      loggedinUser: this.user()
     }
   },
 

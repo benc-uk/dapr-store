@@ -100,6 +100,8 @@ export default {
 
   async mounted() {
     try {
+      if (!this.user()) { return }
+
       let resp = await this.apiCartGet(this.user().userName)
       if (resp.data) {
         this.cart = resp.data
@@ -122,6 +124,8 @@ export default {
   methods: {
     async submitOrder() {
       try {
+        if (!this.user()) { return }
+
         let resp = await this.apiCartSubmit(this.user().userName)
         this.newOrder = resp.data
         resp = await this.apiCartClear(this.user().userName)
@@ -134,6 +138,8 @@ export default {
 
     async clearCart() {
       try {
+        if (!this.user()) { return }
+
         let resp = await this.apiCartClear(this.user().userName)
         this.cart = resp.data
         this.cartProducts = []
@@ -144,6 +150,8 @@ export default {
 
     async addSubProduct(productId, amount) {
       try {
+        if (!this.user()) { return }
+
         let resp = await this.apiCartAddAmount(this.user().userName, productId, amount)
 
         this.cart = resp.data
