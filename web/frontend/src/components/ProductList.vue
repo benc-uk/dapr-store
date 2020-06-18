@@ -34,8 +34,8 @@
         </b-col>
 
         <b-col class="flex-grow-0 d-none d-md-block">
-          <span v-if="product.onOffer" class="onsale">On Sale</span>
           <div class="product-img">
+            <span v-if="product.onOffer" class="onsale">On Sale</span>
             <b-link :to="`/product/`+product.id">
               <img :src="product.image">
             </b-link>
