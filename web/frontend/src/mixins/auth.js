@@ -44,7 +44,7 @@ export default {
       accessTokenRequest = {
         scopes: [ ]
       }
-      for (let scope in apiScopes) {
+      for (let scope of apiScopes) {
         accessTokenRequest.scopes.push(`api://${clientId}/${scope}`)
       }
     },

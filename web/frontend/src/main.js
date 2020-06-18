@@ -45,8 +45,8 @@ async function appStartup() {
     console.warn('### Failed to fetch \'/config\' endpoint. Defaults will be used')
     config = {
       API_ENDPOINT: '/',
-      AUTH_CLIENT_ID: ''
-      //AUTH_CLIENT_ID: '69972365-c1b6-494d-9579-5b9de2790fc3'
+      //AUTH_CLIENT_ID: ''
+      AUTH_CLIENT_ID: '69972365-c1b6-494d-9579-5b9de2790fc3'
     }
   }
 
@@ -56,7 +56,7 @@ async function appStartup() {
   // MSAL config used for signing in users with MS identity platform
   if (config.AUTH_CLIENT_ID) {
     console.log(`### Azure AD sign-in: enabled. Using clientId: ${config.AUTH_CLIENT_ID}`)
-    auth.methods.authInitMsal(config.AUTH_CLIENT_ID, ['store-api'])
+    auth.methods.authInitMsal(config.AUTH_CLIENT_ID, [ 'store-api' ])
   } else {
     console.log('### Azure AD sign-in: disabled. Will run in demo mode')
   }
