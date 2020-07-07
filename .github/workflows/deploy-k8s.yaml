@@ -3,6 +3,12 @@ name: Deploy To Kubernetes
 on:
   repository_dispatch:
     types: [ 'Continuous Deployment' ]
+  workflow_dispatch:
+   inputs:
+      imageTag:
+        description: 'Image tag to deploy'     
+        required: true
+        default: 'latest'
 
 env:
   IMAGE_REG: bcdemo.azurecr.io
