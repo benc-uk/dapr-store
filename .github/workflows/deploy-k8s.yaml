@@ -70,7 +70,7 @@ jobs:
             image:
               registry: ${{ env.IMAGE_REG }}
               repo: ${{ env.IMAGE_REPO }}
-              tag: "${{ github.event.client_payload.imageTag }}"
+              tag: "${{ github.event.client_payload.imageTag }}${{ github.event.inputs.imageTag }}"
             ingress:
               host: "${{ env.HOST }}"
 
@@ -176,7 +176,7 @@ jobs:
             image:
               registry: ${{ env.IMAGE_REG }}
               repo: ${{ env.IMAGE_REPO }}
-              tag: "${{ github.event.client_payload.imageTag }}"
+              tag: "${{ github.event.client_payload.imageTag }}${{ github.event.inputs.imageTag }}"
             ingress:
               host: "${{ env.HOST }}"
               certName: "${{ env.CERT_NAME }}"
