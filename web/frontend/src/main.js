@@ -44,9 +44,9 @@ async function appStartup() {
   } catch (err) {
     console.warn('### Failed to fetch \'/config\' endpoint. Defaults will be used')
     config = {
-      API_ENDPOINT: '/',
-      //AUTH_CLIENT_ID: ''
-      AUTH_CLIENT_ID: '69972365-c1b6-494d-9579-5b9de2790fc3'
+      // Take local defaults from .env.development or .env.development.local
+      API_ENDPOINT: process.env.VUE_APP_API_ENDPOINT || '/',
+      AUTH_CLIENT_ID: process.env.VUE_APP_AUTH_CLIENT_ID || ''
     }
   }
 

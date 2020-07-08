@@ -1,6 +1,7 @@
 name: CI Build Images
 
 on: 
+  workflow_dispatch:
   push: 
     branches: [master]
     paths-ignore:
@@ -98,13 +99,23 @@ jobs:
         make push DOCKER_TAG=latest
 
     # =====================================================================
-    # Optional deployment trigger
+    # Continuous deployment trigger
     # =====================================================================
 
-    - name: Trigger deployment
+    - name: Trigger deployment with workflows_dispatch
       if: github.event_name == 'push'
-      uses: peter-evans/repository-dispatch@v1
-      with:
-        token: ${{ secrets.DEPLOYMENT_PAT }}
-        event-type: 'Continuous Deployment'
-        client-payload: '{"imageTag": "${{ github.run_id }}"}'        
+      env:
+        WORKFLOW_ID: "1300956"
+      run: |
+        curl --request POST \
+        --url https://api.github.com/repos/benc-uk/dapr-store/actions/workflows/$WORKFLOW_ID/dispatches \
+        --header 'authorization: Bearer ${{ secrets.DEPLOYMENT_PAT }}' \
+        --header 'content-type: application/json' \
+        --data '{ "ref": "${{ github.ref }}" }'
+
+      # if: github.event_name == 'push'
+      # uses: peter-evans/repository-dispatch@v1
+      # with:
+      #   token: ${{ secrets.DEPLOYMENT_PAT }}
+      #   event-type: 'Continuous Deployment'
+      #   client-payload: '{"imageTag": "${{ github.run_id }}"}'                

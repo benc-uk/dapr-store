@@ -9,7 +9,6 @@ import Cart from '@/views/Cart.vue'
 jest.mock('@/mixins/api')
 jest.mock('@/mixins/auth')
 
-
 describe('Cart.vue', () => {
   it('renders cart contents', async () => {
     const wrapper = mount(Cart, {
