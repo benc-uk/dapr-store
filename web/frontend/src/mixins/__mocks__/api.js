@@ -5,7 +5,6 @@
 // Dapr Store frontend - Mock API helper
 // ----------------------------------------------------------------------------
 
-
 const fs = require('fs')
 
 // Load mock data, which we put beside the tests

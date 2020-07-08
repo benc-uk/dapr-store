@@ -1,8 +1,6 @@
 name: Deploy To Kubernetes
 
 on:
-  repository_dispatch:
-    types: [ 'Continuous Deployment' ]
   workflow_dispatch:
    inputs:
       imageTag:
@@ -24,11 +22,14 @@ jobs:
       NAMESPACE: 'daprstore-stage'
       HOST: 'staging.daprstore.benco.io'
 
-    steps:
+    steps: 
       - name: 'Start deployment'
         id: deploy
         uses: chrnorm/deployment-action@v1.2.0
         with:
+          # Shouldn't need to pass the ref, but there's a bug in GitHub
+          # Triggering workflow_dispatch with API means GITHUB_REF isn't set 
+          ref: ${{ github.event.ref }}
           token: ${{ github.token }}
           environment: ${{ env.ENV_NAME }}
 
@@ -133,6 +134,7 @@ jobs:
         id: deploy
         uses: chrnorm/deployment-action@v1.2.0
         with:
+          ref: ${{ github.event.ref }}
           token: ${{ github.token }}
           environment: ${{ env.ENV_NAME }}
 
