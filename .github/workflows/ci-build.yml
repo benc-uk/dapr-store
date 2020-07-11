@@ -104,18 +104,8 @@ jobs:
 
     - name: Trigger deployment with workflows_dispatch
       if: github.event_name == 'push'
-      env:
-        WORKFLOW_ID: "1300956"
-      run: |
-        curl --request POST \
-        --url https://api.github.com/repos/benc-uk/dapr-store/actions/workflows/$WORKFLOW_ID/dispatches \
-        --header 'authorization: Bearer ${{ secrets.DEPLOYMENT_PAT }}' \
-        --header 'content-type: application/json' \
-        --data '{ "ref": "${{ github.ref }}" }'
-
-      # if: github.event_name == 'push'
-      # uses: peter-evans/repository-dispatch@v1
-      # with:
-      #   token: ${{ secrets.DEPLOYMENT_PAT }}
-      #   event-type: 'Continuous Deployment'
-      #   client-payload: '{"imageTag": "${{ github.run_id }}"}'                
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: Deploy To Kubernetes
+        token: ${{ secrets.DEPLOYMENT_PAT }}
+        inputs: '{ "imageTag": "${{ github.run_id }}" }'
