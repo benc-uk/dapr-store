@@ -108,7 +108,7 @@ export default {
         let resp = await this.apiUserRegister({
           'username': this.user().userName,
           'displayName': this.user().name || 'Unknown Name',
-          'profileImage': `https://api.adorable.io/avatars/200/${this.user().userName}`
+          'profileImage': 'img/placeholder-profile.jpg'
         })
         if (resp.data && resp.data.registrationStatus == 'success') {
           console.log(`## Registered user ${this.user().userName}`)
