@@ -10,7 +10,7 @@ const router = new VueRouter()
 
 import ProductList from '@/components/ProductList.vue'
 
-jest.mock('@/mixins/api')
+jest.mock('@/services/api')
 
 // Load mock data
 let mockJson = require('fs').readFileSync(__dirname+'/../../../../testing/mock-data/products.json')

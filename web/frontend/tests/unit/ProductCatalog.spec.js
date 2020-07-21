@@ -6,7 +6,7 @@ localVue.use(BootstrapVue)
 
 import ProductCatalog from '@/views/ProductCatalog.vue'
 
-jest.mock('@/mixins/api')
+jest.mock('@/services/api')
 
 describe('ProductCatalog.vue', () => {
   it('renders products in catalog', async () => {

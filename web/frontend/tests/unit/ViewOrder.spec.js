@@ -10,7 +10,7 @@ const router = new VueRouter()
 
 import ViewOrder from '@/views/ViewOrder.vue'
 
-jest.mock('@/mixins/api')
+jest.mock('@/services/api')
 
 const orderId = 'order123'
 

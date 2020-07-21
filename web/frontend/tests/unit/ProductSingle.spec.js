@@ -10,7 +10,7 @@ const router = new VueRouter()
 
 import ProductSingle from '@/views/ProductSingle.vue'
 
-jest.mock('@/mixins/api')
+jest.mock('@/services/api')
 
 const productId = 'prd2'
 
