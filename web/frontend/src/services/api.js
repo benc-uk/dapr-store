@@ -8,7 +8,6 @@
 import auth from './auth'
 
 const API_SCOPE = 'store-api'
-let accessToken
 let clientId
 let apiEndpoint
 
@@ -117,9 +116,8 @@ async function apiCall(apiPath, method = 'get', data = null) {
     const scopes = [ `api://${clientId}/${API_SCOPE}` ]
 
     // Try to get an access token with our API scope
-    if (!accessToken) {
-      accessToken = await auth.acquireToken(scopes)
-    }
+    // It should be safe to call this every time, as MSAL.js caches tokens locally for us
+    const accessToken = await auth.acquireToken(scopes)
 
     // Send token as per the OAuth 2.0 bearer token scheme
     if (accessToken) {

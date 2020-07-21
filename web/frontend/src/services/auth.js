@@ -11,7 +11,7 @@ export default {
     // Can only call configure once
     if (msalApp) { return }
 
-    // If no clientId then create a mock MSAL UserAgentApplication
+    // If no clientId provided then create a mock MSAL UserAgentApplication
     // Allows us to run without Azure AD for demos & local dev
     if (!clientId) {
       console.log('### Azure AD sign-in: disabled. Will run in demo mode with dummy demo@example.net account')
@@ -27,6 +27,8 @@ export default {
         environment: ''
       }
 
+      // Stub out all the functions we call and return static dummy user where required
+      // Use localStorage to simulate MSAL caching and logging out
       msalApp = {
         clientId: null,
 
@@ -54,15 +56,28 @@ export default {
       return
     }
 
-    console.log(`### Azure AD sign-in: enabled. Using clientId: ${clientId}`)
-    msalApp = new msal.UserAgentApplication({
+    const config = {
       auth: {
-        clientId: clientId
+        clientId: clientId,
+        redirectUri: window.location.origin
       },
       cache: {
         cacheLocation: 'localStorage'
-      }
-    })
+      },
+      // Only uncomment when you *really* need to debug what is going on in MSAL
+      /* system: {
+        logger: new msal.Logger(
+          (logLevel, msg) => { console.log(msg) },
+          {
+            level: msal.LogLevel.Verbose
+          }
+        )
+      } */
+    }
+    console.log('### Azure AD sign-in: enabled\n', config)
+
+    // Create our shared/static MSAL app object
+    msalApp = new msal.UserAgentApplication(config)
   },
 
   //
@@ -121,7 +136,7 @@ export default {
       // 1. Try to acquire token silently
       tokenResp = await msalApp.acquireTokenSilent(accessTokenRequest)
       console.log('### MSAL acquireTokenSilent was successful')
-    } catch (tokenErr) {
+    } catch (err) {
       // 2. Silent process might have failed so try via popup
       tokenResp = await msalApp.acquireTokenPopup(accessTokenRequest)
       console.log('### MSAL acquireTokenPopup was successful')
