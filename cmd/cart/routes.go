@@ -23,10 +23,10 @@ import (
 // All routes we need should be registered here
 //
 func (api API) addRoutes(router *mux.Router) {
-	router.HandleFunc("/setProduct/{username}/{productId}/{count}", auth.AuthMiddleware(api.setProductCount)).Methods("PUT")
-	router.HandleFunc("/get/{username}", auth.AuthMiddleware(api.getCart)).Methods("GET")
-	router.HandleFunc("/submit", auth.AuthMiddleware(api.submitCart)).Methods("POST")
-	router.HandleFunc("/clear/{username}", auth.AuthMiddleware(api.clearCart)).Methods("PUT")
+	router.HandleFunc("/setProduct/{username}/{productId}/{count}", auth.JWTValidator(api.setProductCount)).Methods("PUT")
+	router.HandleFunc("/get/{username}", auth.JWTValidator(api.getCart)).Methods("GET")
+	router.HandleFunc("/submit", auth.JWTValidator(api.submitCart)).Methods("POST")
+	router.HandleFunc("/clear/{username}", auth.JWTValidator(api.clearCart)).Methods("PUT")
 }
 
 //

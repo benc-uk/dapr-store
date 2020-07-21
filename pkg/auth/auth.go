@@ -20,17 +20,17 @@ import (
 )
 
 const jwksURL = `https://login.microsoftonline.com/common/discovery/v2.0/keys`
+const appScopeName = "store-api"
 
 var jwkSet *jwk.Set
 
 //
-// AuthMiddleware added around any route will protect it
+// JWTValidator added around any route will protect it
 //
-func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
+func JWTValidator(next http.HandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-
-		// Disable if call is internal from another Dapr service (localhost) or running on dev machine
+		// Disable check if call is internal from another Dapr service (localhost) or running on dev machine
 		fwdHost := r.Header.Get("X-Forwarded-Host")
 		if strings.Contains(fwdHost, "localhost") || r.Host == "example.com" {
 			log.Printf("### Auth (%s): Bypassing validation for host: %s %s\n", r.URL, fwdHost, r.Host)
@@ -38,7 +38,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// Disable if client id is not set, this is running in demo / unsecured mode
+		// Disable check if client id is not set, this is running in demo / unsecured mode
 		clientID := env.GetEnvString("AUTH_CLIENT_ID", "")
 		if len(clientID) == 0 {
 			log.Printf("### Auth (%s): No validation as AUTH_CLIENT_ID is not set\n", r.URL)
@@ -63,7 +63,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		}
 		tokenString := authParts[1]
 
-		// Decode the token
+		// Decode the token, using getKeyFromJWKS to get the key
 		token, err := jwt.Parse(tokenString, getKeyFromJWKS)
 		if err != nil {
 			w.WriteHeader(401)
@@ -72,7 +72,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 		// Now validate the decoded claims
 		claims := token.Claims.(jwt.MapClaims)
-		if claims["scp"] != "store-api" {
+		if claims["scp"] != appScopeName {
 			w.WriteHeader(401)
 			return
 		}
@@ -106,7 +106,10 @@ func getKeyFromJWKS(token *jwt.Token) (interface{}, error) {
 	}
 
 	if key := jwkSet.LookupKeyID(keyID); len(key) == 1 {
-		return key[0].Materialize()
+		// This I *think* gets the key value as raw bytes
+		var keyReturn interface{}
+		key[0].Raw(&keyReturn)
+		return keyReturn, nil
 	}
 
 	return nil, fmt.Errorf("Unable to find key: %q", keyID)

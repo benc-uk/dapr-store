@@ -20,8 +20,8 @@ import (
 // All routes we need should be registered here
 //
 func (api API) addRoutes(router *mux.Router) {
-	router.HandleFunc("/get/{id}", auth.AuthMiddleware(api.getOrder))
-	router.HandleFunc("/getForUser/{username}", auth.AuthMiddleware(api.getOrdersForUser))
+	router.HandleFunc("/get/{id}", auth.JWTValidator(api.getOrder))
+	router.HandleFunc("/getForUser/{username}", auth.JWTValidator(api.getOrdersForUser))
 }
 
 //
