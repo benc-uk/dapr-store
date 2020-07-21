@@ -130,13 +130,10 @@ export default {
 
       try {
         await auth.login()
-        console.log('l c')
         const user = auth.user()
-        console.dir(user)
         if (user && user.userName) {
           try {
-            let r = await api.userCheckReg(user.userName)
-            console.log(r)
+            await api.userCheckReg(user.userName)
           } catch (err) {
             auth.clearLocal()
             throw new Error('Sorry, you aren\'t a registered user, please use the registration option below')
