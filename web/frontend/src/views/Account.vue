@@ -46,8 +46,8 @@
 </template>
 
 <script>
-import api from '../mixins/api'
-import auth from '../mixins/auth'
+import api from '../services/api'
+import auth from '../services/auth'
 import ErrorBox from '../components/ErrorBox'
 import Order from '../components/Order'
 
@@ -59,11 +59,9 @@ export default {
     'order': Order
   },
 
-  mixins: [ api, auth ],
-
   data() {
     return {
-      registeredUser: null,
+      registeredUser: auth.user(),
       error: null,
       orders: null,
       ordersLoaded: false
@@ -72,14 +70,14 @@ export default {
 
   async created() {
     try {
-      if (this.user()){
-        let resp = await this.apiUserGet(this.user().userName)
-        if (resp.data) {
-          this.registeredUser = resp.data
+      if (auth.user()) {
+        let resp = await api.userGet(auth.user().userName)
+        if (resp) {
+          this.registeredUser = resp
         }
       }
     } catch (err) {
-      this.error = this.apiDecodeError(err)
+      this.error = err
     }
 
     this.reloadOrders()
@@ -87,7 +85,7 @@ export default {
 
   methods: {
     async logout() {
-      await this.authLogout()
+      await auth.logout()
 
       this.$router.push({ name: 'home' })
     },
@@ -98,12 +96,9 @@ export default {
       let orderList = []
 
       try {
-        let resp = await this.apiOrdersForUser(this.user().userName)
-        if (resp.data) {
-          orderList = resp.data
-        }
+        orderList = await api.ordersForUser(auth.user().userName)
       } catch (err) {
-        this.error = this.apiDecodeError(err)
+        this.error = err
       }
 
       // If you have no orders, skip it
@@ -115,11 +110,10 @@ export default {
       // Load orders call the API to fetch details
       for (let orderId of orderList.reverse()) {
         try {
-          let resp = await this.apiOrderGet(orderId)
-          let order = resp.data
+          let order = await api.orderGet(orderId)
           this.orders.push(order)
         } catch (err) {
-          this.error += JSON.stringify(this.apiDecodeError(err))+'\n\n'
+          this.error += err
           continue
         }
       }
@@ -131,42 +125,18 @@ export default {
 </script>
 
 <style scoped>
-code {
-  color:rgb(23, 38, 173);
-  font-size: 1.2rem;
-}
-.details {
-  font-size: 140%;
-}
-/* .order {
-  font-size: 140%;
-  margin-bottom: 1rem;
-}
-.order-received {
-  color: rgb(115, 8, 119);
-  background-color: rgb(227, 189, 236);
-}
-.order-received {
-  color: rgb(129, 66, 8);
-  background-color: rgb(231, 202, 138);
-}
-.order-processing {
-  color: rgb(23, 38, 173);
-  background-color: rgb(194, 214, 240);
-}
-.order-complete {
-  color: rgb(10, 107, 10);
-  background-color: rgb(119, 223, 150);
-}
-.order-status {
-  padding: 6px 20px;
-  margin: 6px;
-  display: inline-block;
-  border-radius: 5px;
-} */
-.profile {
-  float: right;
-  width: 10rem;
-  border-radius: 50%;
-}
+  code {
+    color:rgb(23, 38, 173);
+    font-size: 1.2rem;
+  }
+
+  .details {
+    font-size: 140%;
+  }
+
+  .profile {
+    float: right;
+    width: 10rem;
+    border-radius: 50%;
+  }
 </style>

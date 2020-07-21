@@ -7,7 +7,7 @@
 
 import VueRouter from 'vue-router'
 
-import auth from './mixins/auth'
+import auth from './services/auth'
 
 import ProductCatalog from './views/ProductCatalog'
 import ProductOffers from './views/ProductOffers'
@@ -80,7 +80,8 @@ const router = new VueRouter({
 })
 
 function signedInCheck(to, from, next) {
-  if (!auth.methods.user() || !auth.methods.user().userName) {
+  const user = auth.user()
+  if (!user || !user.userName) {
     next('/login')
   } else {
     next()

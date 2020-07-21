@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import api from '../mixins/api'
+import api from '../services/api'
 import ProductList from '../components/ProductList'
 import ErrorBox from '../components/ErrorBox'
 
@@ -27,8 +27,6 @@ export default {
     'product-list': ProductList,
     'error-box': ErrorBox
   },
-
-  mixins: [ api ],
 
   data() {
     return {
@@ -51,10 +49,9 @@ export default {
     async doSearch() {
       try {
         this.products = null
-        let resp = await this.apiProductSearch(this.$route.params.query)
-        this.products = resp.data
+        this.products = await api.productSearch(this.$route.params.query)
       } catch (err) {
-        this.error = this.apiDecodeError(err)
+        this.error = err
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "name": "dapr-store-frontend",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 8000",
@@ -20,7 +20,6 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@fortawesome/vue-fontawesome": "^0.1.9",
-    "axios": "^0.19.2",
     "bootstrap-vue": "^2.15.0",
     "bootswatch": "^4.5.0",
     "core-js": "^3.6.5",

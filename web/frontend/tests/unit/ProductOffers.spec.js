@@ -6,7 +6,7 @@ localVue.use(BootstrapVue)
 
 import ProductOffers from '@/views/ProductOffers.vue'
 
-jest.mock('@/mixins/api')
+jest.mock('@/services/api')
 
 describe('ProductOffers.vue', () => {
   it('renders products on offer', async () => {

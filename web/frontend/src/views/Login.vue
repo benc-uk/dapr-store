@@ -11,7 +11,7 @@
   <b-container>
     <error-box :error="error" />
     <b-alert v-if="demoMode" show dismissible>
-      Real user sign-in disabled, as AUTH_CLIENT_ID was not set. <br>Running in demo mode, using a dummy user account
+      Real user sign-in disabled, as AUTH_CLIENT_ID is not set. <br>Running in demo mode, using a dummy user account
     </b-alert>
     <b-overlay :show="inprogress && !error" rounded="sm">
       <b-row class="m-1">
@@ -71,8 +71,8 @@
 </template>
 
 <script>
-import api from '../mixins/api'
-import auth from '../mixins/auth'
+import api from '../services/api'
+import auth from '../services/auth'
 import ErrorBox from '../components/ErrorBox'
 
 export default {
@@ -81,8 +81,6 @@ export default {
   components: {
     'error-box': ErrorBox
   },
-
-  mixins: [ api, auth ],
 
   data() {
     return {
@@ -93,8 +91,7 @@ export default {
   },
 
   created() {
-    // Demo mode is on when no AUTH_CLIENT_ID is provided
-    this.demoMode = this.$config.AUTH_CLIENT_ID ? false : true
+    this.demoMode = auth.clientId() ? false : true
   },
 
   methods: {
@@ -103,26 +100,27 @@ export default {
       this.inprogress = true
 
       try {
-        await this.authLogin()
+        await auth.login()
+        const user = auth.user()
 
-        let resp = await this.apiUserRegister({
-          'username': this.user().userName,
-          'displayName': this.user().name || 'Unknown Name',
+        let resp = await api.userRegister({
+          'username': user.userName,
+          'displayName': user.name || 'Unknown Name',
           'profileImage': 'img/placeholder-profile.jpg'
         })
-        if (resp.data && resp.data.registrationStatus == 'success') {
-          console.log(`## Registered user ${this.user().userName}`)
+
+        if (resp && resp.registrationStatus == 'success') {
+          console.log(`## Registered user ${user.userName}`)
         } else {
           throw new Error('Something went wrong while registering user')
         }
-        this.$forceUpdate()
+
+        // !Important! Let parent component (App) know login has finished
+        this.$emit('loginComplete')
         this.$router.replace({ path: '/' })
       } catch (err) {
-        console.error(err)
-
-        this.authUnsetUser()
-        let errMsg = this.apiDecodeError(err)
-        this.error = JSON.stringify(errMsg).includes('already registered') ? 'You have already registered, please sign-in' : errMsg
+        auth.clearLocal()
+        this.error = err.message.includes('already registered') ? 'You have already registered, please sign-in' : err
       }
     },
 
@@ -131,20 +129,23 @@ export default {
       this.error = null
 
       try {
-        await this.authLogin(true)
-
-        if (this.user() && this.user().userName) {
+        await auth.login()
+        console.log('l c')
+        const user = auth.user()
+        console.dir(user)
+        if (user && user.userName) {
           try {
-            await this.apiUserCheckReg(this.user().userName)
+            let r = await api.userCheckReg(user.userName)
+            console.log(r)
           } catch (err) {
-            this.authUnsetUser()
+            auth.clearLocal()
             throw new Error('Sorry, you aren\'t a registered user, please use the registration option below')
           }
-          this.$forceUpdate()
+          this.$emit('loginComplete')
           this.$router.replace({ path: '/' })
         }
       } catch (err) {
-        this.error = this.apiDecodeError(err)
+        this.error = err
       }
     },
   }
@@ -152,13 +153,15 @@ export default {
 </script>
 
 <style scoped>
-.card {
-  height: 350px;
-}
-.card-body {
-  font-size: 20px;
-}
-.btn {
-  height: 80px
-}
+  .card {
+    height: 350px;
+  }
+
+  .card-body {
+    font-size: 20px;
+  }
+
+  .btn {
+    height: 80px
+  }
 </style>

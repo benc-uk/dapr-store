@@ -14,7 +14,7 @@ exports[`Account.vue renders user profile 1`] = `
     <!---->
     <div class="card-body">
       <!---->
-      <!----><img src="face.jpg" class="profile d-none d-md-block">
+      <!----><img class="profile d-none d-md-block" src="face.jpg">
 
       Display Name: <b>Mock User</b> <br>
       Username: <b>mock@example.net</b></div>
@@ -32,7 +32,7 @@ exports[`Account.vue renders user profile 1`] = `
     <!---->
     <div class="card-body">
       <!---->
-      <!----><a href="/order/ord-mock" target="_self" class="">
+      <!----><a href="#/order/ord-mock" class="" target="_self">
         <h2>Mock order</h2>
       </a>
       <h2>

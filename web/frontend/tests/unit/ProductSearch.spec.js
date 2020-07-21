@@ -1,5 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
+
 import BootstrapVue from 'bootstrap-vue'
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)
@@ -10,7 +11,7 @@ const router = new VueRouter()
 
 import ProductSearch from '@/views/ProductSearch.vue'
 
-jest.mock('@/mixins/api')
+jest.mock('@/services/api')
 
 describe('ProductSearch.vue', () => {
   it('renders search for Ascot', async () => {

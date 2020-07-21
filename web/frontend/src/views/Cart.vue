@@ -43,10 +43,10 @@
         </template>
         <h2>Count:</h2> <input :value="cart.products[product.id]" type="text" readonly>
 
-        <b-button class="ml-5 mr-3" :disabled="!cart || cart.products.length == 0" variant="warning" size="lg" @click="addSubProduct(product.id, -1)">
+        <b-button class="ml-5 mr-3" :disabled="!cart || cart.products.length == 0" variant="warning" size="lg" @click="modifyProductAmmount(product.id, -1)">
           <fa icon="minus-circle" />
         </b-button>
-        <b-button :disabled="!cart || cart.products.length == 0" variant="success" size="lg" @click="addSubProduct(product.id, 1)">
+        <b-button :disabled="!cart || cart.products.length == 0" variant="success" size="lg" @click="modifyProductAmmount(product.id, 1)">
           <fa icon="plus-circle" />
         </b-button>
         <img :src="product.image" class="thumb">
@@ -65,8 +65,8 @@
 
 <script>
 import ErrorBox from '../components/ErrorBox'
-import api from '../mixins/api'
-import auth from '../mixins/auth'
+import api from '../services/api'
+import auth from '../services/auth'
 
 export default {
   name: 'Cart',
@@ -75,14 +75,13 @@ export default {
     'error-box': ErrorBox
   },
 
-  mixins: [ api, auth ],
-
   data() {
     return {
       error: null,
       newOrder: null,
       cart: null,
-      cartProducts: []
+      cartProducts: [],
+      user: null
     }
   },
 
@@ -100,67 +99,58 @@ export default {
 
   async mounted() {
     try {
-      if (!this.user()) { return }
+      this.user = auth.user()
+      if (!this.user) { return }
 
-      let resp = await this.apiCartGet(this.user().userName)
-      if (resp.data) {
-        this.cart = resp.data
+      let resp = await api.cartGet(this.user.userName)
+      if (resp) {
+        this.cart = resp
         this.cartProducts = []
         for (let productId in this.cart.products) {
-          // Do this async helps speed it up when running locally
-          this.apiProductGet(productId)
+          // Do this async helps speed it up when running locally, due to Dapr bug
+          api.productGet(productId)
             .then((resp) => {
-              if (resp.data) {
-                this.cartProducts.push(resp.data)
-              }
+              this.cartProducts.push(resp)
             })
         }
       }
     } catch (err) {
-      this.error = this.apiDecodeError(err)
+      this.error = err
     }
   },
 
   methods: {
     async submitOrder() {
       try {
-        if (!this.user()) { return }
-
-        let resp = await this.apiCartSubmit(this.user().userName)
-        this.newOrder = resp.data
-        resp = await this.apiCartClear(this.user().userName)
-        this.cart = resp.data
+        this.newOrder = await api.cartSubmit(this.user.userName)
+        this.cart = await api.cartClear(this.user.userName)
         this.cartProducts = []
       } catch (err) {
-        this.error = this.apiDecodeError(err)
+        this.error = err
       }
     },
 
     async clearCart() {
       try {
-        if (!this.user()) { return }
-
-        let resp = await this.apiCartClear(this.user().userName)
-        this.cart = resp.data
+        let resp = await api.cartClear(this.user.userName)
+        this.cart = resp
         this.cartProducts = []
       } catch (err) {
-        this.error = this.apiDecodeError(err)
+        this.error = err
       }
     },
 
-    async addSubProduct(productId, amount) {
+    async modifyProductAmmount(productId, amount) {
       try {
-        if (!this.user()) { return }
+        this.cart = await api.cartAddAmount(this.user.userName, productId, amount)
 
-        let resp = await this.apiCartAddAmount(this.user().userName, productId, amount)
-
-        this.cart = resp.data
         // Fiddly nonsense to remove from cartProducts if removed from products.cart
+        // Check if productId is removed from cart object, then recreate cartProducts array
         if (!Object.prototype.hasOwnProperty.call(this.cart.products, productId)) {
           this.cartProducts = this.cartProducts.filter((p) => p.id != productId)
         }
       } catch (err) {
-        this.error = this.apiDecodeError(err)
+        this.error = err
       }
     }
   }

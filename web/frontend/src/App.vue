@@ -25,7 +25,7 @@
         </b-navbar-nav>
 
         <b-navbar-nav class="ml-auto">
-          <b-nav-item v-if="!user()" to="/login" variant="info">
+          <b-nav-item v-if="!user" to="/login" variant="info">
             <fa icon="user" /> &nbsp; Login
           </b-nav-item>
           <template v-else>
@@ -42,7 +42,7 @@
 
     <div class="container">
       <!-- Views are injected here -->
-      <router-view />
+      <router-view @loginComplete="refreshUser" />
 
       <footer>Dapr eShop v{{ version }} - (C) Ben Coleman, 2020</footer>
     </div>
@@ -50,19 +50,22 @@
 </template>
 
 <script>
-import auth from './mixins/auth'
+import auth from './services/auth'
 
 export default {
   name: 'App',
-
-  mixins: [ auth ],
 
   data() {
     return {
       version: require('../package.json').version,
       query: '',
-      loggedinUser: this.user()
+      user: {}
     }
+  },
+
+  async created() {
+    // Restore any cached or saved local user
+    this.refreshUser()
   },
 
   methods: {
@@ -71,6 +74,10 @@ export default {
         this.$router.push({ name: 'search', params: { query: this.query } })
           .catch(() => {})
       }
+    },
+
+    refreshUser() {
+      this.user = auth.user()
     }
   }
 }
@@ -80,6 +87,7 @@ export default {
   * {
     font-family: 'Josefin Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
+
   body, html, .app {
     margin: 0;
     padding: 0;
@@ -89,54 +97,64 @@ export default {
     height: 3rem;
     padding-right: 1rem;
   }
+
   .logo-text {
     font-family: 'Cinzel Decorative', cursive;
     font-size: 1.7rem;
     padding-right: 3rem;
     line-height: 3rem;
   }
+
   @media  (max-width: 500px) {
     .logo-text {
       font-size: 1.0rem;
     }
   }
+
   .navbar {
     padding: 0.4rem 1rem !important;
     margin-bottom: 2rem;
   }
+
   .nav-item {
     width: 8rem;
     text-align: center;
     font-size: 1.3rem;
     border-radius: 10px;
     margin-right: 2rem;
-    /* padding: 1rem 2rem !important; */
   }
+
   .nav-item:hover {
     background-color: rgba(10, 10, 60, 0.1);
     border-radius: 10px;
   }
+
   .active {
     background-color:rgba(255, 255, 255, 0.1);
     border-radius: 10px;
   }
+
   .card-header {
     font-size: 150% !important;
   }
+
   footer {
     width: 100%;
     text-align: right;
     border-top: 2px solid lightgray;
     margin-top: 3rem;
   }
+
   .alert {
     font-size: 140% !important;
   }
+
   .alert h4 {
     color: #222;
     padding-bottom: 0.3rem;
     border-bottom: 2px solid rgba(0, 0, 0, 0.2);
   }
+
   input[type=text] {
     background-color: rgba(10, 10, 60, 0.1);
     padding: 0px 0px 0px 10px !important;
@@ -144,6 +162,7 @@ export default {
     font-size: 1.2rem !important;
     height: 45px;
   }
+
   input[type=text]:focus {
     background-color: rgba(200, 200, 255, 0.2);
   }

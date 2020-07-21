@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import api from '../mixins/api'
+import api from '../services/api'
 import ProductList from '../components/ProductList'
 import ErrorBox from '../components/ErrorBox'
 
@@ -28,8 +28,6 @@ export default {
     'error-box': ErrorBox
   },
 
-  mixins: [ api ],
-
   data() {
     return {
       products: null,
@@ -39,11 +37,9 @@ export default {
 
   async mounted() {
     try {
-      let resp = await this.apiProductOffers()
-      this.products = resp.data
+      this.products = await api.productOffers()
     } catch (err) {
-      console.error(err)
-      this.error = this.apiDecodeError(err)
+      this.error = err
     }
   },
 }
