@@ -18,7 +18,7 @@ on:
     
 env:
   #DOCKER_TAG: ${{ github.run_id }}
-  VERSION: 0.4.3
+  VERSION: 0.5.0
   DOCKER_REPO: daprstore  
   DOCKER_USER: bcdemo
   DOCKER_REG: bcdemo.azurecr.io
