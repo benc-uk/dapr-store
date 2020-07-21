@@ -43,10 +43,10 @@
         </template>
         <h2>Count:</h2> <input :value="cart.products[product.id]" type="text" readonly>
 
-        <b-button class="ml-5 mr-3" :disabled="!cart || cart.products.length == 0" variant="warning" size="lg" @click="addSubProduct(product.id, -1)">
+        <b-button class="ml-5 mr-3" :disabled="!cart || cart.products.length == 0" variant="warning" size="lg" @click="modifyProductAmmount(product.id, -1)">
           <fa icon="minus-circle" />
         </b-button>
-        <b-button :disabled="!cart || cart.products.length == 0" variant="success" size="lg" @click="addSubProduct(product.id, 1)">
+        <b-button :disabled="!cart || cart.products.length == 0" variant="success" size="lg" @click="modifyProductAmmount(product.id, 1)">
           <fa icon="plus-circle" />
         </b-button>
         <img :src="product.image" class="thumb">
@@ -140,11 +140,12 @@ export default {
       }
     },
 
-    async addSubProduct(productId, amount) {
+    async modifyProductAmmount(productId, amount) {
       try {
         this.cart = await api.cartAddAmount(this.user.userName, productId, amount)
 
         // Fiddly nonsense to remove from cartProducts if removed from products.cart
+        // Check if productId is removed from cart object, then recreate cartProducts array
         if (!Object.prototype.hasOwnProperty.call(this.cart.products, productId)) {
           this.cartProducts = this.cartProducts.filter((p) => p.id != productId)
         }
