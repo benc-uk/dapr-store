@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import api from '../mixins/api'
+import api from '../services/api'
 import ProductList from '../components/ProductList'
 import ErrorBox from '../components/ErrorBox'
 
@@ -28,8 +28,6 @@ export default {
     'error-box': ErrorBox
   },
 
-  mixins: [ api ],
-
   data() {
     return {
       products: null,
@@ -39,14 +37,14 @@ export default {
 
   async mounted() {
     try {
-      let resp = await this.apiProductCatalog()
-      if (resp.data && typeof resp.data === 'object') {
-        this.products = resp.data
+      let resp = await api.productCatalog()
+      if (resp && typeof resp === 'object') {
+        this.products = resp
       } else {
         throw new Error('Failed to fetch products')
       }
     } catch (err) {
-      this.error = this.apiDecodeError(err)
+      this.error = err
     }
   },
 }

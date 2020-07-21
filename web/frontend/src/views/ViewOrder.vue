@@ -28,7 +28,7 @@
 
 <script>
 import ErrorBox from '../components/ErrorBox'
-import api from '../mixins/api'
+import api from '../services/api'
 import Order from '../components/Order'
 
 export default {
@@ -38,8 +38,6 @@ export default {
     'error-box': ErrorBox,
     'order': Order
   },
-
-  mixins: [ api ],
 
   data() {
     return {
@@ -56,12 +54,9 @@ export default {
     async loadOrder(id) {
       this.order = null
       try {
-        let resp = await this.apiOrderGet(id)
-        if (resp.data) {
-          this.order = resp.data
-        }
+        this.order = await api.orderGet(id)
       } catch (err) {
-        this.error = this.apiDecodeError(err)
+        this.error = err
       }
     }
   }

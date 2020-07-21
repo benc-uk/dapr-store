@@ -128,9 +128,9 @@ func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, coun
 	if count < 0 {
 		return problem.New("err://invalid-request", "SetProductCount error", 400, "Count can not be negative", s.ServiceName)
 	}
+
 	if count == 0 {
 		delete(cart.Products, productID)
-
 	} else {
 		cart.Products[productID] = count
 	}

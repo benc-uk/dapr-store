@@ -30,7 +30,7 @@
           <br><br>
           £{{ product.cost }}
           <br><br>
-          <b-button id="addBut" :disabled="!user()" variant="primary" @click="addToCart">
+          <b-button id="addBut" :disabled="!isLoggedIn()" variant="primary" @click="addToCart">
             <fa icon="shopping-cart" />
             &nbsp; Add to Cart
           </b-button>
@@ -48,8 +48,8 @@
 
 <script>
 import ErrorBox from '../components/ErrorBox'
-import api from '../mixins/api'
-import auth from '../mixins/auth'
+import api from '../services/api'
+import auth from '../services/auth'
 
 export default {
   name: 'ProductSingle',
@@ -57,8 +57,6 @@ export default {
   components: {
     'error-box': ErrorBox
   },
-
-  mixins: [ api, auth ],
 
   data() {
     return {
@@ -69,30 +67,31 @@ export default {
 
   async mounted() {
     try {
-      let resp = await this.apiProductGet(this.$route.params.id)
-      if (resp.data) {
-        this.product = resp.data
-      }
+      this.product = await api.productGet(this.$route.params.id)
     } catch (err) {
-      this.error = this.apiDecodeError(err)
+      this.error = err
     }
   },
 
   methods: {
     async addToCart() {
       try {
-        if (!this.user()) { return }
+        const user = auth.user()
+        if (!user) { return }
 
-        await this.apiCartAddAmount(this.user().userName, this.product.id, +1)
+        await api.cartAddAmount(user.userName, this.product.id, +1)
         this.showToast('Added to your cart!', 'success')
       } catch (err) {
         this.showToast('Error adding to cart 😫 '+err.toString(), 'danger')
       }
     },
 
-    showToast(msg, variant) {
-      console.log(msg, variant)
+    isLoggedIn() {
+      if (auth.user()) { return true }
+      return false
+    },
 
+    showToast(msg, variant) {
       this.$bvToast.toast(`${this.product.name}`, {
         title: msg,
         variant: variant,
