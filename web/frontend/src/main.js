@@ -42,11 +42,12 @@ async function appStartup() {
 
   // Load config at runtime from special `/config` endpoint on frontend-host
   try {
-    let configResp = fetch('/config')
+    let configResp = await fetch('/config')
     if (configResp.ok) {
       const config = await configResp.json()
       API_ENDPOINT = config.API_ENDPOINT
       AUTH_CLIENT_ID = config.AUTH_CLIENT_ID
+      console.log('### Config loaded:', config)
     }
   } catch (err) {
     console.warn('### Failed to fetch \'/config\' endpoint. Defaults will be used')
