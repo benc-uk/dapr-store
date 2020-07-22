@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------------
 
 import Vue from 'vue'
-//import VueRouter from 'vue-router'
+import VueRouter from 'vue-router'
 import App from './App.vue'
 
 // Global services
@@ -28,6 +28,7 @@ Vue.component('fa', FontAwesomeIcon)
 
 // And client side routes (held in router.js)
 import router from './router'
+Vue.use(VueRouter)
 
 // Let's go!
 appStartup()
