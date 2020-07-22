@@ -10,5 +10,9 @@ export default {
       sid: '',
       environment: ''
     }
+  },
+
+  clientId() {
+    return null
   }
 }

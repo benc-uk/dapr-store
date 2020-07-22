@@ -14,7 +14,7 @@ exports[`Account.vue renders user profile 1`] = `
     <!---->
     <div class="card-body">
       <!---->
-      <!----><img class="profile d-none d-md-block" src="face.jpg">
+      <!----><img src="img/placeholder-profile.jpg" class="profile d-none d-md-block">
 
       Display Name: <b>Mock User</b> <br>
       Username: <b>mock@example.net</b></div>
