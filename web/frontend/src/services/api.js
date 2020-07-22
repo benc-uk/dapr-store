@@ -7,7 +7,7 @@
 
 import auth from './auth'
 
-const API_SCOPE = 'store-api'
+let apiScope
 let clientId
 let apiEndpoint
 
@@ -15,9 +15,10 @@ export default {
   //
   // Must be called at startup
   //
-  configure(appApiEndpoint, appClientId) {
+  configure(appApiEndpoint, appClientId, scope) {
     clientId = appClientId
     apiEndpoint = appApiEndpoint
+    apiScope = scope
   },
 
   //
@@ -112,8 +113,8 @@ async function apiCall(apiPath, method = 'get', data = null) {
   console.log(`### API CALL ${method} ${url}`)
 
   // Only get a token if logged in & using real auth (i.e AUTH_CLIENT_ID set)
-  if (auth.user() && clientId) {
-    const scopes = [ `api://${clientId}/${API_SCOPE}` ]
+  if (auth.user() && clientId && apiScope) {
+    const scopes = [ `api://${clientId}/${apiScope}` ]
 
     // Try to get an access token with our API scope
     // It should be safe to call this every time, as MSAL.js caches tokens locally for us

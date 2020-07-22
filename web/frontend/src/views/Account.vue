@@ -22,7 +22,7 @@
       <b-spinner variant="success" style="width: 5rem; height: 5rem;" />
     </div>
     <b-card v-if="registeredUser" class="details">
-      <img class="profile d-none d-md-block" :src="registeredUser.profileImage">
+      <img class="profile d-none d-md-block" :src="photo">
 
       Display Name: <b>{{ registeredUser.displayName }}</b>
       <br>
@@ -48,6 +48,7 @@
 <script>
 import api from '../services/api'
 import auth from '../services/auth'
+import graph from '../services/graph'
 import ErrorBox from '../components/ErrorBox'
 import Order from '../components/Order'
 
@@ -62,6 +63,7 @@ export default {
   data() {
     return {
       registeredUser: auth.user(),
+      photo: 'img/placeholder-profile.jpg',
       error: null,
       orders: null,
       ordersLoaded: false
@@ -75,6 +77,8 @@ export default {
         if (resp) {
           this.registeredUser = resp
         }
+        graph.getPhoto()
+          .then((photo) => { if (photo){ this.photo = photo } })
       }
     } catch (err) {
       this.error = err

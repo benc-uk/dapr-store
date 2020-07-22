@@ -6,9 +6,12 @@
 // ----------------------------------------------------------------------------
 
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+//import VueRouter from 'vue-router'
 import App from './App.vue'
+
+// Global services
 import auth from './services/auth'
+import api from './services/api'
 
 // Use Vue Bootstrap and theme
 import BootstrapVue from 'bootstrap-vue'
@@ -25,8 +28,6 @@ Vue.component('fa', FontAwesomeIcon)
 
 // And client side routes (held in router.js)
 import router from './router'
-import api from './services/api'
-Vue.use(VueRouter)
 
 // Let's go!
 appStartup()
@@ -54,7 +55,7 @@ async function appStartup() {
   }
 
   auth.configure(AUTH_CLIENT_ID)
-  api.configure(API_ENDPOINT, AUTH_CLIENT_ID)
+  api.configure(API_ENDPOINT, AUTH_CLIENT_ID, 'store-api')
 
   // Actually mount & start the Vue app, kinda important
   new Vue({
