@@ -60,7 +60,7 @@ jobs:
     - name: Upload reports
       if: ${{ success() || failure() }}
       run: |
-        az storage blob upload-batch --account-name $STORAGE_ACCT_NAME --account-key ${{ secrets.STORAGE_KEY }} \
+        az storage blob upload-batch --account-name $STORAGE_ACCT_NAME --account-key "${{ secrets.STORAGE_KEY }}" \
           --source ./output --destination \$web/${{ github.run_id }} --no-progress > /dev/null
         echo -e "\n\n================================================================================================================"
         echo -e "📜🌍✅ Test reports uploaded and viewable here - https://$STORAGE_ACCT_NAME.z6.web.core.windows.net/${{ github.run_id }}/"
