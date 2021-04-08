@@ -36,13 +36,14 @@ func NewService(serviceName string, router *mux.Router) *OrderService {
 	service := &OrderService{
 		helper,
 		storeName,
-		"orders-email",
-		"orders-report",
+		"orders-email",  // Hard coded, !TODO move to config env var
+		"orders-report", // Hard coded, !TODO move to config env var
 	}
 
 	// Dapr pub/sub specific
 	topicName := env.GetEnvString("DAPR_ORDERS_TOPIC", "orders-queue")
-	helper.RegisterTopicSubscriptions([]string{topicName}, router)
+	pubSubName := env.GetEnvString("DAPR_PUBSUB_NAME", "pubsub")
+	helper.RegisterTopicSubscriptions(pubSubName, []string{topicName}, router)
 	helper.RegisterTopicReceiver(topicName, router, service.pubSubOrderReceiver)
 
 	return service
@@ -57,8 +58,8 @@ func (s *OrderService) AddOrder(order spec.Order) error {
 	}
 
 	userOrders := []string{}
-	// !NOTE! We use the username as a key in the orders state set, to hold an index of orders
-	data, prob := s.GetState(s.storeName, order.ForUser)
+	// NOTE We use the username as a key in the orders state set, to hold an index of orders
+	data, _ := s.GetState(s.storeName, order.ForUser)
 	// Ignore any problem, it's possible it doesn't exist yet (user's first order)
 	_ = json.Unmarshal(data, &userOrders)
 
@@ -117,7 +118,7 @@ func (s *OrderService) ProcessOrder(order spec.Order) error {
 
 	// Check we have a new order
 	if order.Status != spec.OrderNew {
-		return errors.New("Order not in correct status")
+		return errors.New("order not in correct status")
 	}
 
 	prob := s.AddOrder(order)
@@ -125,7 +126,10 @@ func (s *OrderService) ProcessOrder(order spec.Order) error {
 		return prob
 	}
 
-	s.SetStatus(&order, spec.OrderReceived)
+	err = s.SetStatus(&order, spec.OrderReceived)
+	if err != nil {
+		log.Printf("### Failed to update staate for order %s\n", err)
+	}
 
 	log.Printf("### Order %s was saved to state store\n", order.ID)
 
@@ -133,17 +137,23 @@ func (s *OrderService) ProcessOrder(order spec.Order) error {
 	// Also email to the user via SendGrid
 	// For these to work configure the components in cmd/orders/components
 	// If un-configured then nothing happens, and no output is send or generated
-	s.EmailNotify(order)
-	s.SaveReport(order)
+	err = s.EmailNotify(order)
+	if err != nil {
+		log.Printf("### Email notification failed %s\n", err)
+	}
+	err = s.SaveReport(order)
+	if err != nil {
+		log.Printf("### Saving order report failed %s\n", err)
+	}
 
 	// Fake background order processing
 	time.AfterFunc(30*time.Second, func() {
-		s.SetStatus(&order, spec.OrderProcessing)
+		_ = s.SetStatus(&order, spec.OrderProcessing)
 	})
 
 	// Fake background order completion
 	time.AfterFunc(120*time.Second, func() {
-		s.SetStatus(&order, spec.OrderComplete)
+		_ = s.SetStatus(&order, spec.OrderComplete)
 	})
 
 	return nil
@@ -151,7 +161,7 @@ func (s *OrderService) ProcessOrder(order spec.Order) error {
 
 // GetOrdersForUser fetches a list of order ids for a given username
 func (s *OrderService) GetOrdersForUser(userName string) ([]string, error) {
-	// !NOTE! We use the username as a key in the orders state set, to hold an index of orders
+	// NOTE We use the username as a key in the orders state set, to hold an index of orders
 	data, prob := s.GetState(s.storeName, userName)
 	if prob != nil {
 		return nil, prob

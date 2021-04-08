@@ -9,22 +9,18 @@
 
 <template>
   <b-card class="order">
-    <b-link :to="`/order/`+order.id">
+    <b-link :to="`/order/` + order.id">
       <h2>{{ order.title }}</h2>
     </b-link>
     <h2>
-      Status: <span class="text-capitalize order-status" :class="['order-'+order.status]">{{ order.status }}</span>
+      Status: <span class="text-capitalize order-status" :class="['order-' + order.status]">{{ order.status }}</span>
     </h2>
     <ul>
-      <li>
-        Order Id: {{ order.id }}
-      </li>
+      <li>Order Id: {{ order.id }}</li>
       <li>Amount: £{{ order.amount }}</li>
       <li>Items:</li>
       <ul>
-        <li v-for="(line, index) in order.lineItems" :key="index">
-          {{ line.count }} x {{ line.product.name }} &mdash; £{{ line.product.cost }}
-        </li>
+        <li v-for="(line, index) in order.lineItems" :key="index">{{ line.count }} x {{ line.product.name }} &mdash; £{{ line.product.cost }}</li>
       </ul>
     </ul>
   </b-card>

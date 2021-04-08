@@ -2,41 +2,30 @@ name: Deploy To Kubernetes
 
 on:
   workflow_dispatch:
-   inputs:
-      imageTag:
-        description: 'Image tag to deploy'     
+    inputs:
+      IMAGE_TAG:
+        description: "Image tag to deploy"
         required: true
-        default: 'latest'
+        default: "latest"
 
 env:
-  IMAGE_REG: bcdemo.azurecr.io
-  IMAGE_REPO: daprstore
+  IMAGE_REG: ghcr.io
+  NAMESPACE: dapr-store
 
 jobs:
   deployStaging:
     runs-on: ubuntu-latest
 
     env:
-      STATIC_IP: '20.191.56.121'
-      ENV_NAME: "Kubernetes: Staging"
-      NAMESPACE: 'daprstore-stage'
-      HOST: 'staging.daprstore.benco.io'
+      STATIC_IP: "20.191.56.121"
+      NAMESPACE: "dapr-store"
+      HOST: "dapr-store.kube.benco.io"
 
-    steps: 
-      - name: 'Start deployment'
-        id: deploy
-        uses: chrnorm/deployment-action@v1.2.0
-        with:
-          # Shouldn't need to pass the ref, but there's a bug in GitHub
-          # Triggering workflow_dispatch with API means GITHUB_REF isn't set 
-          ref: ${{ github.event.ref }}
-          token: ${{ github.token }}
-          environment: ${{ env.ENV_NAME }}
+    steps:
+      - name: "Checkout source"
+        uses: actions/checkout@v2
 
-      - name: 'Checkout source'
-        uses: actions/checkout@v1
-
-      - name: 'Helm deploy Redis to staging'
+      - name: "Helm deploy Redis"
         uses: deliverybot/helm@master
         env:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
@@ -56,164 +45,46 @@ jobs:
               persistence:
                 enabled: false
 
-      - run: sleep 10
+      # - run: sleep 10
 
-      - name: 'Helm deploy Daprstore to staging'
-        uses: deliverybot/helm@master
-        env:
-          KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
-        with:
-          helm: helm3
-          release: daprstore
-          namespace: ${{ env.NAMESPACE }}
-          chart: ./deploy/helm/daprstore
-          values: |
-            image:
-              registry: ${{ env.IMAGE_REG }}
-              repo: ${{ env.IMAGE_REPO }}
-              tag: "${{ github.event.client_payload.imageTag }}${{ github.event.inputs.imageTag }}"
-            ingress:
-              host: "${{ env.HOST }}"
+      # - name: "Helm deploy Daprstore to staging"
+      #   uses: deliverybot/helm@master
+      #   env:
+      #     KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
+      #   with:
+      #     helm: helm3
+      #     release: daprstore
+      #     namespace: ${{ env.NAMESPACE }}
+      #     chart: ./deploy/helm/daprstore
+      #     values: |
+      #       image:
+      #         registry: ${{ env.IMAGE_REG }}
+      #         repo: ${{ env.IMAGE_REPO }}
+      #         tag: "${{ github.event.client_payload.imageTag }}${{ github.event.inputs.imageTag }}"
+      #       ingress:
+      #         host: "${{ env.HOST }}"
 
-      - name: 'Helm deploy Nginx ingress to staging'
-        uses: deliverybot/helm@master
-        env:
-          KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
-        with:
-          helm: helm3
-          release: api-gateway-stage
-          namespace: ${{ env.NAMESPACE }}
-          repository: https://kubernetes.github.io/ingress-nginx
-          chart: ingress-nginx
-          value-files: ./deploy/ingress/chart-values.yaml
-          values: |
-            controller:
-              service:
-                loadBalancerIP: "${{ env.STATIC_IP }}"
-              scope:
-                namespace: ${{ env.NAMESPACE }}
+      # - name: "Helm deploy Nginx ingress to staging"
+      #   uses: deliverybot/helm@master
+      #   env:
+      #     KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
+      #   with:
+      #     helm: helm3
+      #     release: api-gateway-stage
+      #     namespace: ${{ env.NAMESPACE }}
+      #     repository: https://kubernetes.github.io/ingress-nginx
+      #     chart: ingress-nginx
+      #     value-files: ./deploy/ingress/chart-values.yaml
+      #     values: |
+      #       controller:
+      #         service:
+      #           loadBalancerIP: "${{ env.STATIC_IP }}"
+      #         scope:
+      #           namespace: ${{ env.NAMESPACE }}
 
-      - name: 'Run API tests'
-        uses: matt-ball/newman-action@master
-        with:
-          collection: ./testing/postman_collection.json
-          environment: ./testing/postman_env_staging.json
-
-      - name: 'End deployment - success'
-        if: ${{ success() }}
-        uses: chrnorm/deployment-status@v1.0.0
-        with:
-          token: ${{ github.token }}
-          state: success
-          deployment_id: ${{ steps.deploy.outputs.deployment_id }}
-          environment_url: http://${{ env.HOST }}/
-
-      - name: 'End deployment - failure'
-        if: ${{ failure() }}
-        uses: chrnorm/deployment-status@v1.0.0
-        with:
-          token: ${{ github.token }}
-          state: failure
-          deployment_id: ${{ steps.deploy.outputs.deployment_id }}    
-
-# ==============================================================================================
-
-  deployProduction:
-    runs-on: ubuntu-latest
-    needs: deployStaging
-
-    env:
-      STATIC_IP: '20.191.56.9'
-      ENV_NAME: 'Kubernetes: Production'
-      NAMESPACE: 'daprstore-prod'
-      HOST: 'production.daprstore.benco.io'
-      CERT_NAME: 'production-daprstore-cert'
-
-    steps:
-      - name: 'Start deployment'
-        id: deploy
-        uses: chrnorm/deployment-action@v1.2.0
-        with:
-          ref: ${{ github.event.ref }}
-          token: ${{ github.token }}
-          environment: ${{ env.ENV_NAME }}
-
-      - name: 'Checkout source'
-        uses: actions/checkout@v1
-
-      - name: 'Helm deploy Redis to staging'
-        uses: deliverybot/helm@master
-        env:
-          KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
-        with:
-          helm: helm3
-          release: redis
-          namespace: ${{ env.NAMESPACE }}
-          chart: redis
-          repository: https://charts.bitnami.com/bitnami
-          values: |
-            fullnameOverride: daprstore-redis
-            enabled: true
-            usePassword: false
-            cluster:
-              enabled: false
-            master:
-              persistence:
-                enabled: true
-
-      - run: sleep 10
-
-      - name: 'Helm deploy Daprstore to production'
-        uses: deliverybot/helm@master
-        env:
-          KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
-        with:
-          helm: helm3
-          release: daprstore
-          namespace: ${{ env.NAMESPACE }}
-          chart: ./deploy/helm/daprstore
-          values: |
-            auth:
-              clientId: "69972365-c1b6-494d-9579-5b9de2790fc3"
-            image:
-              registry: ${{ env.IMAGE_REG }}
-              repo: ${{ env.IMAGE_REPO }}
-              tag: "${{ github.event.client_payload.imageTag }}${{ github.event.inputs.imageTag }}"
-            ingress:
-              host: "${{ env.HOST }}"
-              certName: "${{ env.CERT_NAME }}"
-
-      - name: 'Helm deploy ingress to production'
-        uses: deliverybot/helm@master
-        env:
-          KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
-        with:
-          helm: helm3
-          release: api-gateway-prod
-          namespace: ${{ env.NAMESPACE }}
-          repository: https://kubernetes.github.io/ingress-nginx
-          chart: ingress-nginx
-          value-files: ./deploy/ingress/chart-values.yaml          
-          values: |
-            controller:
-              service:
-                loadBalancerIP: "${{ env.STATIC_IP }}"
-              scope:
-                namespace: ${{ env.NAMESPACE }}
-
-      - name: 'End deployment - success'
-        if: ${{ success() }}
-        uses: chrnorm/deployment-status@v1.0.0
-        with:
-          token: ${{ github.token }}
-          state: success
-          deployment_id: ${{ steps.deploy.outputs.deployment_id }}  
-          environment_url: http://${{ env.HOST }}/
-
-      - name: 'End deployment - failure'
-        if: ${{ failure() }}
-        uses: chrnorm/deployment-status@v1.0.0
-        with:
-          token: ${{ github.token }}
-          state: failure
-          deployment_id: ${{ steps.deploy.outputs.deployment_id }}    
+      # - name: "Run API tests"
+      #   uses: matt-ball/newman-action@master
+      #   with:
+      #     collection: ./testing/postman_collection.json
+      #     # Can't set this without a file, kinda lame
+      #     environment: ./testing/postman_env_staging.json

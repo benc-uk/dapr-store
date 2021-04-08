@@ -1,7 +1,7 @@
 # ===================================================================================
 # === Stage 1: Build static serving host ============================================
 # ===================================================================================
-FROM golang:1.14-alpine as server-build
+FROM golang:1.16-alpine as server-build
 
 WORKDIR /build
 
@@ -24,7 +24,7 @@ RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build \
 # ================================================================================================
 # === Stage 2: Build and bundle the Vue.js app with Vue CLI 3 ====================================
 # ================================================================================================
-FROM node:12-alpine as frontend-build
+FROM node:14-alpine as frontend-build
 
 ARG VERSION="0.0.1"
 ARG BUILD_INFO="Not provided"
@@ -38,13 +38,11 @@ RUN npm version $VERSION --allow-same-version
 RUN npm install --silent
 
 # Copy in the Vue.js app source
-COPY web/frontend/.eslintrc.js .
+COPY web/frontend/.eslintrc.json .
 COPY web/frontend/babel.config.js .
 COPY web/frontend/public ./public
 COPY web/frontend/src ./src
 
-# Run ESLint checks
-RUN npm run lint
 # Now main Vue CLI build & bundle, this will output to ./dist
 RUN npm run build
 

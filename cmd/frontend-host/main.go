@@ -78,7 +78,10 @@ func main() {
 
 	router.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		// an example API handler
-		json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+		err := json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+		if err != nil {
+			log.Printf("### Problem with healthz endpoint %s\n", err)
+		}
 	})
 
 	staticPath := env.GetEnvString("STATIC_DIR", defaultStaticPath)
@@ -116,5 +119,5 @@ func routeConfig(resp http.ResponseWriter, req *http.Request) {
 	configJSON, _ := json.Marshal(config)
 	resp.Header().Set("Access-Control-Allow-Origin", "*")
 	resp.Header().Add("Content-Type", "application/json")
-	resp.Write([]byte(configJSON))
+	_, _ = resp.Write([]byte(configJSON))
 }

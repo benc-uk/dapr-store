@@ -23,12 +23,18 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal(mockJSON, &mockCarts)
+	err = json.Unmarshal(mockJSON, &mockCarts)
+	if err != nil {
+		panic(err)
+	}
 	mockJSON, err = ioutil.ReadFile("../../testing/mock-data/orders.json")
 	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal(mockJSON, &mockOrders)
+	err = json.Unmarshal(mockJSON, &mockOrders)
+	if err != nil {
+		panic(err)
+	}
 }
 
 //

@@ -24,12 +24,18 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal(mockJSON, &MockOrders)
+	err = json.Unmarshal(mockJSON, &MockOrders)
+	if err != nil {
+		panic(err)
+	}
 	mockJSON, err = ioutil.ReadFile("../../testing/mock-data/user-orders.json")
 	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal(mockJSON, &mockUserOrders)
+	err = json.Unmarshal(mockJSON, &mockUserOrders)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // GetOrder mock
@@ -55,7 +61,7 @@ func (s OrderService) ProcessOrder(order orderspec.Order) error {
 
 	// Check we have a new order
 	if order.Status != orderspec.OrderNew {
-		return errors.New("Order not in correct status")
+		return errors.New("order not in correct status")
 	}
 
 	prob := s.AddOrder(order)
@@ -63,7 +69,7 @@ func (s OrderService) ProcessOrder(order orderspec.Order) error {
 		return prob
 	}
 
-	s.SetStatus(&order, orderspec.OrderReceived)
+	_ = s.SetStatus(&order, orderspec.OrderReceived)
 
 	log.Printf("### Order %s was saved to state store\n", order.ID)
 
@@ -71,17 +77,17 @@ func (s OrderService) ProcessOrder(order orderspec.Order) error {
 	// Also email to the user via SendGrid
 	// For these to work configure the components in cmd/orders/components
 	// If un-configured then nothing happens, and no output is send or generated
-	s.EmailNotify(order)
-	s.SaveReport(order)
+	_ = s.EmailNotify(order)
+	_ = s.SaveReport(order)
 
 	// Fake background order processing
 	time.AfterFunc(1*time.Second, func() {
-		s.SetStatus(&order, orderspec.OrderProcessing)
+		_ = s.SetStatus(&order, orderspec.OrderProcessing)
 	})
 
 	// Fake background order completion
 	time.AfterFunc(2*time.Second, func() {
-		s.SetStatus(&order, orderspec.OrderComplete)
+		_ = s.SetStatus(&order, orderspec.OrderComplete)
 	})
 
 	return nil

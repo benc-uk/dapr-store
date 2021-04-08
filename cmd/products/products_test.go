@@ -22,7 +22,7 @@ func TestProducts(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
 	// Mock of ProductsService
-	mockProductSvc := &mock.ProductsService{}
+	mockProductSvc := &mock.ProductService{}
 
 	router := mux.NewRouter()
 	api := API{

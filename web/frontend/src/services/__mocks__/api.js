@@ -8,7 +8,7 @@
 const fs = require('fs')
 
 // Load mock data, which we put beside the tests
-let mockDataDir = __dirname+'/../../../../../testing/mock-data'
+let mockDataDir = __dirname + '/../../../../../testing/mock-data'
 let mockJson = fs.readFileSync(`${mockDataDir}/carts.json`)
 let mockCarts = JSON.parse(mockJson)
 mockJson = fs.readFileSync(`${mockDataDir}/orders.json`)
@@ -25,13 +25,13 @@ export default {
     return mockProducts.filter((p) => p.onOffer == true)
   },
 
-  productCatalog: function() {
+  productCatalog: function () {
     return mockProducts
   },
 
   productGet(productId) {
     return new Promise((resolve) => {
-      resolve(mockProducts.find((p) => p.id == productId) )
+      resolve(mockProducts.find((p) => p.id == productId))
     })
   },
 
@@ -39,7 +39,7 @@ export default {
     return mockProducts.filter((p) => p.name.includes(query))
   },
 
-  ordersForUser: function() {
+  ordersForUser: function () {
     return mockUserOrders
   },
 
@@ -57,7 +57,7 @@ export default {
 
   cartAddAmount(_, productId, amount) {
     let count = mockCarts[0][productId]
-    count+=amount
+    count += amount
     mockCarts[0][productId] = count
     return mockCarts[0]
   }

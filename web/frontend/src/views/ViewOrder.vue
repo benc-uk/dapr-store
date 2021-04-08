@@ -19,7 +19,7 @@
     <error-box :error="error" />
 
     <div v-if="!order && !error" class="text-center">
-      <b-spinner variant="success" style="width: 5rem; height: 5rem;" />
+      <b-spinner variant="success" style="width: 5rem; height: 5rem" />
     </div>
 
     <order v-if="order" :order="order" />
@@ -36,7 +36,7 @@ export default {
 
   components: {
     'error-box': ErrorBox,
-    'order': Order
+    order: Order
   },
 
   data() {

@@ -46,7 +46,7 @@ func (api API) getProduct(resp http.ResponseWriter, req *http.Request) {
 
 	json, _ := json.Marshal(products[0])
 	resp.Header().Set("Content-Type", "application/json")
-	resp.Write(json)
+	_, _ = resp.Write(json)
 }
 
 //
@@ -62,7 +62,7 @@ func (api API) getCatalog(resp http.ResponseWriter, req *http.Request) {
 
 	json, _ := json.Marshal(products)
 	resp.Header().Set("Content-Type", "application/json")
-	resp.Write(json)
+	_, _ = resp.Write(json)
 }
 
 //
@@ -78,7 +78,7 @@ func (api API) getOffers(resp http.ResponseWriter, req *http.Request) {
 
 	json, _ := json.Marshal(products)
 	resp.Header().Set("Content-Type", "application/json")
-	resp.Write(json)
+	_, _ = resp.Write(json)
 }
 
 //
@@ -95,5 +95,5 @@ func (api API) searchProducts(resp http.ResponseWriter, req *http.Request) {
 
 	json, _ := json.Marshal(products)
 	resp.Header().Set("Content-Type", "application/json")
-	resp.Write(json)
+	_, _ = resp.Write(json)
 }

@@ -1,19 +1,4 @@
 {
-  // Go settings
-  "go.useLanguageServer": true,
-  "go.vetFlags": [
-    "-composites=false"
-  ],
-
-  // ESLint config for Vue
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "eslint.format.enable": true,
-  "[typescript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-  "eslint.workingDirectories": [
-    "./web/frontend"
-  ]
+  "eslint.workingDirectories": ["./web/frontend"],
+  "go.lintTool": "golangci-lint"
 }

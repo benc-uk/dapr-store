@@ -9,7 +9,9 @@
 
 <template>
   <div>
-    <h1>Search results for: <i>{{ this.$route.params.query }}</i></h1>
+    <h1>
+      Search results for: <i>{{ $route.params.query }}</i>
+    </h1>
     <error-box :error="error" />
     <product-list v-if="!error" :products="products" />
   </div>

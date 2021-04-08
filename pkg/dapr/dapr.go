@@ -26,20 +26,26 @@ import (
 const (
 	getStateURL      = "http://localhost:%d/v1.0/state/%s/%s"
 	saveStateURL     = "http://localhost:%d/v1.0/state/%s"
-	publishURL       = "http://localhost:%d/v1.0/publish/%s"
+	publishURL       = "http://localhost:%d/v1.0/publish/%s/%s"
 	outputBindingURL = "http://localhost:%d/v1.0/bindings/%s"
 	invokeURL        = "http://localhost:%d/v1.0/invoke/%s/method/%s"
 )
 
-// DaprState is the payload for the Dapr state API
 type state struct {
 	Key   string      `json:"key"`
 	Value interface{} `json:"value"`
 }
 
+type topic struct {
+	PubSubName string `json:"pubsubname"`
+	Topic      string `json:"topic"`
+	Route      string `json:"route"`
+}
+
 type bindingOut struct {
-	Metadata map[string]string `json:"metadata"`
-	Data     interface{}       `json:"data"`
+	Metadata  map[string]string `json:"metadata"`
+	Data      interface{}       `json:"data"`
+	Operation string            `json:"operation"`
 }
 
 // Helper is our main struct
@@ -58,10 +64,10 @@ func NewHelper(appName string) *Helper {
 	// Check for Dapr existence
 	time.AfterFunc(time.Second*15, func() {
 		daprResp, err := http.Get(fmt.Sprintf("http://localhost:%d/v1.0/healthz", daprPort))
-		if err != nil || daprResp.StatusCode != 200 {
-			log.Println("### WARNING! Dapr process/sidecar NOT found")
+		if err != nil || daprResp.StatusCode != 204 {
+			log.Printf("### WARNING! Dapr process/sidecar NOT found for %s\n", appName)
 		} else {
-			log.Printf("### Dapr process/sidecar found on port: %d", daprPort)
+			log.Printf("### Dapr process/sidecar found for %s on port: %d", appName, daprPort)
 		}
 	})
 
@@ -116,15 +122,16 @@ func (h *Helper) SaveState(storeName, key string, value interface{}) *problem.Pr
 //
 // PublishMessage pushes a message to the given topic
 //
-func (h *Helper) PublishMessage(queueName string, message interface{}) *problem.Problem {
+func (h *Helper) PublishMessage(pubSubName string, topicName string, message interface{}) *problem.Problem {
 	jsonPayload, err := json.Marshal(message)
 	if err != nil {
 		return problem.New("err://json-marshall", "Malformed JSON", 400, "Message could not be marshalled to JSON", h.ServiceName)
 	}
 
-	daprURL := fmt.Sprintf(publishURL, h.Port, queueName)
+	log.Printf("### Pub/sub helper, topic:%s payload:%+v\n", topicName, string(jsonPayload))
+
+	daprURL := fmt.Sprintf(publishURL, h.Port, pubSubName, topicName)
 	daprResp, err := http.Post(daprURL, "application/json", bytes.NewBuffer(jsonPayload))
-	log.Printf("!!!! PublishMessage %+v", daprResp)
 	if err != nil {
 		return problem.NewAPIProblem(daprURL, "Error publishing message", h.ServiceName, daprResp, err)
 	}
@@ -138,8 +145,9 @@ func (h *Helper) PublishMessage(queueName string, message interface{}) *problem.
 //
 func (h *Helper) SendOutput(bindingName string, data interface{}, metadata map[string]string) *problem.Problem {
 	daprPayload := bindingOut{
-		Metadata: metadata,
-		Data:     data,
+		Metadata:  metadata,
+		Data:      data,
+		Operation: "create",
 	}
 
 	jsonPayload, err := json.Marshal(daprPayload)
@@ -160,11 +168,21 @@ func (h *Helper) SendOutput(bindingName string, data interface{}, metadata map[s
 //
 // RegisterTopicSubscriptions is a HTTP handler that lets Dapr know what topics we subscribe to
 //
-func (h *Helper) RegisterTopicSubscriptions(topics []string, router *mux.Router) {
+func (h *Helper) RegisterTopicSubscriptions(pubSubName string, topics []string, router *mux.Router) {
 	router.HandleFunc("/dapr/subscribe", func(resp http.ResponseWriter, req *http.Request) {
-		json, _ := json.Marshal(topics)
+
+		topicList := []topic{}
+		for _, t := range topics {
+			topicList = append(topicList, topic{
+				PubSubName: pubSubName,
+				Topic:      t,
+				Route:      fmt.Sprintf("/receive/%s", t),
+			})
+		}
+		json, _ := json.Marshal(topicList)
+
 		resp.Header().Set("Content-Type", "application/json")
-		resp.Write(json)
+		_, _ = resp.Write(json)
 	})
 }
 
@@ -172,7 +190,8 @@ func (h *Helper) RegisterTopicSubscriptions(topics []string, router *mux.Router)
 // RegisterTopicReceiver is a way to plug in a handler for receiving messages from a topic
 //
 func (h *Helper) RegisterTopicReceiver(topic string, router *mux.Router, handler func(body io.Reader) error) {
-	router.HandleFunc("/"+topic, func(resp http.ResponseWriter, req *http.Request) {
+	route := fmt.Sprintf("/receive/%s", topic)
+	router.HandleFunc(route, func(resp http.ResponseWriter, req *http.Request) {
 		type cloudevent struct {
 			ID   string      `json:"id"`
 			Data interface{} `json:"data"`

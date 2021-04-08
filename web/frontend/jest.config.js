@@ -9,8 +9,10 @@ module.exports = {
   coverageDirectory: '../../output/web-coverage',
   coverageReporters: ['html', 'text-summary'],
   reporters: [
-    'default', [
-      'jest-junit', {
+    'default',
+    [
+      'jest-junit',
+      {
         outputName: 'unit-tests-frontend.xml',
         outputDirectory: '../../output'
       }

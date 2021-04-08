@@ -34,7 +34,7 @@ func (api API) addRoutes(router *mux.Router) {
 //
 func (api API) setProductCount(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	cart, err := api.service.Get(vars["username"])
+	cart, _ := api.service.Get(vars["username"])
 
 	count, err := strconv.Atoi(vars["count"])
 	if err != nil {
@@ -52,7 +52,7 @@ func (api API) setProductCount(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-Type", "application/json")
 	json, _ := json.Marshal(cart)
 	log.Printf("cart %s", json)
-	resp.Write(json)
+	_, _ = resp.Write(json)
 }
 
 //
@@ -70,7 +70,7 @@ func (api API) getCart(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-Type", "application/json")
 	json, _ := json.Marshal(cart)
 	log.Printf("cart %s", json)
-	resp.Write(json)
+	_, _ = resp.Write(json)
 }
 
 //
@@ -85,12 +85,15 @@ func (api API) clearCart(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	api.service.Clear(cart)
+	err = api.service.Clear(cart)
+	if err != nil {
+		log.Printf("### Warning failed to clear cart %s", err)
+	}
 
 	resp.Header().Set("Content-Type", "application/json")
 	json, _ := json.Marshal(cart)
 	log.Printf("cart %s", json)
-	resp.Write(json)
+	_, _ = resp.Write(json)
 }
 
 //
@@ -133,5 +136,5 @@ func (api API) submitCart(resp http.ResponseWriter, req *http.Request) {
 	// Send the _order_ back, created from submitting the cart
 	resp.Header().Set("Content-Type", "application/json")
 	json, _ := json.Marshal(order)
-	resp.Write(json)
+	_, _ = resp.Write(json)
 }

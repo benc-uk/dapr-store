@@ -2,7 +2,8 @@
 
 exports[`ProductSearch.vue renders search for Ascot 1`] = `
 <div>
-  <h1>Search results for: <i>Ascot</i></h1>
+  <h1>
+    Search results for: <i>Ascot</i></h1>
   <!---->
   <div>
     <!---->
@@ -29,7 +30,8 @@ exports[`ProductSearch.vue renders search for Ascot 1`] = `
           </div>
           <div class="flex-grow-0 d-none d-md-block col">
             <div class="product-img">
-              <!----> <a href="#/product/prd3" class="" target="_self"><img src="/img/catalog/3.jpg"></a></div>
+              <!----> <a href="#/product/prd3" class="" target="_self"><img src="/img/catalog/3.jpg"></a>
+            </div>
           </div>
         </div>
       </div>

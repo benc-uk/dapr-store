@@ -1,111 +1,82 @@
 name: CI Build Images
 
-on: 
-  workflow_dispatch:
-  push: 
+on:
+  ZZZZZZZZZworkflow_dispatch:
+  push:
     branches: [master]
-    paths-ignore:
-    - 'docs/**'
-    - '.github/**'
-    - '!.github/workflows/ci-build.yml'
-    - 'etc/**'
-    - 'testing/**'
-    - 'scripts/**'
-    - 'recycle-bin/**'
-    - '.vscode/**'
+    paths:
+      - "pkg/**"
+      - "cmd/**"
+      - "web/**"
+      - ".github/workflows/**"
   pull_request:
     branches: [master]
-    
+
 env:
-  #DOCKER_TAG: ${{ github.run_id }}
-  VERSION: 0.5.1
-  DOCKER_REPO: daprstore  
-  DOCKER_USER: bcdemo
-  DOCKER_REG: bcdemo.azurecr.io
-  STORAGE_ACCT_NAME: bcmisc
-  BUILD_INFO: 'Workflow:${{ github.workflow }} / RunId:${{ github.run_id }} / Ref:${{ github.ref }} / SHA:${{ github.sha }}'
+  VERSION: 0.6.0
+  STORAGE_ACCT_NAME: benc
+  BUILD_INFO: "Workflow:${{ github.workflow }} / RunId:${{ github.run_id }} / Ref:${{ github.ref }} / SHA:${{ github.sha }}"
+  IMAGE_REG: ghcr.io
 
 jobs:
-  #
   # ===== Testing & code checking ======
-  #
-  runTestsLinting:
+  tests-linting:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout source
-      uses: actions/checkout@v1
+      - name: "Checkout source"
+        uses: actions/checkout@v2
 
-    - name: Set Go version and paths
-      uses: actions/setup-go@v2
-      with:
-        go-version: '^1.14.0'
+      - name: "Set Go version and paths"
+        uses: actions/setup-go@v2
+        with:
+          go-version: "^1.16.3"
 
-    - name: Install extra test & build tools
-      run: |
-        go get -u golang.org/x/lint/golint
-        go get gotest.tools/gotestsum
-        npm i --prefix $HOME/tmp xunit-viewer
+      - name: "Check code & lint"
+        run: make lint
 
-    - name: Check code - gofmt, golint & ESLint
-      run: make lint gofmt
+      - name: "Run all unit tests"
+        run: make test-reports
 
-    - name: Run all unit tests
-      run: make test-output
+      # Very optional - upload of test results
+      - name: "Upload test reports to Azure"
+        if: ${{ success() || failure() }}
+        run: |
+          az storage blob upload-batch --account-name $STORAGE_ACCT_NAME --account-key "${{ secrets.STORAGE_KEY }}" \
+             --source ./output --destination \$web/${{ github.run_id }} --no-progress > /dev/null
+          echo -e "📜🌍 Test reports uploaded and viewable here - https://$STORAGE_ACCT_NAME.z6.web.core.windows.net/${{ github.run_id }}/"
 
-    - name: Generate test & code coverage reports
-      if: ${{ success() || failure() }}
-      run: make reports
-
-    - name: Upload reports
-      if: ${{ success() || failure() }}
-      run: |
-        az storage blob upload-batch --account-name $STORAGE_ACCT_NAME --account-key "${{ secrets.STORAGE_KEY }}" \
-          --source ./output --destination \$web/${{ github.run_id }} --no-progress > /dev/null
-        echo -e "\n\n================================================================================================================"
-        echo -e "📜🌍✅ Test reports uploaded and viewable here - https://$STORAGE_ACCT_NAME.z6.web.core.windows.net/${{ github.run_id }}/"
-        echo -e "================================================================================================================\n\n"
-        echo "::warning ::Test results URL: https://$STORAGE_ACCT_NAME.z6.web.core.windows.net/${{ github.run_id }}/"
-        
-  #
   # ===== Build container images ======
-  #
-  buildImages:
+  build-images:
     runs-on: ubuntu-latest
-    needs: runTestsLinting
+    needs: tests-linting
 
     steps:
-    - name: Checkout source
-      uses: actions/checkout@v1
+      - name: "Checkout source"
+        uses: actions/checkout@v2
 
-    - name: Run all builds
-      run: |
-        echo "Build Info String=> $BUILD_INFO / Date:$(date +%F_%T)"
-        make docker DOCKER_TAG=${{ github.run_id }} VERSION=$VERSION BUILD_INFO="$BUILD_INFO / Date:$(date +%F_%T)"
-        make docker DOCKER_TAG=latest VERSION=$VERSION BUILD_INFO="$BUILD_INFO / Date:$(date +%F_%T)"
+      # Nicer than using github runid, I think
+      - name: "Create datestamp image tag"
+        run: echo "IMAGE_TAG=$(date +%d-%m-%Y.%H%M)" >> $GITHUB_ENV
 
-    # =====================================================================
-    # Steps after this are only run when merging or pushing into master
-    # =====================================================================
+      - name: "Run all builds"
+        run: |
+          make image-all IMAGE_TAG=$IMAGE_TAG VERSION=$VERSION BUILD_INFO="$BUILD_INFO"
+          make image-all IMAGE_TAG=latest VERSION=$VERSION BUILD_INFO="$BUILD_INFO"
 
-    - name: Login to registry 
-      if: github.event_name == 'push'
-      run:  docker login $DOCKER_REG -u $DOCKER_USER -p ${{ secrets.ACR_PASSWORD }} 
+      # Steps after this are only run when merging or pushing into master
+      - name: "Push to container registry"
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login $IMAGE_REG -u $GITHUB_ACTOR --password-stdin
+          make push-all IMAGE_TAG=$IMAGE_TAG
+          make push-all IMAGE_TAG=latest
 
-    - name: Push to Dockerhub
-      if: github.event_name == 'push'
-      run: |
-        make push DOCKER_TAG=${{ github.run_id }}
-        make push DOCKER_TAG=latest
-
-    # =====================================================================
-    # Continuous deployment trigger
-    # =====================================================================
-
-    - name: Trigger deployment with workflows_dispatch
-      if: github.event_name == 'push'
-      uses: benc-uk/workflow-dispatch@v1
-      with:
-        workflow: Deploy To Kubernetes
-        token: ${{ secrets.DEPLOYMENT_PAT }}
-        inputs: '{ "imageTag": "${{ github.run_id }}" }'
+      # Continuous deployment trigger
+      - name: "Trigger deployment with workflows_dispatch"
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Deploy To Kubernetes
+          token: ${{ secrets.GH_PAT }}
+          inputs: '{ "IMAGE_TAG": "${{ env.IMAGE_TAG }}" }'

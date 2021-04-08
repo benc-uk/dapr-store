@@ -9,15 +9,17 @@
 
 <template>
   <div class="about">
-    <img src="../assets/img/logo.svg" class="logo">
+    <img src="../assets/img/logo.svg" class="logo" />
     <h1>Dapr eShop</h1>
-    A demonstration app built using microservices and the Dapr framework<br>
-    <b>Ben Coleman, 2020 [MIT License]</b><br>
-    <br>
-    Version: {{ version }}<br>
-    Build Info: <pre>{{ buildInfo }}</pre>
-    <br>
-    &bull; Learn more about Dapr - <a href="https://dapr.io/" target="_blank">dapr.io</a><br>
+    A reference app built using microservices and the Dapr framework<br />
+    <b>Ben Coleman, 2020~2021 [MIT License]</b><br />
+    <br />
+    Version: {{ version }}<br />
+    Build Info:
+    <pre>{{ buildInfo }}</pre>
+    <br />
+    &bull; Learn more about Dapr - <a href="https://dapr.io/" target="_blank">dapr.io</a><br />
+    &bull; Project home - <a href="https://code.benco.io/dapr-store/" target="_blank">https://code.benco.io/dapr-store</a><br />
     &bull; GitHub project - <a href="https://github.com/benc-uk/dapr-store" target="_blank">github.com/benc-uk/dapr-store</a>
   </div>
 </template>
@@ -33,14 +35,13 @@ export default {
 }
 </script>
 
-
 <style scoped>
 pre {
-  margin-left:2rem;
+  margin-left: 2rem;
   background-color: rgba(0, 0, 0, 0.1);
   padding: 1rem;
   width: 50%;
-  font-size: 70%
+  font-size: 70%;
 }
 h1 {
   font-weight: bold;
@@ -60,7 +61,13 @@ h1 {
   height: 12rem;
 }
 @keyframes fadein {
-  from { opacity: 0; transform: scaleY(.1);}
-  to   { opacity: 1; transform: scaleY(1);}
+  from {
+    opacity: 0;
+    transform: scaleY(0.1);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
 }
 </style>

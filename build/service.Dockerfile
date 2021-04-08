@@ -1,7 +1,7 @@
 # ===================================================================================
 # === Stage 1: Build the Go service code into 'server' exe ==========================
 # ===================================================================================
-FROM golang:1.14-alpine as go-build
+FROM golang:1.16-alpine as go-build
 
 ARG SERVICE_NAME="SET_ON_COMMAND_LINE"
 ARG VERSION="0.0.1"
@@ -46,7 +46,7 @@ ENV PORT=$SERVICE_PORT
 
 # This is a trick, we don't really need run.sh
 # But some services might have .db files, some don't
-COPY cmd/$SERVICE_NAME/run.sh cmd/$SERVICE_NAME/*.db ./
+COPY cmd/$SERVICE_NAME/readme.md cmd/$SERVICE_NAME/*.db ./
 
 # That's it! Just run the server 
 CMD [ "./server"]

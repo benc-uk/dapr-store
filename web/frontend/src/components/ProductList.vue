@@ -10,20 +10,20 @@
 <template>
   <div>
     <div v-if="!products" class="text-center">
-      <b-spinner variant="success" style="width: 5rem; height: 5rem;" />
+      <b-spinner variant="success" style="width: 5rem; height: 5rem" />
     </div>
 
     <b-card v-for="product in products" :key="product.id">
       <b-row>
         <b-col>
-          <b-link :to="`/product/`+product.id">
+          <b-link :to="`/product/` + product.id">
             <b-card-title>
               {{ product.name }}
             </b-card-title>
           </b-link>
           <b-card-text>
             {{ product.description }}
-            <br><br>
+            <br /><br />
             <h4>£{{ product.cost }}</h4>
           </b-card-text>
 
@@ -36,8 +36,8 @@
         <b-col class="flex-grow-0 d-none d-md-block">
           <div class="product-img">
             <span v-if="product.onOffer" class="onsale">On Sale</span>
-            <b-link :to="`/product/`+product.id">
-              <img :src="product.image">
+            <b-link :to="`/product/` + product.id">
+              <img :src="product.image" />
             </b-link>
           </div>
         </b-col>
@@ -53,7 +53,6 @@ import auth from '../services/auth'
 export default {
   name: 'ProductList',
 
-
   props: {
     products: {
       type: Array,
@@ -64,17 +63,21 @@ export default {
   methods: {
     async addToCart(product) {
       try {
-        if (!auth.user()) { return }
+        if (!auth.user()) {
+          return
+        }
 
-        await api.cartAddAmount(auth.user().userName, product.id, +1)
+        await api.cartAddAmount(auth.user().username, product.id, +1)
         this.showToast('Added to your cart!', 'success', product)
       } catch (err) {
-        this.showToast('Error adding to cart 😫 '+err.toString(), 'danger', product)
+        this.showToast('Error adding to cart 😫 ' + err.toString(), 'danger', product)
       }
     },
 
     isLoggedIn() {
-      if (auth.user()) { return true }
+      if (auth.user()) {
+        return true
+      }
       return false
     },
 
@@ -107,7 +110,7 @@ export default {
   border-radius: 0.5rem;
 }
 .card-text {
-  font-size: 130%
+  font-size: 130%;
 }
 .onsale {
   display: inline-block;

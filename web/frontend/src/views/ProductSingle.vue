@@ -13,7 +13,7 @@
     <error-box :error="error" />
 
     <div v-if="!product && !error" class="text-center">
-      <b-spinner variant="success" style="width: 5rem; height: 5rem;" />
+      <b-spinner variant="success" style="width: 5rem; height: 5rem" />
     </div>
 
     <b-card v-if="product">
@@ -22,14 +22,11 @@
           <b-card-title>
             {{ product.name }}
           </b-card-title>
-          <div v-if="product.onOffer" class="onsale">
-            On Sale
-          </div>
-          <br><br><br>
+          <div v-if="product.onOffer" class="onsale">On Sale</div>
+          <br /><br /><br />
           {{ product.description }}
-          <br><br>
-          £{{ product.cost }}
-          <br><br>
+          <br /><br />
+          £{{ product.cost }} <br /><br />
           <b-button id="addBut" :disabled="!isLoggedIn()" variant="primary" @click="addToCart">
             <fa icon="shopping-cart" />
             &nbsp; Add to Cart
@@ -38,7 +35,7 @@
 
         <b-col>
           <div class="product-img">
-            <img :src="product.image">
+            <img :src="product.image" />
           </div>
         </b-col>
       </b-row>
@@ -77,17 +74,21 @@ export default {
     async addToCart() {
       try {
         const user = auth.user()
-        if (!user) { return }
+        if (!user) {
+          return
+        }
 
-        await api.cartAddAmount(user.userName, this.product.id, +1)
+        await api.cartAddAmount(user.username, this.product.id, +1)
         this.showToast('Added to your cart!', 'success')
       } catch (err) {
-        this.showToast('Error adding to cart 😫 '+err.toString(), 'danger')
+        this.showToast('Error adding to cart 😫 ' + err.toString(), 'danger')
       }
     },
 
     isLoggedIn() {
-      if (auth.user()) { return true }
+      if (auth.user()) {
+        return true
+      }
       return false
     },
 
@@ -117,7 +118,7 @@ export default {
   max-width: 600px;
   border-radius: 1vw;
 }
-@media  (max-width: 768px) {
+@media (max-width: 768px) {
   .row {
     flex-direction: column;
   }

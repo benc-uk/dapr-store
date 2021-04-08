@@ -12,33 +12,29 @@
     <error-box :error="error" />
     <h1>
       User Account
-      <b-button size="lg" variant="danger" class="float-right" @click="logout">
-        <fa icon="sign-out-alt" /> &nbsp; LOGOUT
-      </b-button>
+      <b-button size="lg" variant="danger" class="float-right" @click="logout"> <fa icon="sign-out-alt" /> &nbsp; LOGOUT </b-button>
     </h1>
-    <br>
+    <br />
 
     <div v-if="!registeredUser" class="text-center">
-      <b-spinner variant="success" style="width: 5rem; height: 5rem;" />
+      <b-spinner variant="success" style="width: 5rem; height: 5rem" />
     </div>
     <b-card v-if="registeredUser" class="details">
-      <img class="profile d-none d-md-block" :src="photo">
+      <img class="profile d-none d-md-block" :src="photo" />
 
       Display Name: <b>{{ registeredUser.displayName }}</b>
-      <br>
+      <br />
       Username: <b>{{ registeredUser.username }}</b>
     </b-card>
 
-    <br>
+    <br />
     <h1>
       Orders
-      <b-button size="lg" variant="success" class="float-right" @click="reloadOrders">
-        <fa icon="redo-alt" /> &nbsp; Refresh
-      </b-button>
+      <b-button size="lg" variant="success" class="float-right" @click="reloadOrders"> <fa icon="redo-alt" /> &nbsp; Refresh </b-button>
     </h1>
 
     <div v-if="!ordersLoaded" class="text-center">
-      <b-spinner variant="success" style="width: 5rem; height: 5rem;" />
+      <b-spinner variant="success" style="width: 5rem; height: 5rem" />
     </div>
 
     <order v-for="order in orders" :key="order.id" :order="order" />
@@ -57,7 +53,7 @@ export default {
 
   components: {
     'error-box': ErrorBox,
-    'order': Order
+    order: Order
   },
 
   data() {
@@ -73,12 +69,15 @@ export default {
   async created() {
     try {
       if (auth.user()) {
-        let resp = await api.userGet(auth.user().userName)
+        let resp = await api.userGet(auth.user().username)
         if (resp) {
           this.registeredUser = resp
         }
-        graph.getPhoto()
-          .then((photo) => { if (photo){ this.photo = photo } })
+        graph.getPhoto().then((photo) => {
+          if (photo) {
+            this.photo = photo
+          }
+        })
       }
     } catch (err) {
       this.error = err
@@ -100,7 +99,7 @@ export default {
       let orderList = []
 
       try {
-        orderList = await api.ordersForUser(auth.user().userName)
+        orderList = await api.ordersForUser(auth.user().username)
       } catch (err) {
         this.error = err
       }
@@ -129,18 +128,18 @@ export default {
 </script>
 
 <style scoped>
-  code {
-    color:rgb(23, 38, 173);
-    font-size: 1.2rem;
-  }
+code {
+  color: rgb(23, 38, 173);
+  font-size: 1.2rem;
+}
 
-  .details {
-    font-size: 140%;
-  }
+.details {
+  font-size: 140%;
+}
 
-  .profile {
-    float: right;
-    width: 10rem;
-    border-radius: 50%;
-  }
+.profile {
+  float: right;
+  width: 10rem;
+  border-radius: 50%;
+}
 </style>

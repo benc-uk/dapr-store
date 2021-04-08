@@ -38,7 +38,7 @@ func (api API) getOrder(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 	json, _ := json.Marshal(order)
-	resp.Write(json)
+	_, _ = resp.Write(json)
 }
 
 //
@@ -55,5 +55,5 @@ func (api API) getOrdersForUser(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 	json, _ := json.Marshal(orders)
-	resp.Write(json)
+	_, _ = resp.Write(json)
 }

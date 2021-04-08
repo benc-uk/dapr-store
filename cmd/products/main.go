@@ -36,7 +36,6 @@ var (
 	buildInfo   = "No build details" // Build details, set at build time with -ldflags "-X 'main.buildInfo=Foo bar'"
 	serviceName = "products"
 	defaultPort = 9002
-	// db          *sql.DB
 )
 
 //
@@ -52,10 +51,15 @@ func main() {
 	// Use gorilla/mux for routing
 	router := mux.NewRouter()
 
+	dbFilePath := "./sqlsssssssssite.db"
+	if len(os.Args) > 1 {
+		dbFilePath = os.Args[1]
+	}
+
 	// Wrapper API with anonymous inner new Base API
 	api := API{
 		api.NewBase(serviceName, version, buildInfo, healthy, router),
-		impl.NewService(serviceName),
+		impl.NewService(serviceName, dbFilePath),
 	}
 
 	// Add routes for this service

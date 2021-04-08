@@ -25,7 +25,7 @@ export default {
       validator: (prop) => typeof prop === 'string' || typeof prop === 'object' || prop === null,
       required: true
     }
-  },
+  }
 }
 </script>
 

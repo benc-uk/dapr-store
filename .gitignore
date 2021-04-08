@@ -19,3 +19,4 @@ cmd/frontend-host/frontend-host
 web/frontend/coverage
 **/node_modules/**
 output/**
+bin/**

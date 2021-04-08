@@ -1,8 +1,8 @@
 {
-	"values": [
-		{
-			"key": "endpoint",
-			"value": "staging.daprstore.benco.io"
-		}
-	]
+  "values": [
+    {
+      "key": "endpoint",
+      "value": "dapr-store.kube.benco.io"
+    }
+  ]
 }

@@ -7,7 +7,8 @@ exports[`Account.vue renders user profile 1`] = `
     User Account
     <button type="button" class="btn float-right btn-danger btn-lg">
       <fa icon="sign-out-alt"></fa> &nbsp; LOGOUT
-    </button></h1> <br>
+    </button>
+  </h1> <br>
   <!---->
   <div class="card details">
     <!---->
@@ -17,7 +18,8 @@ exports[`Account.vue renders user profile 1`] = `
       <!----><img src="img/placeholder-profile.jpg" class="profile d-none d-md-block">
 
       Display Name: <b>Mock User</b> <br>
-      Username: <b>mock@example.net</b></div>
+      Username: <b>mock@example.net</b>
+    </div>
     <!---->
     <!---->
   </div> <br>
@@ -25,7 +27,8 @@ exports[`Account.vue renders user profile 1`] = `
     Orders
     <button type="button" class="btn float-right btn-success btn-lg">
       <fa icon="redo-alt"></fa> &nbsp; Refresh
-    </button></h1>
+    </button>
+  </h1>
   <!---->
   <div class="card order">
     <!---->
@@ -38,15 +41,11 @@ exports[`Account.vue renders user profile 1`] = `
       <h2>
         Status: <span class="text-capitalize order-status order-new">new</span></h2>
       <ul>
-        <li>
-          Order Id: ord-mock
-        </li>
+        <li>Order Id: ord-mock</li>
         <li>Amount: £22.4</li>
         <li>Items:</li>
         <ul>
-          <li>
-            2 x Paisley Cravat Ascot Tie — £11.2
-          </li>
+          <li>2 x Paisley Cravat Ascot Tie — £11.2</li>
         </ul>
       </ul>
     </div>

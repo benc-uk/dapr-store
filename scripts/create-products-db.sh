@@ -4,12 +4,15 @@
 # Build the cmd/products/sqlite.db database file
 #
 
-echo "### Using cmd/products/sqlite.db"
-echo "### Droping products table"
-sqlite3 cmd/products/sqlite.db "DROP TABLE IF EXISTS products"
+outputDb=${1:-"cmd/products/sqlite.db"}
+inputCsv=${2:-"etc/products.csv"}
 
-echo "### Creating products table"
-sqlite3 cmd/products/sqlite.db "CREATE TABLE products ( 
+echo "🠶🠶🠶 Will create or update: $outputDb"
+echo "🠶🠶🠶 Droping products table"
+sqlite3 $outputDb "DROP TABLE IF EXISTS products"
+
+echo "🠶🠶🠶 Creating products table"
+sqlite3 $outputDb "CREATE TABLE products ( 
   id TEXT not null primary key,
   name text NOT null,
   description TEXT,
@@ -17,5 +20,7 @@ sqlite3 cmd/products/sqlite.db "CREATE TABLE products (
   image TEXT,
   onoffer INT);"
 
-echo "### Importing etc/products.csv into products table"
-sqlite3 -csv cmd/products/sqlite.db ".import etc/products.csv products"
+echo "🠶🠶🠶 Importing $inputCsv into products table"
+sqlite3 -csv $outputDb ".import $inputCsv products"
+
+echo "🠶🠶🠶 Database products table contains: $(sqlite3 $outputDb 'SELECT COUNT(*) FROM products;') products"

@@ -9,6 +9,7 @@ package impl
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/benc-uk/dapr-store/cmd/products/spec"
@@ -22,12 +23,15 @@ type ProductService struct {
 }
 
 // NewService creates a new ProductService
-func NewService(serviceName string) *ProductService {
-	db, err := sql.Open("sqlite3", "./sqlite.db")
+func NewService(serviceName string, dbFilePath string) *ProductService {
+	// Note force rw mode here, otherwise it creates an empty DB if file not found
+	db, err := sql.Open("sqlite3", fmt.Sprintf("file:%s?mode=rw", dbFilePath))
 	if err != nil {
-		log.Panicf("### Failed to open database! %+v\n", err)
+		log.Panicf("### Failed to open database %s %+v\n", dbFilePath, err)
 		return nil
 	}
+
+	log.Printf("### Database %s opened OK\n", dbFilePath)
 
 	return &ProductService{
 		db,

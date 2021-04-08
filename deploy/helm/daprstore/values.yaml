@@ -7,7 +7,7 @@ image:
   pullSecrets: []
 
 auth:
-  clientId: 
+  clientId:
 
 ingress:
   host:
@@ -20,40 +20,40 @@ resources:
     memory: 200M
 
 cart:
-  annotations: 
+  annotations:
   replicas: 1
 
 orders:
-  annotations: 
+  annotations:
   replicas: 1
 
 products:
-  annotations: 
+  annotations:
   replicas: 1
 
 users:
-  annotations: 
+  annotations:
   replicas: 1
 
 frontendHost:
-  annotations: 
+  annotations:
   replicas: 1
 
 apiGateway:
-  annotations: 
+  annotations:
   replicas: 1
   staticIP:
-    address: 
-    resourceGroup: 
+    address:
+    resourceGroup:
 
 daprComponents:
   deploy: true
   state:
     name: statestore
   pubsub:
-    name: messagebus
+    name: pubsub
 
-redis: 
+redis:
   fullnameOverride: daprstore-redis
   enabled: true
   usePassword: false

@@ -16,13 +16,10 @@ exports[`ProductSingle.vue renders product details 1`] = `
           <h4 class="card-title">
             Black &amp; Gold Tie Set
           </h4>
-          <div class="onsale">
-            On Sale
-          </div> <br><br><br>
+          <div class="onsale">On Sale</div> <br><br><br>
           100% hand made silk includes tie, pocket square and cufflinks
           <br><br>
-          £18
-          <br><br> <button id="addBut" type="button" disabled="disabled" class="btn btn-primary disabled">
+          £18 <br><br> <button id="addBut" type="button" disabled="disabled" class="btn btn-primary disabled">
             <fa icon="shopping-cart"></fa>
             &nbsp; Add to Cart
           </button>

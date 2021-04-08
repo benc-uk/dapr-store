@@ -27,7 +27,10 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal(mockJSON, &mockUsers)
+	err = json.Unmarshal(mockJSON, &mockUsers)
+	if err != nil {
+		panic(err)
+	}
 }
 
 // GetUser mock

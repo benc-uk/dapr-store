@@ -31,7 +31,7 @@ export default {
   data() {
     return {
       products: null,
-      error: null,
+      error: null
     }
   },
 
@@ -41,6 +41,6 @@ export default {
     } catch (err) {
       this.error = err
     }
-  },
+  }
 }
 </script>

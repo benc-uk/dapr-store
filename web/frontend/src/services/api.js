@@ -24,57 +24,57 @@ export default {
   //
   // ===== Users =====
   //
-  userRegister: function(user) {
+  userRegister: function (user) {
     return apiCall('v1.0/invoke/users/method/register', 'POST', user)
   },
 
-  userGet: function(username) {
+  userGet: function (username) {
     return apiCall(`v1.0/invoke/users/method/get/${username}`)
   },
 
-  userCheckReg: function(username) {
+  userCheckReg: function (username) {
     return apiCall(`v1.0/invoke/users/method/isregistered/${username}`)
   },
 
   //
   // ===== Products =====
   //
-  productCatalog: function() {
+  productCatalog: function () {
     return apiCall('v1.0/invoke/products/method/catalog')
   },
 
-  productOffers: function() {
+  productOffers: function () {
     return apiCall('v1.0/invoke/products/method/offers')
   },
 
-  productGet: function(productId) {
+  productGet: function (productId) {
     return apiCall(`v1.0/invoke/products/method/get/${productId}`)
   },
 
-  productSearch: function(query) {
+  productSearch: function (query) {
     return apiCall(`v1.0/invoke/products/method/search/${query}`)
   },
 
   //
   // ===== Cart =====
   //
-  cartProductSet: function(username, productId, count) {
+  cartProductSet: function (username, productId, count) {
     return apiCall(`v1.0/invoke/cart/method/setProduct/${username}/${productId}/${count}`, 'PUT')
   },
 
-  cartGet: function(username) {
+  cartGet: function (username) {
     return apiCall(`v1.0/invoke/cart/method/get/${username}`, 'GET')
   },
 
-  cartSubmit: function(username) {
+  cartSubmit: function (username) {
     return apiCall('v1.0/invoke/cart/method/submit', 'POST', `${username}`)
   },
 
-  cartClear: function(username) {
+  cartClear: function (username) {
     return apiCall(`v1.0/invoke/cart/method/clear/${username}`, 'PUT', `${username}`)
   },
 
-  cartAddAmount: async function(username, productId, amount) {
+  cartAddAmount: async function (username, productId, amount) {
     let count = 0
 
     let cartResp = await this.cartGet(username)
@@ -86,7 +86,9 @@ export default {
       } else {
         count = amount
       }
-      if (count < 0) { count = 0 }
+      if (count < 0) {
+        count = 0
+      }
     }
 
     return this.cartProductSet(username, productId, count)
@@ -95,11 +97,11 @@ export default {
   //
   // ===== Orders =====
   //
-  orderGet: function(orderId) {
+  orderGet: function (orderId) {
     return apiCall(`v1.0/invoke/orders/method/get/${orderId}`)
   },
 
-  ordersForUser: function(username) {
+  ordersForUser: function (username) {
     return apiCall(`v1.0/invoke/orders/method/getForUser/${username}`)
   }
 }
@@ -109,12 +111,12 @@ export default {
 //
 async function apiCall(apiPath, method = 'get', data = null) {
   let headers = {}
-  let url = `${(apiEndpoint || '/')}${apiPath}`
+  let url = `${apiEndpoint || '/'}${apiPath}`
   console.log(`### API CALL ${method} ${url}`)
 
   // Only get a token if logged in & using real auth (i.e AUTH_CLIENT_ID set)
   if (auth.user() && clientId && apiScope) {
-    const scopes = [ `api://${clientId}/${apiScope}` ]
+    const scopes = [`api://${clientId}/${apiScope}`]
 
     // Try to get an access token with our API scope
     // It should be safe to call this every time, as MSAL.js caches tokens locally for us
@@ -123,7 +125,7 @@ async function apiCall(apiPath, method = 'get', data = null) {
     // Send token as per the OAuth 2.0 bearer token scheme
     if (accessToken) {
       headers = {
-        'Authorization': `Bearer ${accessToken}`
+        Authorization: `Bearer ${accessToken}`
       }
     }
   }
@@ -131,7 +133,7 @@ async function apiCall(apiPath, method = 'get', data = null) {
   // Build request
   const request = {
     method,
-    headers,
+    headers
   }
 
   // Add payload if required

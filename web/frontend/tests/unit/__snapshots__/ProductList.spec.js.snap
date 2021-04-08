@@ -26,7 +26,8 @@ exports[`ProductList.vue renders product list 1`] = `
         </div>
         <div class="flex-grow-0 d-none d-md-block col">
           <div class="product-img">
-            <!----> <a href="#/product/prd1" class="" target="_self"><img src="/img/catalog/1.jpg"></a></div>
+            <!----> <a href="#/product/prd1" class="" target="_self"><img src="/img/catalog/1.jpg"></a>
+          </div>
         </div>
       </div>
     </div>
@@ -85,7 +86,8 @@ exports[`ProductList.vue renders product list 1`] = `
         </div>
         <div class="flex-grow-0 d-none d-md-block col">
           <div class="product-img">
-            <!----> <a href="#/product/prd3" class="" target="_self"><img src="/img/catalog/3.jpg"></a></div>
+            <!----> <a href="#/product/prd3" class="" target="_self"><img src="/img/catalog/3.jpg"></a>
+          </div>
         </div>
       </div>
     </div>

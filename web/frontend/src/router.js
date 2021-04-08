@@ -75,13 +75,13 @@ const router = new VueRouter({
       path: '/order/:id',
       component: ViewOrder,
       beforeEnter: signedInCheck
-    },
+    }
   ]
 })
 
 function signedInCheck(to, from, next) {
   const user = auth.user()
-  if (!user || !user.userName) {
+  if (!user || !user.username) {
     next('/login')
   } else {
     next()

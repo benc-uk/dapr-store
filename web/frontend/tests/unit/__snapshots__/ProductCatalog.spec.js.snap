@@ -29,7 +29,8 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
           </div>
           <div class="flex-grow-0 d-none d-md-block col">
             <div class="product-img">
-              <!----> <a href="/product/prd1" target="_self" class=""><img src="/img/catalog/1.jpg"></a></div>
+              <!----> <a href="/product/prd1" target="_self" class=""><img src="/img/catalog/1.jpg"></a>
+            </div>
           </div>
         </div>
       </div>
@@ -88,7 +89,8 @@ exports[`ProductCatalog.vue renders products in catalog 1`] = `
           </div>
           <div class="flex-grow-0 d-none d-md-block col">
             <div class="product-img">
-              <!----> <a href="/product/prd3" target="_self" class=""><img src="/img/catalog/3.jpg"></a></div>
+              <!----> <a href="/product/prd3" target="_self" class=""><img src="/img/catalog/3.jpg"></a>
+            </div>
           </div>
         </div>
       </div>

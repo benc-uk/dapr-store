@@ -18,8 +18,9 @@ import (
 // CartService is a Dapr implementation of CartService interface
 type CartService struct {
 	*dapr.Helper
-	topicName string
-	storeName string
+	pubSubName string
+	topicName  string
+	storeName  string
 }
 
 //
@@ -33,12 +34,14 @@ func NewService(serviceName string) *CartService {
 	}
 	topicName := env.GetEnvString("DAPR_ORDERS_TOPIC", "orders-queue")
 	storeName := env.GetEnvString("DAPR_STORE_NAME", "statestore")
+	pubSubName := env.GetEnvString("DAPR_PUBSUB_NAME", "pubsub")
 
 	log.Printf("### Dapr pub/sub topic name: %s\n", topicName)
 	log.Printf("### Dapr state store name:   %s\n", storeName)
 
 	return &CartService{
 		helper,
+		pubSubName,
 		topicName,
 		storeName,
 	}
@@ -112,11 +115,15 @@ func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 		LineItems: lineItems,
 	}
 
-	prob := s.PublishMessage(s.topicName, order)
+	prob := s.PublishMessage(s.pubSubName, s.topicName, order)
 	if prob != nil {
 		return nil, prob
 	}
-	s.Clear(&cart)
+
+	err := s.Clear(&cart)
+	if err != nil {
+		log.Printf("### Warning failed to clear cart %s", err)
+	}
 
 	return order, nil
 }

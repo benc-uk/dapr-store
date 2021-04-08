@@ -10,7 +10,7 @@ exports[`Cart.vue renders cart contents 1`] = `
   <!---->
   <!---->
   <div>
-    <h2>Cart total: £91.10 </h2>
+    <h2>Cart total: £91.10</h2>
     <div class="card m-3 p-1">
       <!---->
       <div class="card-header bg-primary text-white"><span>Top&nbsp;Hat&nbsp;(6″)</span></div>

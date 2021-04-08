@@ -1,5 +1,6 @@
-@host = staging.daprstore.benco.io
+#@host = staging.daprstore.benco.io
 #@host = daprstore.kube.benco.io
+@host = localhost:9000
 
 # ===================================================================
 # Products API
@@ -13,7 +14,7 @@ GET http://{{host}}/v1.0/invoke/products/method/offers
 
 ###
 
-GET http://{{host}}/v1.0/invoke/products/method/get/2
+GET http://{{host}}/v1.0/invoke/products/method/get/prd006
 
 ###
 
@@ -26,7 +27,7 @@ GET http://{{host}}/v1.0/invoke/products/method/search/tied
 # ===================================================================
 
 ### Add products to cart
-PUT http://{{host}}/v1.0/invoke/cart/method/setProduct/sdadasda@example.net/prd001/6
+PUT http://{{host}}/v1.0/invoke/cart/method/setProduct/demo@example.net/prd001/6
 
 ### Get cart
 GET http://{{host}}/v1.0/invoke/cart/method/get/demo@example.net
@@ -47,7 +48,7 @@ content-type: application/json
 # ===================================================================
 
 ### Get existing order
-GET http://{{host}}/v1.0/invoke/orders/method/get/eQovn 
+GET http://{{host}}/v1.0/invoke/orders/method/get/yCK1e 
 
 ### Get orders for user
 GET http://{{host}}/v1.0/invoke/orders/method/getForUser/demo@example.net

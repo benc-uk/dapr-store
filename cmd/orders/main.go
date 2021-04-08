@@ -23,7 +23,7 @@ import (
 	_ "github.com/joho/godotenv/autoload" // Autoloads .env file if it exists
 )
 
-// API type is a wrap of the common base API with local implementation
+// sPI type is a wrap of the common base API with local implementation
 type API struct {
 	*api.Base
 	service spec.OrderService
