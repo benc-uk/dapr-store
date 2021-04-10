@@ -30,13 +30,14 @@ var jwkSet *jwk.Set
 func JWTValidator(next http.HandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		// TODO! Removed as it wasn't doing anything...
 		// Disable check if call is internal from another Dapr service (localhost) or running on dev machine
-		fwdHost := r.Header.Get("X-Forwarded-Host")
-		if strings.Contains(fwdHost, "localhost") || r.Host == "example.com" {
-			log.Printf("### Auth (%s): Bypassing validation for host: %s %s\n", r.URL, fwdHost, r.Host)
-			next(w, r)
-			return
-		}
+		// fwdHost := r.Header.Get("X-Forwarded-Host")
+		// if strings.Contains(fwdHost, "localhost") || r.Host == "example.com" {
+		// 	log.Printf("### Auth (%s): Bypassing validation for host: %s %s\n", r.URL, fwdHost, r.Host)
+		// 	next(w, r)
+		// 	return
+		// }
 
 		// Disable check if client id is not set, this is running in demo / unsecured mode
 		clientID := env.GetEnvString("AUTH_CLIENT_ID", "")

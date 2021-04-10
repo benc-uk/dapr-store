@@ -1,0 +1,13 @@
+#
+# Default values for redis Helm install as a backend for the statestore Dapr component
+# Use chart from charts.bitnami.com/bitnami repo
+#
+
+fullnameOverride: daprstore-redis
+enabled: true
+usePassword: false
+cluster:
+  enabled: false
+master:
+  persistence:
+    enabled: false

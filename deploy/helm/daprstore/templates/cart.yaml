@@ -14,10 +14,11 @@ spec:
     metadata:
       labels:
         daprstore: cart
+        {{- include "daprstore.selectorLabels" . | nindent 8 }}
       annotations:
         dapr.io/enabled: "true"
-        dapr.io/id: "cart"
-        dapr.io/port: "9001"
+        dapr.io/app-id: "cart"
+        dapr.io/app-port: "9001"
       {{- with .Values.cart.annotations }}
           {{- toYaml . | nindent 8 }}
       {{- end }}            

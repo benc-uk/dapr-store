@@ -2,7 +2,7 @@
   "values": [
     {
       "key": "endpoint",
-      "value": "dapr-store.kube.benco.io"
+      "value": "daprstore.kube.benco.io"
     }
   ]
 }

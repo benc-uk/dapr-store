@@ -1,0 +1,19 @@
+#
+# Sample default values for deploying Dapr Store
+# See helm/daprstore/values.yaml for full set of options available
+#
+
+# Mostly don't change these
+image:
+  registry: ghcr.io
+  repo: benc-uk/daprstore
+  tag: latest
+
+# Leave blank to disable authentication
+auth:
+  clientId:
+
+# Leave blank to dsisable and use loadbalancer service + IP
+ingress:
+  host:
+  certName:

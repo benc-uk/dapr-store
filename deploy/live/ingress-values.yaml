@@ -1,0 +1,20 @@
+#
+# ********* LIVE VALUES FOR DEPLOYING INGRESS API GATEWAY *******
+# install with
+#  helm install api-gateway ingress-nginx/ingress-nginx --values ~/dev/dapr-store/deploy/config/live-ingress-values.yaml --namespace dapr-store
+#
+
+controller:
+  service:
+    labels:
+      purpose: "daprstore-api-gateway"
+
+    # Static IP so DNS can remain static too
+    loadBalancerIP: "20.86.99.160"
+  ingressClass: "dapr"
+  podAnnotations:
+    dapr.io/enabled: "true"
+    dapr.io/app-id: "api-gateway"
+    dapr.io/app-port: "80"
+  scope:
+    enabled: true

@@ -93,6 +93,7 @@ func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 
 		product := &productspec.Product{}
 		err = json.NewDecoder(resp.Body).Decode(product)
+		log.Printf("SUB CART GOT PROD %+v", product)
 		if err != nil {
 			prob := problem.New("err://json-decode", "Malformed JSON", 500, "Product JSON could not be decoded", s.ServiceName)
 			return nil, prob

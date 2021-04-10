@@ -1,0 +1,17 @@
+#
+# Rename/copy this file, and set your API key
+# Then copy to your default dapr components dir, eg. $HOME/.dapr/components
+#
+
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: orders-email
+spec:
+  type: bindings.twilio.sendgrid
+  metadata:
+    - name: emailFrom
+      value: "orders@daprstore.com"
+    # REQUIRED. Must be set here, this is your SendGrid API key
+    - name: apiKey
+      value: "__YOUR_API_KEY__"

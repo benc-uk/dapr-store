@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         daprstore: frontend-host
+        {{- include "daprstore.selectorLabels" . | nindent 8 }}
       annotations:
       {{- with .Values.frontendHost.annotations }}
           {{- toYaml . | nindent 8 }}

@@ -1,8 +1,10 @@
+#
 # Default values for dapr-store.
+#
 
 image:
-  registry: docker.io
-  repo: daprstore
+  registry: ghcr.io
+  repo: benc-uk/daprstore
   tag: latest
   pullSecrets: []
 
@@ -39,26 +41,9 @@ frontendHost:
   annotations:
   replicas: 1
 
-apiGateway:
-  annotations:
-  replicas: 1
-  staticIP:
-    address:
-    resourceGroup:
-
 daprComponents:
   deploy: true
   state:
     name: statestore
   pubsub:
     name: pubsub
-
-redis:
-  fullnameOverride: daprstore-redis
-  enabled: true
-  usePassword: false
-  cluster:
-    enabled: false
-  master:
-    persistence:
-      enabled: false

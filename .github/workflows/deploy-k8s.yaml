@@ -13,74 +13,30 @@ env:
   NAMESPACE: dapr-store
 
 jobs:
-  deployStaging:
+  deploy-aks:
+    name: "Deploy to AKS cluster"
     runs-on: ubuntu-latest
 
     env:
-      STATIC_IP: "20.191.56.121"
       NAMESPACE: "dapr-store"
-      HOST: "dapr-store.kube.benco.io"
 
     steps:
       - name: "Checkout source"
         uses: actions/checkout@v2
 
-      - name: "Helm deploy Redis"
+      - name: "Helm deploy Dapr Store app"
         uses: deliverybot/helm@master
         env:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
         with:
           helm: helm3
-          release: redis
+          release: store
           namespace: ${{ env.NAMESPACE }}
-          chart: redis
-          repository: https://charts.bitnami.com/bitnami
+          chart: ./deploy/helm/daprstore
+          value-files: ./deploy/live/app-values.yaml
           values: |
-            fullnameOverride: daprstore-redis
-            enabled: true
-            usePassword: false
-            cluster:
-              enabled: false
-            master:
-              persistence:
-                enabled: false
-
-      # - run: sleep 10
-
-      # - name: "Helm deploy Daprstore to staging"
-      #   uses: deliverybot/helm@master
-      #   env:
-      #     KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
-      #   with:
-      #     helm: helm3
-      #     release: daprstore
-      #     namespace: ${{ env.NAMESPACE }}
-      #     chart: ./deploy/helm/daprstore
-      #     values: |
-      #       image:
-      #         registry: ${{ env.IMAGE_REG }}
-      #         repo: ${{ env.IMAGE_REPO }}
-      #         tag: "${{ github.event.client_payload.imageTag }}${{ github.event.inputs.imageTag }}"
-      #       ingress:
-      #         host: "${{ env.HOST }}"
-
-      # - name: "Helm deploy Nginx ingress to staging"
-      #   uses: deliverybot/helm@master
-      #   env:
-      #     KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
-      #   with:
-      #     helm: helm3
-      #     release: api-gateway-stage
-      #     namespace: ${{ env.NAMESPACE }}
-      #     repository: https://kubernetes.github.io/ingress-nginx
-      #     chart: ingress-nginx
-      #     value-files: ./deploy/ingress/chart-values.yaml
-      #     values: |
-      #       controller:
-      #         service:
-      #           loadBalancerIP: "${{ env.STATIC_IP }}"
-      #         scope:
-      #           namespace: ${{ env.NAMESPACE }}
+            image:
+              tag: "${{ github.event.client_payload.IMAGE_TAG }}${{ github.event.inputs.IMAGE_TAG }}"
 
       # - name: "Run API tests"
       #   uses: matt-ball/newman-action@master

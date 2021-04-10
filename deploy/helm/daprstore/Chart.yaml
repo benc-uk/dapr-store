@@ -1,19 +1,11 @@
 apiVersion: v2
 name: daprstore
-description: A sample/reference application showcasing the use of [Dapr
+description: A reference application showcasing the use of Dapr
 
 type: application
 
 # This is the chart version.
-version: 0.1.0
+version: 0.6.0
 
 # This is the version number of the application being deployed.
 appVersion: 0.6.0
-# dependencies:
-# - name: redis
-#   version: "^10.6.13"
-#   repository: "https://charts.bitnami.com/bitnami"
-
-# - name: ingress-nginx
-#   version: "^2.1.0"
-#   repository: "https://kubernetes.github.io/ingress-nginx"

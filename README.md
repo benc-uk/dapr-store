@@ -20,10 +20,10 @@ The following diagram shows all the components of the application and main inter
 
 The application uses the following [Dapr Building Blocks](https://github.com/dapr/docs/tree/master/concepts#building-blocks) and APIs
 
-- **Service Invocation** — The API gateway calls the four main microservices using HTTP calls to [Dapr service invocation](https://github.com/dapr/docs/blob/master/concepts/service-invocation/README.md). This provides retries, mTLS and service discovery.
-- **State** — State is held for users and orders using the [Dapr state management API](https://github.com/dapr/docs/blob/master/concepts/state-management/README.md). The state provider used is Redis, however any other provider could be plugged in without any application code changes.
-- **Pub/Sub** — The submission of new orders through the cart service, is decoupled from the order processing via pub/sub messaging and the [Dapr pub/sub messaging API](https://github.com/dapr/docs/blob/master/concepts/publish-subscribe-messaging/README.md). New orders are placed on a topic as messages, to be collected by the orders service. This allows the orders service to independently scale and separates our reads & writes
-- **Output Bindings** — To communicate with downstream & 3rd party systems, the [Dapr Bindings API](https://github.com/dapr/docs/blob/master/concepts/bindings/README.md) is used. This allows the store to carry out tasks such as saving order details into external storage (e.g. Azure Blob) and notify uses with emails via SendGrid
+- **Service Invocation** — The API gateway calls the four main microservices using HTTP calls to [Dapr service invocation](https://docs.dapr.io/developing-applications/building-blocks/service-invocation/service-invocation-overview/). This provides retries, mTLS and service discovery.
+- **State** — State is held for users and orders using the [Dapr state management API](https://docs.dapr.io/developing-applications/building-blocks/state-management/state-management-overview/). The state provider used is Redis, however any other provider could be plugged in without any application code changes.
+- **Pub/Sub** — The submission of new orders through the cart service, is decoupled from the order processing via pub/sub messaging and the [Dapr pub/sub messaging API](https://docs.dapr.io/developing-applications/building-blocks/pubsub/pubsub-overview/). New orders are placed on a topic as messages, to be collected by the orders service. This allows the orders service to independently scale and separates our reads & writes
+- **Output Bindings** — To communicate with downstream & 3rd party systems, the [Dapr Bindings API](https://docs.dapr.io/developing-applications/building-blocks/bindings/bindings-overview/) is used. This allows the store to carry out tasks such as saving order details into external storage (e.g. Azure Blob) and notify uses with emails via SendGrid
 - **Middleware** — Dapr supports a range of HTTP middleware, for this project traffic rate limiting can enabled on any of the APIs with a single Kubernetes annotation
 
 # Components
@@ -156,6 +156,8 @@ The default API endpoint is `/` and it makes calls to the Dapr invoke API, namel
 
 A very basic / minimal static server using gorilla/mux. See https://github.com/gorilla/mux#static-files. It simply serves up the static bundled files output from the build process of the frontend, it expects to find these files in `./dist` directory but this is configurable
 
+In addition it exposes a simple `/config` endpoint, this is to allow dynamic configuration of the frontend. It passes two env vars `AUTH_CLIENT_ID` and `API_ENDPOINT` from the frontend host to the frontend Vue SPA as a JSON response, which are fetched & read as the app is loaded in the browser.
+
 ## 🌍 API gateway
 
 This component is critical but consists of no code. It's a NGINX reverse proxy configured to do two things:
@@ -181,49 +183,7 @@ See `scripts/local-gateway` for details on how this is done, the `scripts/local-
 
 # Running in Kubernetes - Quick guide
 
-Quick and dirty guide to deploying Dapr Store into Kubernetes.
-
-1. Deploy a state provider. Redis has been used as it's lightweight and is also the default used when running Dapr locally
-
-   ```bash
-   kubectl apply -f deploy/state/redis.yaml
-   ```
-
-   Note this deploys Redis with no persistent storage, so only a good idea for testing/demos
-
-   For a more robust deployment use Helm
-
-   ```bash
-   helm install redis bitnami/redis --set "cluster.enabled=false,usePassword=false"
-   ```
-
-2. Deploy _API Gateway_ which is the "Daprized" NGINX Ingress, this will also deploy the ingress rules
-
-   ```bash
-   ./deploy/ingress/deploy.sh
-   ```
-
-   Thn get the public IP assigned to the controller, Note. it could take some minutes for it to get an IP
-
-   ```bash
-   kubectl get svc -l component=controller -o jsonpath='Public IP is: {.items[0].status.loadBalancer.ingress[0].ip}{"\n"}'
-   ```
-
-3. Deploy the Dapr _Components_ used for state store and pub/sub
-
-   > **_Optional._** Setup Azure blob storage for order reporting output, to do this rename `deploy/dapr/azure-blob.yaml.sample` and configure the values
-
-   ```bash
-   kubectl apply -f deploy/dapr
-   ```
-
-4. Deploy all the Dapr Store services & frontend host
-
-   ```bash
-   kubectl apply -f deploy/app
-   ```
-
-5. Access the site & frontend via public IP obtained in step 2
+See [deploy/readme.md](deploy/readme.md)
 
 # Running locally - Quick guide
 
@@ -232,8 +192,7 @@ This is a (very) basic guide to running the Dapr Store locally. Only instruction
 ### Prereqs
 
 - Docker
-- Go 1.14+
-- Realize. install with: `go get github.com/oxequa/realize`. Realize is a task runner for Go, with live reloading
+- Go 1.15+
 
 ### Setup
 
@@ -241,7 +200,7 @@ Install and initialize Dapr
 
 ```
 wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
-sudo dapr init
+dapr init
 ```
 
 ### Clone repo
@@ -255,52 +214,47 @@ git clone https://github.com/benc-uk/dapr-store/
 Run everything. Run from the project root (e.g. `dapr-store` directory)
 
 ```bash
-./bin/start-local.sh
+make run
 ```
 
-To stop Dapr instances and other processes, run the `stop-local.sh` script:
-
-```bash
-./bin/stop-local.sh
-```
+Access the store from http://localhost:9000/
 
 # Build and CI/CD
 
-A makefile is provided, the main targets you are likely to use are:
+A makefile is provided to assist working with the project, the main targets are:
 
-`make docker`  
-Build the Docker images for all services + frontend. Set vars `DOCKER_REG`, `DOCKER_REPO`, `DOCKER_TAG` to configure the image name, otherwise defaults will be used, which is `docker.io/daprstore/{service}:latest`
+```text
+help                 💬 This help message :)
+lint                 🔎 Lint & format, check to be run in CI, sets exit code on error
+lint-fix             📝 Lint & format, fixes errors and modifies code
+test                 🎯 Unit tests for services and snapshot tests for SPA frontend
+test-reports         📜 Unit tests with coverage and test reports
+test-snapshot        📷 Update snapshots for frontend tests
+image-all            📦 Build all container images
+push-all             📤 Push all images to registry
+bundle               💻 Build and bundle the frontend Vue SPA
+clean                🧹 Clean the project, remove modules, binaries and outputs
+run                  🚀 Start & run everything locally
+stop                 ⛔ Stop & kill everything started locally from `make run`
+```
 
-`make test`  
-Runs all unit tests for Go services
+## Security, Identity & Authentication
 
-`make push`  
-Push Docker images, Set vars `DOCKER_REG`, `DOCKER_REPO`, `DOCKER_TAG` as above
+The default mode of operation for the Dapr Store is in "demo mode" where there is no identity provided configured, and no security on the APIs. This makes it simple to run and allows us to focus on the Dapr aspects of the project. In this mode a demo/dummy user account can be used to sign-in and place orders in the store.
 
-`make lint`  
-Run linting checks in the Go code with golint and Vue code with ESLint
+Optionally Dapr store can be configured utilise the [Microsoft identity platform](https://docs.microsoft.com/en-us/azure/active-directory/develop/) (aka Azure Active Directory v2) as an identity provider, to enable real user sign-in, and securing of the APIs.
 
-`make gofmt`  
-Checks Go code with gofmt
-
-GitHub Actions is used to provide some simple CI builds of the Docker images, See ([.github/workflows](./.github/workflows/)) this is a work in progress and needs much expansion and extending
-
-# Reference Information
-
-NOT FINISHED ☢
-
-## Security & Authentication
-
-See [security section](./docs/security.md)
+See the [security, identity & authentication docs](./docs/auth-identity.md) for more details on setting this up.
 
 ## Config - Environmental Variables
 
 The services support the following environmental variables. All settings are optional.
 
 - `PORT` - Port the server will listen on. See defaults below.
-- `AUTH_CLIENT_ID` - Used to enable [security and authentication](/docs/security.md). Default is _blank_, which is no security
+- `AUTH_CLIENT_ID` - Used to enable integration with Azure AD for identity and authentication. Default is _blank_, which runs the service with no identity backend. See the [security, identity & authentication docs](./docs/auth-identity.md) for more details.
 - `DAPR_STORE_NAME` - Name of the Dapr state component to use. Default is `statestore`
-- `DAPR_ORDERS_TOPIC` - Name of the Dapr pub/sub topic to use for orders. Default is `orders-queue"`
+- `DAPR_ORDERS_TOPIC` - Name of the Dapr pub/sub topic to use for orders. Default is `orders-queue`
+- `DAPR_PUBSUB_NAME` - Name of the Dapr pub/sub component to use for orders. Default is `pubsub`
 
 Frontend host config:
 

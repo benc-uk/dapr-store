@@ -1,0 +1,12 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: orders-email
+spec:
+  type: bindings.twilio.sendgrid
+  metadata:
+    - name: emailFrom
+      value: "orders@daprstore.com"
+    # REQUIRED. Must be set here, this is your SendGrid API key
+    - name: apiKey
+      value: ""

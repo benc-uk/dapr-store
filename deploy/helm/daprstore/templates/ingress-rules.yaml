@@ -28,7 +28,7 @@ spec:
   rules:
     {{ if .Values.ingress.host }}
     - host: "{{ .Values.ingress.host }}"
-      http:
+      http: 
     {{ else }}
     - http:
     {{ end }}

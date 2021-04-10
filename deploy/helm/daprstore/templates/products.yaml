@@ -15,10 +15,11 @@ spec:
     metadata:
       labels:
         daprstore: products
+        {{- include "daprstore.selectorLabels" . | nindent 8 }}
       annotations:
         dapr.io/enabled: "true"
-        dapr.io/id: "products"
-        dapr.io/port: "9002"
+        dapr.io/app-id: "products"
+        dapr.io/app-port: "9002"
       {{- with .Values.products.annotations }}
           {{- toYaml . | nindent 8 }}
       {{- end }}            

@@ -1,0 +1,13 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: orders-report
+spec:
+  type: bindings.azure.blobstorage
+  metadata:
+    - name: storageAccount
+      value: benc
+    - name: storageAccessKey
+      value:
+    - name: container
+      value: orders

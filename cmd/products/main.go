@@ -51,7 +51,7 @@ func main() {
 	// Use gorilla/mux for routing
 	router := mux.NewRouter()
 
-	dbFilePath := "./sqlsssssssssite.db"
+	dbFilePath := "./sqlite.db"
 	if len(os.Args) > 1 {
 		dbFilePath = os.Args[1]
 	}

@@ -12,8 +12,9 @@ cmd/users/users
 cmd/products/products
 cmd/frontend-host/frontend-host
 
-# My configs
-**/my*.yaml
+# Configs
+components/**
+!components/*.sample
 
 # Code coverage & test output
 web/frontend/coverage

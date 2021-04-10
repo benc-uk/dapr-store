@@ -1,0 +1,17 @@
+#
+# Default values for nginx-ingress Helm install for use as an API gateway to Dapr Store
+# Runs nginx-ingress in Daprized mode :)
+# Use chart from https://kubernetes.github.io/ingress-nginx repo
+#
+
+controller:
+  service:
+    labels:
+      purpose: "daprstore-api-gateway"
+  ingressClass: "dapr"
+  podAnnotations:
+    dapr.io/enabled: "true"
+    dapr.io/app-id: "api-gateway"
+    dapr.io/app-port: "80"
+  scope:
+    enabled: true
