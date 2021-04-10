@@ -26,15 +26,13 @@ The application uses the following [Dapr Building Blocks](https://github.com/dap
 - **Output Bindings** — To communicate with downstream & 3rd party systems, the [Dapr Bindings API](https://docs.dapr.io/developing-applications/building-blocks/bindings/bindings-overview/) is used. This allows the store to carry out tasks such as saving order details into external storage (e.g. Azure Blob) and notify uses with emails via SendGrid
 - **Middleware** — Dapr supports a range of HTTP middleware, for this project traffic rate limiting can enabled on any of the APIs with a single Kubernetes annotation
 
-# Components
+# Application Elements & Services
 
-The major components and microservices that make up the Dapr Store system are described here
-
-> Note. The term "component" here, is used in the general english sense, rather than referring to a [_Dapr component_](https://docs.dapr.io/concepts/components-concept/)
+The main elements and microservices that make up the Dapr Store system are described here
 
 ## Shared Go packages
 
-Shared Go code lives in the `pkg/` directory, which is used by all the services. These fall into the following packages:
+Shared Go code lives in the `pkg/` directory, which is used by all the services, and consists of the following packages:
 
 - `pkg/api` - A base API extended by all services, provides health & status endpoints.
 - `pkg/apitests` - A simple helper for running sets of router/API based tests.
@@ -56,8 +54,7 @@ Primary runtime code:
 
 For testing:
 
-- `*_test.go` - Main test file typically runs all of the tests found in `test_cases.go`
-- `test_cases.go` - List of API and route tests with expected results
+- `*_test.go` - Main service tests
 - `mock/mock.go` - Mock implementation of the domain spec, with no dependencies
 
 ## 💰 Orders service
@@ -78,7 +75,7 @@ The service provides some fake order processing activity so that orders are move
 
 - **Pub/Sub.** Subscribes to the `orders-queue` topic to receive new orders from the _cart_ service
 - **State.** Stores and retrieves **Order** entities from the state service, keyed on OrderID. Also lists of orders per user, held as an array of OrderIDs and keyed on username
-- **Bindings.** All output bindings are _optional_
+- **Bindings.** All output bindings are optional, the service operates without these present
   - **Azure Blob.** For saving "order reports" as text files into Azure Blob storage
   - **SendGrid.** For sending emails to users via [SendGrid](https://sendgrid.com/)
 
@@ -95,7 +92,7 @@ It is written in Go, source is in `cmd/users` and it exposes the following API r
 
 See `cmd/users/spec` for details of the **User** entity.
 
-The service provides some faked order processing activity so that orders are moved through a number of statuses, simulating some back-office systems or inventory management. Orders are initially set to `OrderReceived` status, then after 30 seconds moved to `OrderProcessing`, then after 2 minutes moved to `OrderComplete`
+The service is notable as it consists of a mixture of secured API routes and one anonymous/open API `/isregistered`
 
 ### Users - Dapr Interaction
 
@@ -119,11 +116,11 @@ The products data is held in a SQLite database, this decision was taken due to t
 
 ### Products - Dapr Interaction
 
-None
+None directly, but is called via service invocation from other services, the API gateway & the cart service.
 
 ## 🛒 Cart service
 
-This provides a cart service to the Dapr Store. The currently implementation is very minimal.  
+This provides a cart service to the Dapr Store. The currently implementation is a MVP.  
 It is written in Go, source is in `cmd/cart` and it exposes the following API routes:
 
 ```
@@ -154,7 +151,7 @@ The default API endpoint is `/` and it makes calls to the Dapr invoke API, namel
 
 ## 📡 Frontend host
 
-A very basic / minimal static server using gorilla/mux. See https://github.com/gorilla/mux#static-files. It simply serves up the static bundled files output from the build process of the frontend, it expects to find these files in `./dist` directory but this is configurable
+A very standard static content server using gorilla/mux. See https://github.com/gorilla/mux#static-files. It simply serves up the static bundled files output from the build process of the frontend, it expects to find these files in `./dist` directory but this is configurable
 
 In addition it exposes a simple `/config` endpoint, this is to allow dynamic configuration of the frontend. It passes two env vars `AUTH_CLIENT_ID` and `API_ENDPOINT` from the frontend host to the frontend Vue SPA as a JSON response, which are fetched & read as the app is loaded in the browser.
 
@@ -185,9 +182,9 @@ See `scripts/local-gateway` for details on how this is done, the `scripts/local-
 
 See [deploy/readme.md](deploy/readme.md)
 
-# Running locally - Quick guide
+# Running Locally - Quick guide
 
-This is a (very) basic guide to running the Dapr Store locally. Only instructions for WSL 2/Linux/MacOS are provided. It's advised to only do this if you wish to develop or debug the project.
+This is a (very) basic guide to running Dapr Store locally. Only instructions for WSL 2/Linux/MacOS are provided. It's advised to only do this if you wish to develop or debug the project.
 
 ### Prereqs
 
@@ -219,9 +216,9 @@ make run
 
 Access the store from http://localhost:9000/
 
-# Build and CI/CD
+# Working Locally
 
-A makefile is provided to assist working with the project, the main targets are:
+A makefile is provided to assist working with the project and building/running it, the main targets are:
 
 ```text
 help                 💬 This help message :)
@@ -238,7 +235,17 @@ run                  🚀 Start & run everything locally
 stop                 ⛔ Stop & kill everything started locally from `make run`
 ```
 
-## Security, Identity & Authentication
+# CI / CD
+
+A working set of CI and CD release GitHub Actions workflows are provided `.github/workflows/`, automated builds are run in GitHub hosted runners
+
+### [GitHub Actions](https://github.com/benc-uk/dapr-store/actions)
+
+[![](https://img.shields.io/github/workflow/status/benc-uk/dapr-store/CI%20Build%20App/master?label=CI+Build+App)](https://github.com/benc-uk/dapr-store/actions/workflows/ci-build.yml)
+
+[![](https://img.shields.io/github/workflow/status/benc-uk/dapr-store/Deploy%20To%20Kubernetes/master?label=Deploy+to+Kubernetes)](https://github.com/benc-uk/dapr-store/actions/workflows/deploy-k8s.yaml)
+
+# Security, Identity & Authentication
 
 The default mode of operation for the Dapr Store is in "demo mode" where there is no identity provided configured, and no security on the APIs. This makes it simple to run and allows us to focus on the Dapr aspects of the project. In this mode a demo/dummy user account can be used to sign-in and place orders in the store.
 
@@ -246,7 +253,9 @@ Optionally Dapr store can be configured utilise the [Microsoft identity platform
 
 See the [security, identity & authentication docs](./docs/auth-identity.md) for more details on setting this up.
 
-## Config - Environmental Variables
+# Configuration
+
+## Environmental Variables
 
 The services support the following environmental variables. All settings are optional.
 
@@ -269,6 +278,21 @@ Frontend host config:
 - 9003 - Users service
 - 9004 - Order processing service
 - 8000 - Frontend host
+
+## Dapr Components
+
+The application requires the follow Dapr components for operation:
+
+- A state store component, with a name `statestore` (this is the default name and can be changed)
+- A pub/sub component, with a name `pubsub` (this is the default name and can be changed)
+
+When working locally with Dapr these components with these names are deployed by default (i.e. when running `dapr init`), and backed by a Redis container, so no extra configuration or work is required.
+
+When deploying to Kubernetes the Redis state provider needs to stood up, Helm is an easy way to do this, see [deploy/readme.md](deploy/readme.md). The Dapr Store Helm chart then will install the relevant Dapr component definitions `statestore` and `pubsub` to use this Redis instance
+
+### Optional Components
+
+There are two optional components used by the orders service. See the [components/readme.md](components/readme.md) for details on settng these up.
 
 # Roadmap & known issues
 

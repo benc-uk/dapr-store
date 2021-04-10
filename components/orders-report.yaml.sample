@@ -1,5 +1,5 @@
 #
-# Rename/copy this file, and set your storage account details & key
+# Rename/copy this file removing .sample, and set your storage account details & key
 # Then copy to your default dapr components dir, eg. $HOME/.dapr/components
 #
 

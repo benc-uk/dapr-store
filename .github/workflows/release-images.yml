@@ -1,20 +1,18 @@
-name: Release Dockerhub Images
+name: Release Versioned Images
 
 on:
   release:
     types: [published]
 
 env:
-  DOCKER_REPO: daprstore
-  DOCKER_USER: bencuk
-  DOCKER_REG: docker.io
+  IMAGE_REG: ghcr.io
 
 jobs:
-  releaseToDockerhub:
+  release-images:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - name: Run all builds
         run: |

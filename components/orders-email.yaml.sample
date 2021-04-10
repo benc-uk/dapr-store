@@ -1,5 +1,5 @@
 #
-# Rename/copy this file, and set your API key
+# Rename/copy this file removing .sample, and set your API key
 # Then copy to your default dapr components dir, eg. $HOME/.dapr/components
 #
 

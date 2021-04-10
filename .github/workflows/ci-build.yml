@@ -1,7 +1,7 @@
-name: CI Build Images
+name: CI Build App
 
 on:
-  ZZZZZZZZZworkflow_dispatch:
+  workflow_dispatch:
   push:
     branches: [master]
     paths:

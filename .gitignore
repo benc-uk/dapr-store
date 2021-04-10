@@ -1,10 +1,6 @@
 # Secrets here
 **/.env
 
-# Dapr components
-# **/components/**
-# !web/frontend/src/components/**
-
 # Go binaries
 cmd/cart/cart
 cmd/orders/orders
@@ -15,6 +11,9 @@ cmd/frontend-host/frontend-host
 # Configs
 components/**
 !components/*.sample
+!components/readme.md
+!components/pubsub.yaml
+!components/statestore.yaml
 
 # Code coverage & test output
 web/frontend/coverage
