@@ -189,7 +189,8 @@ This is a (very) basic guide to running Dapr Store locally. Only instructions fo
 ### Prereqs
 
 - Docker
-- Go 1.15+
+- Go v1.15+
+- Node.js v12+
 
 ### Setup
 
@@ -208,13 +209,15 @@ git clone https://github.com/benc-uk/dapr-store/
 
 ### Run all services
 
-Run everything. Run from the project root (e.g. `dapr-store` directory)
+Run everything. Run from the project root (e.g. `dapr-store` directory), this will run all the services, the API gateway and the Vue frontend
 
 ```bash
 make run
 ```
 
 Access the store from http://localhost:9000/
+
+**💣 Gotcha!** The Vue frontend will start and display a message "App running at" saying it is running on port 8000, **do not access the frontend directly on this port, it will not function!**, always go via the gateway running on port 9000
 
 # Working Locally
 
@@ -292,17 +295,17 @@ When deploying to Kubernetes the Redis state provider needs to stood up, Helm is
 
 ### Optional Components
 
-There are two optional components used by the orders service. See the [components/readme.md](components/readme.md) for details on settng these up.
+There are two optional components used by the orders service. See the [components/readme.md](components/readme.md) for details on setting these up.
 
 # Roadmap & known issues
 
-LOTS! See [project plan on GitHub](https://github.com/benc-uk/dapr-store/projects/1)
+See [project plan on GitHub](https://github.com/benc-uk/dapr-store/projects/1)
 
 # Concepts and Terms
 
 Clarity of terminology is sometimes important, here's a small glossary
 
-- **Building Block** - [Specific Dapr term](https://github.com/dapr/docs/tree/master/concepts#building-blocks). A *building bloc*k is an API level feature of Dapr, such as 'state mangement' or 'pub/sub' or 'secrets'
+- **Building Block** - [Specific Dapr term](https://github.com/dapr/docs/tree/master/concepts#building-blocks). A _building block_ is an API level feature of Dapr, such as 'state management' or 'pub/sub' or 'secrets'
 - **Component** - Component is another Dapr specific term. A _component_ is a plugin that provides implementation functionality to building blocks. As component is a generic & commonly used word, the term "Dapr component" will be used where ambiguity is possible
 - **Service** - The microservices, written in Go and exposing REST API, either invoked through Dapr and.or using the Dapr API for things such as state.
 - **API Gateway** - NGINX reverse proxy sitting in front of the services. This is not to be confused with Azure API Management, Azure App Gateway or AWS API Gateway
