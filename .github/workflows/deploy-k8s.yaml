@@ -24,22 +24,22 @@ jobs:
       - name: "Checkout source"
         uses: actions/checkout@v2
 
-      - name: "Helm deploy Dapr Store app"
-        uses: deliverybot/helm@master
-        env:
-          KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
-        with:
-          helm: helm3
-          release: store
-          namespace: ${{ env.NAMESPACE }}
-          chart: ./deploy/helm/daprstore
-          value-files: ./deploy/live/app-values.yaml
-          values: |
-            image:
-              tag: "${{ github.event.client_payload.IMAGE_TAG }}${{ github.event.inputs.IMAGE_TAG }}"
+      # - name: "Helm deploy Dapr Store app"
+      #   uses: deliverybot/helm@master
+      #   env:
+      #     KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
+      #   with:
+      #     helm: helm3
+      #     release: store
+      #     namespace: ${{ env.NAMESPACE }}
+      #     chart: ./deploy/helm/daprstore
+      #     value-files: ./deploy/live/app-values.yaml
+      #     values: |
+      #       image:
+      #         tag: "${{ github.event.client_payload.IMAGE_TAG }}${{ github.event.inputs.IMAGE_TAG }}"
 
-      - name: "Validate site is running"
-        run: .github/scripts/url-check.sh -u https://daprstore.kube.benco.io/ -s "Dapr" -t 200
+      # - name: "Validate site is running"
+      #   run: .github/scripts/url-check.sh -u https://daprstore.kube.benco.io/ -s "Dapr" -t 200 -c 10
 
       - name: "Run API tests"
         uses: matt-ball/newman-action@master
