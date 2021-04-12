@@ -38,9 +38,10 @@ jobs:
             image:
               tag: "${{ github.event.client_payload.IMAGE_TAG }}${{ github.event.inputs.IMAGE_TAG }}"
 
-      # - name: "Run API tests"
-      #   uses: matt-ball/newman-action@master
-      #   with:
-      #     collection: ./testing/postman_collection.json
-      #     # Can't set this without a file, kinda lame
-      #     environment: ./testing/postman_env_staging.json
+      - name: "Run API tests"
+        uses: matt-ball/newman-action@master
+        with:
+          collection: ./testing/postman_collection.json
+          # Can't set this without a file, kinda lame
+          environment: ./testing/postman_env_staging.json
+          folder: "Smoke Tests"
