@@ -26,6 +26,13 @@ The application uses the following [Dapr Building Blocks](https://github.com/dap
 - **Output Bindings** — To communicate with downstream & 3rd party systems, the [Dapr Bindings API](https://docs.dapr.io/developing-applications/building-blocks/bindings/bindings-overview/) is used. This allows the store to carry out tasks such as saving order details into external storage (e.g. Azure Blob) and notify uses with emails via SendGrid
 - **Middleware** — Dapr supports a range of HTTP middleware, for this project traffic rate limiting can enabled on any of the APIs with a single Kubernetes annotation
 
+# Project Status
+
+![](https://img.shields.io/github/last-commit/benc-uk/dapr-store) ![](https://img.shields.io/github/release-date/benc-uk/dapr-store) ![](https://img.shields.io/github/v/release/benc-uk/dapr-store) ![](https://img.shields.io/github/commit-activity/m/benc-uk/dapr-store)
+
+Deployed instance: https://daprstore.kube.benco.io/  
+[![](https://img.shields.io/website?label=Hosted%3A%20Kubernetes&up_message=online&url=https%3A%2F%2Fdaprstore.kube.benco.io%2F)](https://daprstore.kube.benco.io/)
+
 # Application Elements & Services
 
 The main elements and microservices that make up the Dapr Store system are described here
