@@ -1,3 +1,6 @@
+#
+# ********* LIVE VALUES FOR DEPLOYING CERT *******
+#
 apiVersion: cert-manager.io/v1alpha3
 kind: Certificate
 metadata:
