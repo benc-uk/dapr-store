@@ -1,6 +1,0 @@
-image:
-  registry: bcdemo.azurecr.io
-  repo: daprstore
-  tag: "latest"
-ingress:
-  host: staging.daprstore.benco.io

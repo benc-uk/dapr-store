@@ -1,9 +1,0 @@
-apiVersion: dapr.io/v1alpha1
-kind: Configuration
-metadata:
-  name: ratelimiting
-spec:
-  httpPipeline:
-    handlers:
-    - name: ratelimit
-      type: middleware.http.ratelimit

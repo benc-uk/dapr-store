@@ -1,8 +1,0 @@
-fullnameOverride: daprstore-redis
-enabled: true
-usePassword: false
-cluster:
-  enabled: false
-master:
-  persistence:
-    enabled: false
