@@ -14,8 +14,11 @@ env:
 
 jobs:
   deploy-aks:
-    name: "Deploy to AKS cluster"
+    name: "Deploy to AKS Cluster"
     runs-on: ubuntu-latest
+    environment:
+      name: "AKS Cluster"
+      url: https://daprstore.kube.benco.io/
 
     env:
       NAMESPACE: "dapr-store"
