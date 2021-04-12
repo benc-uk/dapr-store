@@ -1,0 +1,11 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: custom-config
+spec:
+  httpPipeline:
+    handlers:
+      - name: uppercase
+        type: middleware.http.uppercase
+      - name: azuread-auth
+        type: middleware.http.bearer
