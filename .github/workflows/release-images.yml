@@ -14,15 +14,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Run all builds
+      - name: "Run all image builds"
         run: |
-          make docker DOCKER_TAG=${{ github.event.release.tag_name }} VERSION=${{ github.event.release.tag_name }}
-          make docker DOCKER_TAG=latest VERSION=${{ github.event.release.tag_name }}
+          make image-all IMAGE_TAG=${{ github.event.release.tag_name }} VERSION=${{ github.event.release.tag_name }}
+          make image-all IMAGE_TAG=latest VERSION=${{ github.event.release.tag_name }}
 
-      - name: Login to registry
-        run: docker login $DOCKER_REG -u $DOCKER_USER -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: "Login to registry"
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login $IMAGE_REG -u $GITHUB_ACTOR --password-stdin
 
-      - name: Push to Dockerhub
+      - name: "Push to Registry"
         run: |
-          make push DOCKER_TAG=${{ github.event.release.tag_name }}
-          make push DOCKER_TAG=latest
+          make push-all IMAGE_TAG=${{ github.event.release.tag_name }}
+          make push-all IMAGE_TAG=latest
