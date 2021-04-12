@@ -958,13 +958,10 @@
 									"pm.test('multiple products are returned', function() {",
 									"    pm.expect(pm.response.json()).to.be.an('array');",
 									"    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
+									"    pm.expect(pm.response.json()[0].id).to.be.a('string')",
+									"    pm.expect(pm.response.json()[0].name).to.be.a('string')",
 									"});",
-									"",
-									"pm.test('all products are valid', function() {",
-									"    const schema = pm.environment.get(\"productSchema\");",
-									"    for(let product of pm.response.json())",
-									"        pm.expect(product).to.have.jsonSchema(pm.variables.get(\"schema\"));",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -1018,7 +1015,10 @@
 									"});",
 									"",
 									"pm.test('product is valid', function() {",
-									"    pm.response.to.have.jsonSchema(pm.variables.get(\"schema\"));",
+									"    pm.expect(pm.response.json()).to.be.an('object');",
+									"    pm.expect(pm.response.json().name).to.exist;",
+									"    pm.expect(pm.response.json().cost).to.be.a('number')",
+									"    pm.expect(pm.response.json().id).to.be.a('string')",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1360,17 +1360,17 @@
 	],
 	"variable": [
 		{
-			"id": "71a43ba7-9af9-47cb-b7c1-c87404cabad6",
+			"id": "e122e74b-ab9b-4629-ab73-d93b0a7b1b5e",
 			"key": "productSchemaUrl",
 			"value": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/products/spec/schema.json"
 		},
 		{
-			"id": "4a01bb1c-85f2-4400-8223-bb164ae7f824",
+			"id": "fa9e6fc5-afd5-4055-a910-661dfa7d5cbc",
 			"key": "userSchemaUrl",
 			"value": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/users/spec/schema.json"
 		},
 		{
-			"id": "5849d9aa-cf3f-4ca8-bbd3-c9a8b24dbf09",
+			"id": "b51f5d00-bb71-4210-aafa-57da418da3a2",
 			"key": "orderSchemaUrl",
 			"value": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/orders/spec/schema.json"
 		}
