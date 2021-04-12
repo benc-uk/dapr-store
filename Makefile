@@ -103,7 +103,7 @@ bundle: $(FRONTEND_DIR)/node_modules  ## 💻 Build and bundle the frontend Vue 
 	cd $(FRONTEND_DIR); npm run build
 	cd $(SERVICE_DIR)/frontend-host; go build
 
-clean:     ## 🧹 Clean the project, remove modules, binaries and outputs
+clean:  ## 🧹 Clean the project, remove modules, binaries and outputs
 	rm -rf output
 	rm -rf $(FRONTEND_DIR)/node_modules
 	rm -rf $(FRONTEND_DIR)/dist
@@ -114,7 +114,7 @@ clean:     ## 🧹 Clean the project, remove modules, binaries and outputs
 	rm -rf $(SERVICE_DIR)/products/products
 	rm -rf $(SERVICE_DIR)/frontend-host/frontend-host
 
-run: ## 🚀 Start & run everything locally
+run:  ## 🚀 Start & run everything locally
 	cd $(FRONTEND_DIR); npm run serve &
 	dapr run --app-id cart     --app-port 9001 --log-level $(DAPR_RUN_LOGLEVEL) go run github.com/benc-uk/dapr-store/cmd/cart &
 	dapr run --app-id products --app-port 9002 --log-level $(DAPR_RUN_LOGLEVEL) go run github.com/benc-uk/dapr-store/cmd/products ./cmd/products/sqlite.db &
