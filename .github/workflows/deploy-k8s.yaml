@@ -38,6 +38,9 @@ jobs:
             image:
               tag: "${{ github.event.client_payload.IMAGE_TAG }}${{ github.event.inputs.IMAGE_TAG }}"
 
+      - name: "Validate site is running"
+        run: .github/scripts/url-check.sh -u https://daprstore.kube.benco.io/ -s "Dapr" -t 200
+
       - name: "Run API tests"
         uses: matt-ball/newman-action@master
         with:
