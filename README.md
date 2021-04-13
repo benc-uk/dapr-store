@@ -187,7 +187,7 @@ See `scripts/local-gateway` for details on how this is done, the `scripts/local-
 
 # Running in Kubernetes - Quick guide
 
-See [deploy/readme.md](deploy/readme.md)
+#### [📃 SUB-SECTION: Deployment guide for Kubernetes](./deploy/)
 
 # Running Locally - Quick guide
 
@@ -261,7 +261,7 @@ The default mode of operation for the Dapr Store is in "demo mode" where there i
 
 Optionally Dapr store can be configured utilise the [Microsoft identity platform](https://docs.microsoft.com/en-us/azure/active-directory/develop/) (aka Azure Active Directory v2) as an identity provider, to enable real user sign-in, and securing of the APIs.
 
-See the [security, identity & authentication docs](./docs/auth-identity.md) for more details on setting this up.
+#### [📃 SUB-SECTION: Full details on security, identity & authentication](./docs/auth-identity/)
 
 # Configuration
 
@@ -270,7 +270,7 @@ See the [security, identity & authentication docs](./docs/auth-identity.md) for 
 The services support the following environmental variables. All settings are optional.
 
 - `PORT` - Port the server will listen on. See defaults below.
-- `AUTH_CLIENT_ID` - Used to enable integration with Azure AD for identity and authentication. Default is _blank_, which runs the service with no identity backend. See the [security, identity & authentication docs](./docs/auth-identity.md) for more details.
+- `AUTH_CLIENT_ID` - Used to enable integration with Azure AD for identity and authentication. Default is _blank_, which runs the service with no identity backend. See the [security, identity & authentication docs](#security-identity--authentication) for more details.
 - `DAPR_STORE_NAME` - Name of the Dapr state component to use. Default is `statestore`
 - `DAPR_ORDERS_TOPIC` - Name of the Dapr pub/sub topic to use for orders. Default is `orders-queue`
 - `DAPR_PUBSUB_NAME` - Name of the Dapr pub/sub component to use for orders. Default is `pubsub`
@@ -291,7 +291,7 @@ Frontend host config:
 
 ## Dapr Components
 
-See the [components documentation](components/) for full details of the Dapr components used by the application and how to configure them.
+#### [📃 SUB-SECTION: Details of the Dapr components used by the application and how to configure them.](components/)
 
 # Roadmap & known issues
 

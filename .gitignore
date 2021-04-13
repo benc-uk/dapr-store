@@ -9,9 +9,7 @@ cmd/products/products
 cmd/frontend-host/frontend-host
 
 # Configs
-components/**
-!components/*.sample
-!components/readme.md
+components/*.yaml
 !components/pubsub.yaml
 !components/statestore.yaml
 

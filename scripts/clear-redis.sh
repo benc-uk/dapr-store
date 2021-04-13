@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "🠶🠶🠶  WARNING! 💥 This will clear all Redis state"
-read -p "🠶🠶🠶  Press enter to continue, or ctrl-c to exit"
+read -r -p "🠶🠶🠶  Press enter to continue, or ctrl-c to exit"
 
 docker info > /dev/null 2>&1 || { echo "Docker is not running!"; exit 1; }
 
