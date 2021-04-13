@@ -18,7 +18,7 @@ The following diagram shows all the components of the application and main inter
 
 ## Dapr Interfaces & Building Blocks
 
-The application uses the following [Dapr Building Blocks](https://github.com/dapr/docs/tree/master/concepts#building-blocks) and APIs
+The application uses the following [Dapr Building Blocks](https://docs.dapr.io/developing-applications/building-blocks/) and APIs
 
 - **Service Invocation** — The API gateway calls the four main microservices using HTTP calls to [Dapr service invocation](https://docs.dapr.io/developing-applications/building-blocks/service-invocation/service-invocation-overview/). This provides retries, mTLS and service discovery.
 - **State** — State is held for users and orders using the [Dapr state management API](https://docs.dapr.io/developing-applications/building-blocks/state-management/state-management-overview/). The state provider used is Redis, however any other provider could be plugged in without any application code changes.
@@ -80,7 +80,7 @@ The service provides some fake order processing activity so that orders are move
 
 ### Orders - Dapr Interaction
 
-- **Pub/Sub.** Subscribes to the `orders-queue` topic to receive new orders from the _cart_ service
+- **Pub/Sub.** Subscribes to the `orders-queue` topic to receive new orders from the cart service
 - **State.** Stores and retrieves **Order** entities from the state service, keyed on OrderID. Also lists of orders per user, held as an array of OrderIDs and keyed on username
 - **Bindings.** All output bindings are optional, the service operates without these present
   - **Azure Blob.** For saving "order reports" as text files into Azure Blob storage
@@ -144,9 +144,9 @@ The service is responsible for maintaining shopping carts for each user and pers
 
 ### Cart - Dapr Interaction
 
-- **Pub/Sub.** The cart pushes **Order** entities to the `orders-queue` topic to be collected by the _orders_ service
+- **Pub/Sub.** The cart pushes **Order** entities to the `orders-queue` topic to be collected by the orders service
 - **State.** Stores and retrieves **Cart** entities from the state service, keyed on username.
-- **Service Invocation.** Cross service call to Products API to lookup and check products in the cart
+- **Service Invocation.** Cross service call to products API to lookup and check products in the cart
 
 ## 💻 Frontend
 
@@ -291,18 +291,7 @@ Frontend host config:
 
 ## Dapr Components
 
-The application requires the follow Dapr components for operation:
-
-- A state store component, with a name `statestore` (this is the default name and can be changed)
-- A pub/sub component, with a name `pubsub` (this is the default name and can be changed)
-
-When working locally with Dapr these components with these names are deployed by default (i.e. when running `dapr init`), and backed by a Redis container, so no extra configuration or work is required.
-
-When deploying to Kubernetes the Redis state provider needs to stood up, Helm is an easy way to do this, see [deploy/readme.md](deploy/readme.md). The Dapr Store Helm chart then will install the relevant Dapr component definitions `statestore` and `pubsub` to use this Redis instance
-
-### Optional Components
-
-There are two optional components used by the orders service. See the [components/readme.md](components/readme.md) for details on setting these up.
+See the [components documentation](components/) for full details of the Dapr components used by the application and how to configure them.
 
 # Roadmap & known issues
 
