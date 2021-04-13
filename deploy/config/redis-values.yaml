@@ -3,11 +3,18 @@
 # Use chart from charts.bitnami.com/bitnami repo
 #
 
+# Override the name simplifies the integration with Dapr components
 fullnameOverride: daprstore-redis
 enabled: true
+
+# This is assumed by the Dapr components, and keeps it simple
 usePassword: false
+
+# Don't need multiple pods
 cluster:
   enabled: false
+
+# This is a personal choice, it's not a production system
 master:
   persistence:
     enabled: false

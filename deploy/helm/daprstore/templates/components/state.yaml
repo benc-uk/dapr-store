@@ -7,7 +7,7 @@ spec:
   type: state.redis
   metadata:
   - name: redisHost
-    value: {{ .Chart.Name }}-redis-master:6379
+    value: {{ .Values.daprComponents.state.redisHost }}
   - name: redisPassword
     value: ""
 {{ end }}

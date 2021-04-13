@@ -8,10 +8,15 @@ controller:
   service:
     labels:
       purpose: "daprstore-api-gateway"
+  # Use a special class to not clash with any other controllers installed
   ingressClass: "dapr"
+
+  # This Dapr-izes the workload
   podAnnotations:
     dapr.io/enabled: "true"
     dapr.io/app-id: "api-gateway"
     dapr.io/app-port: "80"
+
+  # This means this ingress controller only works inside this namespace
   scope:
     enabled: true

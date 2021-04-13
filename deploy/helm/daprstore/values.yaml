@@ -45,5 +45,7 @@ daprComponents:
   deploy: true
   state:
     name: statestore
+    redisHost: daprstore-redis-master:6379
   pubsub:
     name: pubsub
+    redisHost: daprstore-redis-master:6379

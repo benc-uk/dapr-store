@@ -3,17 +3,20 @@
 # See helm/daprstore/values.yaml for full set of options available
 #
 
-# Mostly don't change these
+# Mostly don't change these, unless you've built and pushed your own images
 image:
   registry: ghcr.io
   repo: benc-uk/daprstore
   tag: latest
 
-# Leave blank to disable authentication
+# Leave blank to disable authentication, which is the default
 auth:
   clientId:
 
-# Leave blank to dsisable and use loadbalancer service + IP
+# Leave blank to disable ingress and access via IP
+# When disabled a loadbalancer service will be used instead
 ingress:
+  # If set will enable the ingress, DNS configuration is left to user
   host:
+  # If set TLS will be enabled using the secret name provided
   certName:
