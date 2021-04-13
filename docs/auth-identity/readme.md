@@ -16,15 +16,14 @@ az ad app create --display-name="Dapr Store" \
 
 Make a note of the GUID returned, this is the app ID, or client ID
 
-Follow the guide here to further configure the app, this currently can't be done from the CLI  
-https://docs.microsoft.com/en-us/azure/active-directory/develop/scenario-spa-app-registration#redirect-uri-msaljs-20-with-auth-code-flow
+[Follow the guide here to further configure the app](https://docs.microsoft.com/en-us/azure/active-directory/develop/scenario-spa-app-registration#redirect-uri-msaljs-20-with-auth-code-flow), this currently can't be done from the CLI
 
 Quick summary of the steps, from the portal under 'App registrations':
 
-- Click 'Authentication'
-  - UNSELECT the checkbox 'ID tokens (used for implicit and hybrid flows)'
-  - Click 'Add a platform'
-    - Click 'Single page application'
+- Click _'Authentication'_
+  - UNSELECT the checkbox _'ID tokens (used for implicit and hybrid flows)'_
+  - Click _'Add a platform'_
+    - Click _'Single page application'_
     - Enter `http://localhost:9000` as the redirect URI
 
 If you are hosting the app anywhere else, add the relevant redirect URIs
@@ -35,10 +34,10 @@ Once the app is created and authentication is set up, an API scope must be added
 
 From the portal under 'App registrations':
 
-- Click 'Expose an API'
-- Click 'Add a scope'
+- Click _'Expose an API'_
+- Click _'Add a scope'_
 - The scope **must** be called `store-api`
-- Under 'Who can consent?' click 'Admins and users'
+- Under _'Who can consent?'_ click _'Admins and users'_
 - The other fields are not important but are required.
 
 # Configuration

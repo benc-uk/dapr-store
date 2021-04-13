@@ -7,7 +7,7 @@ The application requires the follow Dapr components for operation:
 
 When working locally with Dapr these components with these names are deployed by default (i.e. when running `dapr init`), and backed by a Redis container, so no extra configuration or work is required.
 
-When deploying to Kubernetes the Redis state provider needs to stood up, Helm is an easy way to do this, see [deploy/readme.md](../deploy/readme.md). The Dapr Store Helm chart then will install the relevant Dapr component definitions `statestore` and `pubsub` to use this Redis instance
+When deploying to Kubernetes the Redis state provider needs to be stood up, Helm is an easy way to do this, see [deploy/readme.md](../deploy/readme.md). The Dapr Store Helm chart then will install the relevant Dapr component definitions `statestore` and `pubsub` to use this Redis instance
 
 ## Required Components
 
