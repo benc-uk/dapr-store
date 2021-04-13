@@ -34,6 +34,7 @@ WORKDIR /build
 
 # Install all the Vue.js dev tools & CLI, and our app dependencies 
 COPY web/frontend/package*.json ./
+# We inject and update the version in package.json at build time from the $VERSION build arg
 RUN npm version $VERSION --allow-same-version
 RUN npm install --silent
 

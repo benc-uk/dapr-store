@@ -21,11 +21,13 @@ act push --secret-file .github/act/.secrets --platform ubuntu-latest=ghcr.io/ben
 
 ### Run a deployment
 
-```bash
-act workflow_dispatch --eventpath .github/act/workflow_dispatch.json --secret-file .github/act/.secrets --platform ubuntu-latest=ghcr.io/benc-uk/devcontainers/go:root
-```
-
 ```
 KUBE_CONFIG=$(az aks get-credentials -n benc -g aks --file -)
-act workflow_dispatch --eventpath .github/act/workflow_dispatch.json --secret-file .github/act/.secrets --platform ubuntu-latest=ghcr.io/benc-uk/devcontainers/go:root -s KUBE_CONFIG="$KUBE_CONFIG" --insecure-secrets
+act workflow_dispatch --eventpath .github/act/workflow_dispatch.json --secret-file .github/act/.secrets --platform ubuntu-latest=ghcr.io/benc-uk/devcontainers/go:root -s KUBE_CONFIG="$KUBE_CONFIG"
+```
+
+### Fake a release
+
+```bash
+act release --eventpath .github/act/release.json --secret-file .github/act/.secrets --platform ubuntu-latest=ghcr.io/benc-uk/devcontainers/go:root
 ```

@@ -13,8 +13,7 @@ on:
     branches: [master]
 
 env:
-  # Leave this for dev builds
-  VERSION: 0.0.0
+  VERSION: 0.6.0-dev
   STORAGE_ACCT_NAME: benc
   BUILD_INFO: "Build:development / Workflow:${{ github.workflow }} / RunId:${{ github.run_id }} / Ref:${{ github.ref }} / SHA:${{ github.sha }}"
   IMAGE_REG: ghcr.io
