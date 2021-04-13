@@ -6,6 +6,7 @@ on:
 
 env:
   IMAGE_REG: ghcr.io
+  BUILD_INFO: "Build:stable / Workflow:${{ github.workflow }} / RunId:${{ github.run_id }} / Ref:${{ github.ref }} / SHA:${{ github.sha }}"
 
 jobs:
   release-images:
@@ -16,8 +17,8 @@ jobs:
 
       - name: "Run all image builds"
         run: |
-          make image-all IMAGE_TAG=${{ github.event.release.tag_name }} VERSION=${{ github.event.release.tag_name }}
-          make image-all IMAGE_TAG=latest VERSION=${{ github.event.release.tag_name }}
+          make image-all IMAGE_TAG=${{ github.event.release.tag_name }} VERSION=${{ github.event.release.tag_name }} BUILD_INFO="$BUILD_INFO"
+          make image-all IMAGE_TAG=latest VERSION=${{ github.event.release.tag_name }} BUILD_INFO="$BUILD_INFO"
 
       - name: "Login to registry"
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login $IMAGE_REG -u $GITHUB_ACTOR --password-stdin
