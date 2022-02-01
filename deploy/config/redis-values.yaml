@@ -8,11 +8,13 @@ fullnameOverride: daprstore-redis
 enabled: true
 
 # This is assumed by the Dapr components, and keeps it simple
-usePassword: false
-
-# Don't need multiple pods
-cluster:
+auth:
   enabled: false
+
+replica:
+  replicaCount: 1
+  persistence:
+    enabled: false
 
 # This is a personal choice, it's not a production system
 master:
