@@ -5,6 +5,7 @@ metadata:
   name: {{ .Values.daprComponents.state.name }}
 spec:
   type: state.redis
+  version: v1
   metadata:
   - name: redisHost
     value: {{ .Values.daprComponents.state.redisHost }}

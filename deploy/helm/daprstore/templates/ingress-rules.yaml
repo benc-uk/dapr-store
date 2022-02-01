@@ -1,11 +1,10 @@
 {{- $tlsEnabled := (or .Values.ingress.certIssuer .Values.ingress.certName) -}}
 
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Chart.Name }}-ingress-rules
   annotations:
-    kubernetes.io/ingress.class: dapr
     {{ if .Values.ingress.certIssuer }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.certIssuer }}
     {{ end }}    
@@ -15,6 +14,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     {{ end }}    
 spec:
+  ingressClassName: dapr
   {{ if $tlsEnabled }}
   tls:
   - hosts:
@@ -35,11 +35,17 @@ spec:
         paths:
           # Only expose the Dapr invoke API, lets us call our services and nothing more
           - path: /v1.0/invoke/
+            pathType: Prefix
             backend:
-              serviceName: api-gateway-dapr
-              servicePort: 80                
+              service:
+                name: api-gateway-dapr
+                port: 
+                  number: 80                
           # Everything else falls through to the frontend-host for serving the SPA         
           - path: /
+            pathType: Prefix
             backend:
-              serviceName: daprstore-frontend-host
-              servicePort: 8000
+              service:
+                name: daprstore-frontend-host
+                port:
+                  number: 8000
