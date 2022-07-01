@@ -9,28 +9,37 @@
 
 <template>
   <div class="app">
-    <b-navbar toggleable="lg" type="dark" variant="primary">
-      <b-navbar-brand to="/"> <img src="./assets/img/logo.svg" class="logo" /> <span class="logo-text">Dapr eShop</span> </b-navbar-brand>
-
-      <b-navbar-toggle target="nav-collapse" />
-
-      <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav>
-          <b-form-input v-model="query" autocomplete="off" size="lg" placeholder="Search products" @keyup.enter="search" />
-          <b-button size="lg" variant="success" class="d-none d-lg-flex" @click="search">
-            <fa icon="search" />
-          </b-button>
-        </b-navbar-nav>
-
-        <b-navbar-nav class="ml-auto">
-          <b-nav-item v-if="!user" to="/login" variant="info"> <fa icon="user" /> &nbsp; Login </b-nav-item>
-          <template v-else>
-            <b-nav-item to="/cart" variant="info" active-class="active"> <fa icon="shopping-cart" /> &nbsp; Cart </b-nav-item>
-            <b-nav-item to="/account" variant="info" active-class="active"> <fa icon="id-card" /> &nbsp; Account </b-nav-item>
-          </template>
-        </b-navbar-nav>
-      </b-collapse>
-    </b-navbar>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+          <img src="./assets/img/logo.svg" class="logo">
+          <span class="logo-text">Dapr eShop</span> 
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navContent" class="collapse navbar-collapse">
+          <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Search products" @keyup.enter="search">
+            <button class="btn btn-success" @click="search"><i class="fa-solid fa-magnifying-glass"></i></button>
+          </form>
+          <div class="filler" style="flex-grow:1"></div>
+          <ul class="navbar-nav ml-auto">
+            <li v-if="!user" class="nav-item btn-success">
+              <router-link class="nav-link" to="/login"><i class="fa-solid fa-right-to-bracket"></i> Login</router-link>
+            </li>
+            <template v-else>
+              <li class="nav-item btn-success">
+                <router-link class="nav-link" to="/cart"><i class="fa-solid fa-cart-shopping"></i> Cart</router-link>
+              </li>
+              <li class="nav-item btn-success">
+                <router-link class="nav-link" to="/account"><i class="fa-solid fa-user"></i> Account</router-link>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
     <div class="container">
       <!-- Views are injected here -->

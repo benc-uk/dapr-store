@@ -12,29 +12,34 @@
     <error-box :error="error" />
     <h1>
       User Account
-      <b-button size="lg" variant="danger" class="float-right" @click="logout"> <fa icon="sign-out-alt" /> &nbsp; LOGOUT </b-button>
+      <div class="btn btn-lg btn-danger float-end" @click="logout"> <i class="fa-solid fa-right-from-bracket"></i> &nbsp; LOGOUT </div>
     </h1>
     <br />
 
     <div v-if="!registeredUser" class="text-center">
-      <b-spinner variant="success" style="width: 5rem; height: 5rem" />
+      <div class="spinner-border text-success" role="status"><span class="visually-hidden">Not Registered...</span></div>
     </div>
-    <b-card v-if="registeredUser" class="details">
-      <img class="profile d-none d-md-block" :src="photo" />
+    
+    <div v-if="registeredUser" class="card details">
+      <div class="card-body">
+        <img class="profile d-md-block float-end" :src="photo" />
 
-      Display Name: <b>{{ registeredUser.displayName }}</b>
-      <br />
-      Username: <b>{{ registeredUser.username }}</b>
-    </b-card>
+        Display Name: <b>{{ registeredUser.displayName }}</b>
+        <br />
+        Username: <b>{{ registeredUser.username }}</b>
+      </div>
+    </div>
 
     <br />
     <h1>
       Orders
-      <b-button size="lg" variant="success" class="float-right" @click="reloadOrders"> <fa icon="redo-alt" /> &nbsp; Refresh </b-button>
+      <div class="btn btn-lg btn-success float-end" @click="reloadOrders"> <i class="fa-solid fa-rotate"></i> &nbsp; Refresh </div>
     </h1>
 
     <div v-if="!ordersLoaded" class="text-center">
-      <b-spinner variant="success" style="width: 5rem; height: 5rem" />
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Not Registered...</span>
+      </div>
     </div>
 
     <order v-for="order in orders" :key="order.id" :order="order" />
@@ -138,7 +143,6 @@ code {
 }
 
 .profile {
-  float: right;
   width: 10rem;
   border-radius: 50%;
 }

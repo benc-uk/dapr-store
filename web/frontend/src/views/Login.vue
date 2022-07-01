@@ -8,60 +8,61 @@
 -->
 
 <template>
-  <b-container>
+  <div>
     <error-box :error="error" />
-    <b-alert v-if="demoMode" show dismissible>
+    <div v-if="demoMode" class="alert alert-info" show dismissible>
       Real user sign-in disabled, as AUTH_CLIENT_ID is not set. <br />Running in demo mode, using a dummy user account
-    </b-alert>
-    <b-overlay :show="inprogress && !error" rounded="sm">
-      <b-row class="m-1">
-        <!-- sign-in -->
-        <b-col>
-          <b-card v-if="!demoMode" header="🙍‍♂️ Existing User - Sign In">
-            <b-card-body class="d-flex flex-column" style="height: 100%">
-              <div class="flex-grow-1 text-center">If you have already registered on Dapr eShop, sign in using your Microsoft indentity.</div>
-              <b-button size="lg" variant="dark" @click="login">
-                <img src="../assets/img/ms-tiny-logo.png" /> &nbsp; Sign-in using Microsoft Account
-              </b-button>
-            </b-card-body>
-          </b-card>
-          <b-card v-else header="🙍‍♂️ Demo User - Sign In">
-            <b-card-body class="d-flex flex-column" style="height: 100%">
-              <div class="flex-grow-1 text-center">
-                <h3>DEMO MODE</h3>
-                If you have registered the demo account, then you can sign-in with it.
-              </div>
-              <b-button size="lg" variant="dark" @click="login"> <fa icon="user" /> &nbsp; Sign in with Demo User </b-button>
-            </b-card-body>
-          </b-card>
-          <br />
-        </b-col>
+    </div>
+    <div class="row">
+      <!-- Login -->
+      <div class="col">
+        <div v-if="!demoMode" class="card">
+          <div class="card-header">🙍‍♂️ Existing User - Sign In</div>
+          <div class="card-body text-center">
+            <div class="text-center">If you have already registered on Dapr eShop, sign in using your Microsoft identity.</div>
+            <div class="btn btn-dark btn-lg" @click="login">
+              <img src="../assets/img/ms-tiny-logo.png" /> &nbsp; Sign-in using Microsoft Account
+            </div>
+          </div>
+        </div>
+        <div v-else class="card">
+          <div class="card-header">🙍‍♂️ Demo User - Sign In</div>
+          <div class="card-body text-center">
+            <h3>DEMO MODE</h3>
+            <div class="text-center">Sign in with the demo user account</div>
+            <div class="btn btn-dark btn-lg mt-3" @click="login">
+              <i class="fa-solid fa-user-pen"></i> &nbsp; Sign in with Demo User 
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <!-- registration -->
-        <b-col>
-          <b-card v-if="!demoMode" header="🚩 New users - Register">
-            <b-card-body class="d-flex flex-column" style="height: 100%">
-              <div class="flex-grow-1 text-center">
-                If you do not have an Dapr eShop account yet, register using your Microsoft indentity.<br />You only need to do this once.
+      <!-- Register -->
+      <div class="col">
+        <div class="card">
+          <div v-if="!demoMode" class="card">
+            <div class="card-header">🚩 New users - Register</div>
+            <div class="card-body text-center">
+              <div class="text-center">If you have already registered on Dapr eShop, sign in using your Microsoft identity.</div>
+              <div class="btn btn-dark btn-lg" @click="register">
+                <img src="../assets/img/ms-tiny-logo.png" /> &nbsp; Sign-in using Microsoft Account
               </div>
-              <b-button size="lg" variant="dark" @click="register">
-                <img src="../assets/img/ms-tiny-logo.png" /> &nbsp; Register using Microsoft Account
-              </b-button>
-            </b-card-body>
-          </b-card>
-          <b-card v-else header="🚩 Demo User - Register">
-            <b-card-body class="d-flex flex-column" style="height: 100%">
-              <div class="flex-grow-1 text-center">
-                <h3>DEMO MODE</h3>
-                Register the demo user account. You only need to do this once.
+            </div>
+          </div>
+          <div v-else class="card">
+            <div class="card-header">🚩 Demo User - Register</div>
+            <div class="card-body text-center">
+              <h3>DEMO MODE</h3>
+              <div class="text-center">Register demo user account. You only need to do this once.</div>
+              <div class="btn btn-dark btn-lg mt-3" @click="register">
+                <i class="fa-solid fa-user-pen"></i> &nbsp; Register Demo User Account 
               </div>
-              <b-button size="lg" variant="dark" @click="register"> <fa icon="user" /> &nbsp; Register Demo User Account </b-button>
-            </b-card-body>
-          </b-card>
-        </b-col>
-      </b-row>
-    </b-overlay>
-  </b-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -154,5 +155,6 @@ export default {
 
 .btn {
   height: 80px;
+  line-height: 70px;
 }
 </style>

@@ -9,61 +9,55 @@
 
 <template>
   <div>
-    <h1><fa icon="shopping-cart" /> &nbsp; Shopping Cart</h1>
+    <h1><i class="fa-solid fa-cart-shopping"></i> &nbsp; Shopping Cart</h1>
     <br />
     <error-box :error="error" />
 
     <div v-if="!cart && !error" class="text-center">
-      <b-spinner variant="success" style="width: 5rem; height: 5rem" />
+      <div class="spinner-border text-success" role="status"><span class="visually-hidden">...</span></div>
     </div>
 
-    <b-alert v-if="newOrder" show variant="success">
+    <div v-if="newOrder" class="alert alert-success">
       <h4>Order accepted! 😄</h4>
-      <b-link :to="`order/` + newOrder.id">
+      <router-link :to="`order/` + newOrder.id">
         <div>
           Your order for <b>£{{ newOrder.amount }}</b> has been accepted, the order ID is: <b>{{ newOrder.id }}</b
           ><br />
           Check your account for progress on your order(s)
         </div>
-      </b-link>
-    </b-alert>
+      </router-link>
+    </div>
 
-    <b-alert v-if="cart && Object.keys(cart.products).length == 0" show variant="dark">
-      Your cart is empty! <br /><br /><b-link href="/catalog"> Go shopping! </b-link>
-    </b-alert>
+    <div v-if="cart && Object.keys(cart.products).length == 0" class="alert alert-dark">
+      Your cart is empty! <br /><br /><router-link to="/catalog"> Go shopping! </router-link>
+    </div>
 
     <div v-if="cart">
       <h2>Cart total: £{{ total.toFixed(2) }}</h2>
-      <b-card v-for="product of cartProducts" :key="product.id" class="m-3 p-1" header-bg-variant="primary" header-text-variant="white">
-        <template #header>
-          <span>{{ product.name }}</span>
-        </template>
-        <h2>Count:</h2>
-        <input :value="cart.products[product.id]" type="text" readonly />
+      <div v-for="product of cartProducts" :key="product.id" class="card m-3 p-1" header-bg-variant="primary" header-text-variant="white">
+        <div class="card-header">{{ product.name }}</div>
+        <div class="card-body">
+          <h2>Count:</h2>
+          <input :value="cart.products[product.id]" type="text" readonly class="m-3" />
 
-        <b-button
-          class="ml-5 mr-3"
-          :disabled="!cart || cart.products.length == 0"
-          variant="warning"
-          size="lg"
-          @click="modifyProductAmmount(product.id, -1)"
-        >
-          <fa icon="minus-circle" />
-        </b-button>
-        <b-button :disabled="!cart || cart.products.length == 0" variant="success" size="lg" @click="modifyProductAmmount(product.id, 1)">
-          <fa icon="plus-circle" />
-        </b-button>
-        <img :src="product.image" class="thumb" />
-      </b-card>
+          <button class="btn btn-sm btn-warning ml-5 mr-3" :disabled="!cart || cart.products.length == 0" @click="modifyProductAmmount(product.id, -1)">
+            <i class="fa-solid fa-circle-minus"></i>
+          </button>
+          <button class="btn btn-sm btn-success ml-5 mr-3" :disabled="!cart || cart.products.length == 0" @click="modifyProductAmmount(product.id, 1)">
+            <i class="fa-solid fa-circle-plus"></i>
+          </button>
+          <img :src="product.image" class="thumb" />
+        </div>
+      </div>
     </div>
 
-    <b-button :disabled="!cart || cartProducts.length == 0" variant="primary" size="lg" @click="submitOrder">
-      <fa icon="shopping-basket" /> &nbsp; CHECKOUT
-    </b-button>
+    <button class="btn btn-lg btn-primary ml-5 mr-3" :disabled="!cart || cartProducts.length == 0" @click="submitOrder">
+      <i class="fa-solid fa-basket-shopping"></i> &nbsp; CHECKOUT
+    </button>
     &nbsp;
-    <b-button :disabled="!cart || cartProducts.length == 0" variant="warning" size="lg" class="float-right" @click="clearCart">
-      <fa icon="trash-alt" /> &nbsp; EMPTY CART
-    </b-button>
+    <button class="btn btn-lg btn-warning ml-5 mr-3 float-end" :disabled="!cart || cartProducts.length == 0" @click="clearCart">
+      <i class="fa-solid fa-trash-can"></i> &nbsp; EMPTY CART
+    </button>
   </div>
 </template>
 
