@@ -85,7 +85,6 @@ func (s *OrderService) AddOrder(order spec.Order) error {
 	_ = json.Unmarshal(data.Value, &userOrders)
 
 	alreadyExists := false
-	log.Printf("### userOrders is %v", userOrders)
 	for _, oid := range userOrders {
 		if order.ID == oid {
 			alreadyExists = true
@@ -175,11 +174,13 @@ func (s *OrderService) ProcessOrder(order spec.Order) error {
 
 	// Fake background order processing
 	time.AfterFunc(30*time.Second, func() {
+		log.Printf("### Order %s is now processing\n", order.ID)
 		_ = s.SetStatus(&order, spec.OrderProcessing)
 	})
 
 	// Fake background order completion
 	time.AfterFunc(120*time.Second, func() {
+		log.Printf("### Order %s completed\n", order.ID)
 		_ = s.SetStatus(&order, spec.OrderComplete)
 	})
 
@@ -212,6 +213,7 @@ func (s *OrderService) GetOrdersForUser(userName string) ([]string, error) {
 
 // SetStatus updates the status of an order
 func (s *OrderService) SetStatus(order *spec.Order, status spec.OrderStatus) error {
+	log.Printf("### Setting status for order %s to %s\n", order.ID, status)
 	order.Status = status
 
 	// Save updated order list back, again keyed using user id

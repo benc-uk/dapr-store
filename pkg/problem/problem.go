@@ -62,6 +62,9 @@ func NewDaprStateProblem(err error, name string) *Problem {
 	return New500("dapr://state", "Dapr state failure, unable to get or set data", name, nil, err)
 }
 
+//
+// Helper for Dapr pub/sub errors
+//
 func NewDaprPubSubProblem(err error, name string) *Problem {
 	return New500("dapr://pubsub", "Dapr pubsub failure", name, nil, err)
 }
