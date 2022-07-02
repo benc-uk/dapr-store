@@ -1,7 +1,7 @@
 # ===================================================================================
 # === Stage 1: Build the Go service code into 'server' exe ==========================
 # ===================================================================================
-FROM golang:1.16-alpine as go-build
+FROM golang:1.18-alpine as go-build
 
 ARG SERVICE_NAME="SET_ON_COMMAND_LINE"
 ARG VERSION="0.0.1"
@@ -25,12 +25,12 @@ COPY pkg/ ./pkg/
 # Now run the build
 # Inject version and build details, to be available at runtime 
 RUN GO111MODULE=on CGO_ENABLED=$CGO_ENABLED GOOS=linux \
-go build \
--ldflags "-X main.version=$VERSION -X 'main.buildInfo=$BUILD_INFO'" \
--o server github.com/benc-uk/dapr-store/cmd/${SERVICE_NAME}
+  go build \
+  -ldflags "-X main.version=$VERSION -X 'main.buildInfo=$BUILD_INFO'" \
+  -o server github.com/benc-uk/dapr-store/cmd/${SERVICE_NAME}
 
 # ================================================================================================
-# === Stage 2: Get server exe into a lightweight container =======================================
+# === Stage 2: Get server binary into a lightweight container ====================================
 # ================================================================================================
 FROM alpine
 WORKDIR /app 
