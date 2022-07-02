@@ -9,8 +9,6 @@ The backend microservices are written in Go (however it's worth nothing that Dap
 This repo is a monorepo, containing the source for several discreet but closely linked codebases, one for each component of the project, as described below.  
 The ["Go Standard Project Layout"](https://github.com/golang-standards/project-layout) has been used.
 
-:warning: The project is still in the experimental stage, with a high rate of change - expect breaking changes
-
 # Architecture
 
 The following diagram shows all the components of the application and main interactions. It also highlights which Dapr API/feature (aka Dapr building block) is used and where.
@@ -23,7 +21,7 @@ The application uses the following [Dapr Building Blocks](https://docs.dapr.io/d
 - **Service Invocation** — The API gateway calls the four main microservices using HTTP calls to [Dapr service invocation](https://docs.dapr.io/developing-applications/building-blocks/service-invocation/service-invocation-overview/). This provides retries, mTLS and service discovery.
 - **State** — State is held for users and orders using the [Dapr state management API](https://docs.dapr.io/developing-applications/building-blocks/state-management/state-management-overview/). The state provider used is Redis, however any other provider could be plugged in without any application code changes.
 - **Pub/Sub** — The submission of new orders through the cart service, is decoupled from the order processing via pub/sub messaging and the [Dapr pub/sub messaging API](https://docs.dapr.io/developing-applications/building-blocks/pubsub/pubsub-overview/). New orders are placed on a topic as messages, to be collected by the orders service. This allows the orders service to independently scale and separates our reads & writes
-- **Output Bindings** — To communicate with downstream & 3rd party systems, the [Dapr Bindings API](https://docs.dapr.io/developing-applications/building-blocks/bindings/bindings-overview/) is used. This allows the store to carry out tasks such as saving order details into external storage (e.g. Azure Blob) and notify uses with emails via SendGrid
+- **Output Bindings** — To communicate with downstream & 3rd party systems, the [Dapr Bindings API](https://docs.dapr.io/developing-applications/building-blocks/bindings/bindings-overview/) is used. This allows the system to carry out tasks such as saving order details into external storage (e.g. Azure Blob) and notify uses with emails via SendGrid
 - **Middleware** — Dapr supports a range of HTTP middleware, for this project traffic rate limiting can enabled on any of the APIs with a single Kubernetes annotation
 
 # Project Status
@@ -44,7 +42,6 @@ Shared Go code lives in the `pkg/` directory, which is used by all the services,
 - `pkg/api` - A base API extended by all services, provides health & status endpoints.
 - `pkg/apitests` - A simple helper for running sets of router/API based tests.
 - `pkg/auth` - Server side token validation of JWT using JWK.
-- `pkg/dapr` - A Dapr helper & wrapper library for state, pub/sub and output bindings
 - `pkg/env` - Very simple `os.LookupEnv` wrapper with fallback defaults.
 - `pkg/problem` - Standarized REST error messages using [RFC 7807 Problem Details](https://tools.ietf.org/html/rfc7807).
 
@@ -69,7 +66,7 @@ For testing:
 This service provides order processing to the Dapr Store.  
 It is written in Go, source is in `cmd/orders` and it exposes the following API routes:
 
-```
+```text
 /get/{id}                GET a single order by orderID
 /getForUser/{username}   GET all orders for a given username
 ```
@@ -130,12 +127,11 @@ None directly, but is called via service invocation from other services, the API
 This provides a cart service to the Dapr Store. The currently implementation is a MVP.  
 It is written in Go, source is in `cmd/cart` and it exposes the following API routes:
 
-```
+```text
 /setProduct/{username}/{productId}/{count}    PUT a number of products in the cart of given user
 /get/{username}                               GET cart for user
 /submit                                       POST submit a cart, and turn it into an 'Order'
 /clear/{username}                             PUT clear a user's cart
-
 ```
 
 See `pkg/models` for details of the **Order** struct.
@@ -196,8 +192,8 @@ This is a (very) basic guide to running Dapr Store locally. Only instructions fo
 ### Prereqs
 
 - Docker
-- Go v1.15+
-- Node.js v12+
+- Go v1.18+
+- Node.js v14+
 
 ### Setup
 
@@ -236,7 +232,6 @@ lint                 🔎 Lint & format, check to be run in CI, sets exit code o
 lint-fix             📝 Lint & format, fixes errors and modifies code
 test                 🎯 Unit tests for services and snapshot tests for SPA frontend
 test-reports         📜 Unit tests with coverage and test reports
-test-snapshot        📷 Update snapshots for frontend tests
 image-all            📦 Build all container images
 push-all             📤 Push all images to registry
 bundle               💻 Build and bundle the frontend Vue SPA
@@ -247,7 +242,7 @@ stop                 ⛔ Stop & kill everything started locally from `make run`
 
 # CI / CD
 
-A working set of CI and CD release GitHub Actions workflows are provided `.github/workflows/`, automated builds are run in GitHub hosted runners
+A set of CI and CD release GitHub Actions workflows are included in `.github/workflows/`, automated builds are run in GitHub hosted runners
 
 ### [GitHub Actions](https://github.com/benc-uk/dapr-store/actions)
 

@@ -1,37 +1,35 @@
 package impl
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"math/rand"
-	"os"
 	"time"
 
 	cartspec "github.com/benc-uk/dapr-store/cmd/cart/spec"
 	orderspec "github.com/benc-uk/dapr-store/cmd/orders/spec"
 	productspec "github.com/benc-uk/dapr-store/cmd/products/spec"
-	"github.com/benc-uk/dapr-store/pkg/dapr"
+
+	// "github.com/benc-uk/dapr-store/pkg/dapr"
 	"github.com/benc-uk/dapr-store/pkg/env"
 	"github.com/benc-uk/dapr-store/pkg/problem"
+	dapr "github.com/dapr/go-sdk/client"
 )
 
 // CartService is a Dapr implementation of CartService interface
 type CartService struct {
-	*dapr.Helper
-	pubSubName string
-	topicName  string
-	storeName  string
+	pubSubName  string
+	topicName   string
+	storeName   string
+	serviceName string
+	client      dapr.Client
 }
 
 //
-// NewService creates a new OrderService
+// NewService creates a new CartService
 //
 func NewService(serviceName string) *CartService {
-	// Set up Dapr & checks for Dapr sidecar port, abort
-	helper := dapr.NewHelper(serviceName)
-	if helper == nil {
-		os.Exit(1)
-	}
 	topicName := env.GetEnvString("DAPR_ORDERS_TOPIC", "orders-queue")
 	storeName := env.GetEnvString("DAPR_STORE_NAME", "statestore")
 	pubSubName := env.GetEnvString("DAPR_PUBSUB_NAME", "pubsub")
@@ -39,11 +37,18 @@ func NewService(serviceName string) *CartService {
 	log.Printf("### Dapr pub/sub topic name: %s\n", topicName)
 	log.Printf("### Dapr state store name:   %s\n", storeName)
 
+	// Set up Dapr client & checks for Dapr sidecar, otherwise die
+	client, err := dapr.NewClient()
+	if err != nil {
+		log.Panicln("FATAL! Dapr process/sidecar NOT found. Terminating!")
+	}
+
 	return &CartService{
-		helper,
 		pubSubName,
 		topicName,
 		storeName,
+		serviceName,
+		client,
 	}
 }
 
@@ -51,12 +56,14 @@ func NewService(serviceName string) *CartService {
 // Get fetches saved cart for a given user, if not exists an empty cart is returned
 //
 func (s CartService) Get(username string) (*cartspec.Cart, error) {
-	data, prob := s.GetState(s.storeName, username)
-	if prob != nil {
-		return nil, prob
+	//data, prob := s.GetState(s.storeName, username)
+	data, err := s.client.GetState(context.Background(), s.storeName, username, nil)
+	if err != nil {
+		return nil, problem.NewDaprStateProblem(err, s.serviceName)
 	}
 
-	if len(data) <= 0 {
+	// Create an empty cart
+	if data.Value == nil {
 		cart := &cartspec.Cart{}
 		cart.ForUser = username
 		cart.Products = make(map[string]int)
@@ -64,9 +71,9 @@ func (s CartService) Get(username string) (*cartspec.Cart, error) {
 	}
 
 	cart := &cartspec.Cart{}
-	err := json.Unmarshal(data, cart)
+	err = json.Unmarshal(data.Value, cart)
 	if err != nil {
-		prob := problem.New("err://json-decode", "Malformed cart JSON", 500, "JSON could not be decoded", s.ServiceName)
+		prob := problem.New("err://json-decode", "Malformed cart JSON", 500, "JSON could not be decoded", s.serviceName)
 		return nil, prob
 	}
 
@@ -78,26 +85,28 @@ func (s CartService) Get(username string) (*cartspec.Cart, error) {
 //
 func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 	if len(cart.Products) == 0 {
-		return nil, problem.New("err://order-cart", "Cart empty", 400, "No items in cart", s.ServiceName)
+		return nil, problem.New("err://order-cart", "Cart empty", 400, "No items in cart", s.serviceName)
 	}
 
 	// Build up line item array
 	lineItems := []orderspec.LineItem{}
 
+	// Process the cart server side, calculating the order price
+	// This involves a service to service call to invoke the products service
 	var orderAmount float32
 	for productID, count := range cart.Products {
-		resp, err := s.InvokeGet("products", `get/`+productID)
-		if err != nil || resp.StatusCode != 200 {
-			return nil, problem.NewAPIProblem("err://cart-product", "Submit cart, product lookup error "+productID, s.ServiceName, resp, err)
+		resp, err := s.client.InvokeMethod(context.Background(), "products", `get/`+productID, "get")
+		if err != nil {
+			return nil, problem.New500("err://cart-product", "Submit cart, product lookup error "+productID, s.serviceName, nil, err)
 		}
 
 		product := &productspec.Product{}
-		err = json.NewDecoder(resp.Body).Decode(product)
-		log.Printf("SUB CART GOT PROD %+v", product)
+		err = json.Unmarshal(resp, product)
 		if err != nil {
-			prob := problem.New("err://json-decode", "Malformed JSON", 500, "Product JSON could not be decoded", s.ServiceName)
+			prob := problem.New("err://json-decode", "Malformed JSON", 500, "Product JSON could not be decoded", s.serviceName)
 			return nil, prob
 		}
+
 		lineItem := &orderspec.LineItem{
 			Product: *product,
 			Count:   count,
@@ -116,13 +125,14 @@ func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 		LineItems: lineItems,
 	}
 
-	prob := s.PublishMessage(s.pubSubName, s.topicName, order)
-	if prob != nil {
-		return nil, prob
+	err := s.client.PublishEvent(context.Background(), s.pubSubName, s.topicName, order)
+	if err != nil {
+		return nil, problem.NewDaprPubSubProblem(err, s.serviceName)
 	}
 
-	err := s.Clear(&cart)
+	err = s.Clear(&cart)
 	if err != nil {
+		// Log but don't return the error, as the order was published
 		log.Printf("### Warning failed to clear cart %s", err)
 	}
 
@@ -134,7 +144,7 @@ func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 //
 func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, count int) error {
 	if count < 0 {
-		return problem.New("err://invalid-request", "SetProductCount error", 400, "Count can not be negative", s.ServiceName)
+		return problem.New("err://invalid-request", "SetProductCount error", 400, "Count can not be negative", s.serviceName)
 	}
 
 	if count == 0 {
@@ -143,9 +153,13 @@ func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, coun
 		cart.Products[productID] = count
 	}
 
-	prob := s.SaveState(s.storeName, cart.ForUser, cart)
-	if prob != nil {
-		return prob
+	// Call Dapr client to save state
+	jsonPayload, err := json.Marshal(cart)
+	if err != nil {
+		return problem.New500("err://json-marshall", "State JSON marshalling error", s.serviceName, nil, err)
+	}
+	if err = s.client.SaveState(context.Background(), s.storeName, cart.ForUser, jsonPayload, nil); err != nil {
+		return problem.NewDaprStateProblem(err, s.serviceName)
 	}
 
 	return nil
@@ -156,9 +170,13 @@ func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, coun
 //
 func (s CartService) Clear(cart *cartspec.Cart) error {
 	cart.Products = map[string]int{}
-	prob := s.SaveState(s.storeName, cart.ForUser, cart)
-	if prob != nil {
-		return prob
+	// Call Dapr client to save state
+	jsonPayload, err := json.Marshal(cart)
+	if err != nil {
+		return problem.New500("err://json-marshall", "State JSON marshalling error", s.serviceName, nil, err)
+	}
+	if err = s.client.SaveState(context.Background(), s.storeName, cart.ForUser, jsonPayload, nil); err != nil {
+		return problem.NewDaprStateProblem(err, s.serviceName)
 	}
 	return nil
 }
