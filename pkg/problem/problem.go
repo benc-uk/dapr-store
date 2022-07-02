@@ -62,6 +62,10 @@ func NewDaprStateProblem(err error, name string) *Problem {
 	return New500("dapr://state", "Dapr state failure, unable to get or set data", name, nil, err)
 }
 
+func NewDaprPubSubProblem(err error, name string) *Problem {
+	return New500("dapr://pubsub", "Dapr pubsub failure", name, nil, err)
+}
+
 // Implement error interface
 func (p Problem) Error() string {
 	return fmt.Sprintf("Problem: Type: '%s', Title: '%s', Status: '%d', Detail: '%s', Instance: '%s'", p.Type, p.Title, p.Status, p.Detail, p.Instance)

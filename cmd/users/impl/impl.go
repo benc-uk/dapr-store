@@ -10,6 +10,7 @@ package impl
 import (
 	"context"
 	"encoding/json"
+	"log"
 
 	"github.com/benc-uk/dapr-store/cmd/users/spec"
 
@@ -29,9 +30,10 @@ type UserService struct {
 func NewService(serviceName string) *UserService {
 	storeName := env.GetEnvString("DAPR_STORE_NAME", "statestore")
 
+	// Set up Dapr client & checks for Dapr sidecar, otherwise die
 	client, err := dapr.NewClient()
 	if err != nil {
-		panic(err)
+		log.Panicln("FATAL! Dapr process/sidecar NOT found. Terminating!")
 	}
 
 	return &UserService{
@@ -55,7 +57,7 @@ func (s *UserService) AddUser(user spec.User) error {
 		return prob
 	}
 
-	// Call Dapr helper to save state
+	// Call Dapr client to save state
 	jsonPayload, err := json.Marshal(user)
 	if err != nil {
 		return problem.New500("err://json-marshall", "State JSON marshalling error", s.serviceName, nil, err)
@@ -69,7 +71,7 @@ func (s *UserService) AddUser(user spec.User) error {
 
 // GetUser fetches a user from Dapr state
 func (s *UserService) GetUser(username string) (*spec.User, error) {
-	data, err := s.client.GetState(context.Background(), "wew", username, nil)
+	data, err := s.client.GetState(context.Background(), s.serviceName, username, nil)
 	if err != nil {
 		return nil, problem.NewDaprStateProblem(err, s.serviceName)
 	}
