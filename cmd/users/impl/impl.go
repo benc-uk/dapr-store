@@ -71,7 +71,7 @@ func (s *UserService) AddUser(user spec.User) error {
 
 // GetUser fetches a user from Dapr state
 func (s *UserService) GetUser(username string) (*spec.User, error) {
-	data, err := s.client.GetState(context.Background(), s.serviceName, username, nil)
+	data, err := s.client.GetState(context.Background(), s.storeName, username, nil)
 	if err != nil {
 		return nil, problem.NewDaprStateProblem(err, s.serviceName)
 	}
