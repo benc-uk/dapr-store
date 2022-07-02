@@ -88,7 +88,7 @@ func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 	for productID, count := range cart.Products {
 		resp, err := s.InvokeGet("products", `get/`+productID)
 		if err != nil || resp.StatusCode != 200 {
-			return nil, problem.NewAPIProblem("err://cart-product", "Submit cart, product lookup error "+productID, s.ServiceName, resp, err)
+			return nil, problem.New500("err://cart-product", "Submit cart, product lookup error "+productID, s.ServiceName, resp, err)
 		}
 
 		product := &productspec.Product{}

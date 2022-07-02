@@ -85,7 +85,7 @@ func (h *Helper) GetState(storeName, key string) ([]byte, *problem.Problem) {
 
 	daprResp, err := http.Get(daprURL)
 	if err != nil || (daprResp.StatusCode < 200 || daprResp.StatusCode > 299) {
-		return nil, problem.NewAPIProblem(daprURL, "Dapr get state failed", h.ServiceName, daprResp, err)
+		return nil, problem.New500(daprURL, "Dapr get state failed", h.ServiceName, daprResp, err)
 	}
 
 	defer daprResp.Body.Close()
@@ -104,7 +104,7 @@ func (h *Helper) SaveState(storeName, key string, value interface{}) *problem.Pr
 
 	jsonPayload, err := json.Marshal([]state{daprPayload})
 	if err != nil {
-		return problem.NewAPIProblem("err://json-marshall", "State JSON marshalling error", h.ServiceName, nil, err)
+		return problem.New500("err://json-marshall", "State JSON marshalling error", h.ServiceName, nil, err)
 	}
 
 	log.Printf("### State save helper, key:%s payload:%+v\n", key, string(jsonPayload))
@@ -112,7 +112,7 @@ func (h *Helper) SaveState(storeName, key string, value interface{}) *problem.Pr
 	daprURL := fmt.Sprintf(saveStateURL, h.Port, storeName)
 	daprResp, err := http.Post(daprURL, "application/json", bytes.NewBuffer(jsonPayload))
 	if err != nil || (daprResp.StatusCode < 200 || daprResp.StatusCode > 299) {
-		return problem.NewAPIProblem(daprURL, "Dapr save state failed", h.ServiceName, daprResp, err)
+		return problem.New500(daprURL, "Dapr save state failed", h.ServiceName, daprResp, err)
 	}
 
 	// All good
@@ -133,7 +133,7 @@ func (h *Helper) PublishMessage(pubSubName string, topicName string, message int
 	daprURL := fmt.Sprintf(publishURL, h.Port, pubSubName, topicName)
 	daprResp, err := http.Post(daprURL, "application/json", bytes.NewBuffer(jsonPayload))
 	if err != nil {
-		return problem.NewAPIProblem(daprURL, "Error publishing message", h.ServiceName, daprResp, err)
+		return problem.New500(daprURL, "Error publishing message", h.ServiceName, daprResp, err)
 	}
 
 	// All good
@@ -152,13 +152,13 @@ func (h *Helper) SendOutput(bindingName string, data interface{}, metadata map[s
 
 	jsonPayload, err := json.Marshal(daprPayload)
 	if err != nil {
-		return problem.NewAPIProblem("err://json-marshall", "State JSON marshalling error", h.ServiceName, nil, err)
+		return problem.New500("err://json-marshall", "State JSON marshalling error", h.ServiceName, nil, err)
 	}
 
 	daprURL := fmt.Sprintf(outputBindingURL, h.Port, bindingName)
 	daprResp, err := http.Post(daprURL, "application/json", bytes.NewBuffer(jsonPayload))
 	if err != nil {
-		return problem.NewAPIProblem(daprURL, "Error sending output", h.ServiceName, daprResp, err)
+		return problem.New500(daprURL, "Error sending output", h.ServiceName, daprResp, err)
 	}
 
 	// All good

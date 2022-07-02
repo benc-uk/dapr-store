@@ -41,9 +41,9 @@ func (p *Problem) Send(resp http.ResponseWriter) {
 }
 
 //
-// NewAPIProblem creates a Problem based on either a HTTP resp or an error
+// New500 creates a Problem based on either a HTTP resp or an error
 //
-func NewAPIProblem(url string, title string, instance string, apiResp *http.Response, err error) *Problem {
+func New500(url string, title string, instance string, apiResp *http.Response, err error) *Problem {
 	var p *Problem
 	if err != nil {
 		p = New(url, title, 500, err.Error(), instance)
@@ -53,6 +53,13 @@ func NewAPIProblem(url string, title string, instance string, apiResp *http.Resp
 		p = New(url, title, 500, "Other error occurred", instance)
 	}
 	return p
+}
+
+//
+// Helper for Dapr state errors
+//
+func NewDaprStateProblem(err error, name string) *Problem {
+	return New500("dapr://state", "Dapr state failure, unable to get or set data", name, nil, err)
 }
 
 // Implement error interface
