@@ -5,9 +5,6 @@ VERSION ?= 0.6.0
 BUILD_INFO ?= "Makefile build"
 DAPR_RUN_LOGLEVEL := warn
 
-REPO_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-GOLINT_PATH := $(REPO_DIR)/bin/golangci-lint
-
 # Most likely want to override these when calling `make image-all`
 IMAGE_REG ?= ghcr.io
 IMAGE_REPO ?= benc-uk/daprstore
@@ -21,21 +18,19 @@ IMAGE_LIST := cart orders users products frontend
 help:  ## 💬 This help message :)
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-lint: $(FRONTEND_DIR)/node_modules      ## 🔎 Lint & format, check to be run in CI, sets exit code on error 
-	@$(GOLINT_PATH) > /dev/null || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh
-	cd $(SERVICE_DIR); $(GOLINT_PATH) run --modules-download-mode=mod ./...
+lint: $(FRONTEND_DIR)/node_modules      ## 🔎 Lint & format, check to be run in CI, sets exit code on error
+	cd $(SERVICE_DIR); golangci-lint run --modules-download-mode=mod ./...
 	cd $(FRONTEND_DIR); npm run lint
 
 lint-fix: $(FRONTEND_DIR)/node_modules  ## 📝 Lint & format, fixes errors and modifies code
-	@$(GOLINT_PATH) > /dev/null || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh
-	cd $(SERVICE_DIR); $(GOLINT_PATH) run --modules-download-mode=mod ./... --fix
+	cd $(SERVICE_DIR); golangci-lint run --modules-download-mode=mod ./... --fix
 	cd $(FRONTEND_DIR); npm run lint-fix
 
 test:  ## 🎯 Unit tests for services and snapshot tests for SPA frontend 
 	go test -v ./$(SERVICE_DIR)/...
 	@cd $(FRONTEND_DIR); NODE_ENV=test npm run test -- --ci
 
-test-reports: $(FRONTEND_DIR)/node_modules  ## 📜 Unit tests with coverage and test reports
+test-reports: $(FRONTEND_DIR)/node_modules  ## 📜 Unit tests with coverage and test reports (deprecated)
 	@rm -rf $(OUTPUT_DIR) && mkdir -p $(OUTPUT_DIR)
 	@which gotestsum || go get gotest.tools/gotestsum
 	gotestsum --junitfile $(OUTPUT_DIR)/unit-tests.xml ./$(SERVICE_DIR)/... --coverprofile $(OUTPUT_DIR)/coverage
@@ -44,9 +39,6 @@ test-reports: $(FRONTEND_DIR)/node_modules  ## 📜 Unit tests with coverage and
 	./$(FRONTEND_DIR)/node_modules/xunit-viewer/bin/xunit-viewer -r $(OUTPUT_DIR)/unit-tests-frontend.xml -o $(OUTPUT_DIR)/unit-tests-frontend.html
 	go tool cover -html=$(OUTPUT_DIR)/coverage -o $(OUTPUT_DIR)/cover.html
 	cp testing/reports.html $(OUTPUT_DIR)/index.html
-
-test-snapshot:  ## 📷 Update snapshots for frontend tests
-	@cd $(FRONTEND_DIR); NODE_ENV=test npm run test-update
 
 image-all:      ## 📦 Build all container images
 	for img in $(IMAGE_LIST); do \
