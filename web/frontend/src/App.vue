@@ -1,29 +1,20 @@
-<!--
-// ----------------------------------------------------------------------------
-// Copyright (c) Ben Coleman, 2020
-// Licensed under the MIT License.
-//
-// Dapr Store frontend - Main app with nav bar menu and slot for views to be injected
-// ----------------------------------------------------------------------------
--->
-
 <template>
   <div class="app">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/">
-          <img src="./assets/img/logo.svg" class="logo">
-          <span class="logo-text">Dapr eShop</span> 
-        </a>
+        <router-link class="navbar-brand" to="/">
+          <img src="./assets/img/logo.svg" class="logo" />
+          <span class="logo-text">Dapr eShop</span>
+        </router-link>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div id="navContent" class="collapse navbar-collapse">
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search products" @keyup.enter="search">
+          <div class="d-flex">
+            <input v-model="query" class="form-control me-2" type="search" placeholder="Search products" @keyup.enter="search" />
             <button class="btn btn-success" @click="search"><i class="fa-solid fa-magnifying-glass"></i></button>
-          </form>
-          <div class="filler" style="flex-grow:1"></div>
+          </div>
+          <div class="filler" style="flex-grow: 1"></div>
           <ul class="navbar-nav ml-auto">
             <li v-if="!user" class="nav-item btn-success">
               <router-link class="nav-link" to="/login"><i class="fa-solid fa-right-to-bracket"></i> Login</router-link>

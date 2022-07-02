@@ -1,16 +1,16 @@
-import { createLocalVue, shallowMount } from '@vue/test-utils'
-import BootstrapVue from 'bootstrap-vue'
-const localVue = createLocalVue()
-localVue.use(BootstrapVue)
-
+import { mount } from '@vue/test-utils'
+import router from '@/router'
 import ErrorBox from '@/components/ErrorBox.vue'
 
 describe('ErrorBox.vue', () => {
   it('renders error message', () => {
     const errorMsg = 'This is an error'
-    const wrapper = shallowMount(ErrorBox, { localVue,
-      propsData: { error: errorMsg }
+    const wrapper = mount(ErrorBox, {
+      propsData: { error: errorMsg },
+      global: {
+        plugins: [router]
+      }
     })
-    expect(wrapper).toMatchSnapshot()
+    expect(wrapper.html()).toMatch('This is an error')
   })
 })

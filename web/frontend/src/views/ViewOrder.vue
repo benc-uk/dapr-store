@@ -11,9 +11,7 @@
   <div>
     <h1>
       View Order Status
-      <button class="btn btn-lg btn-success float-end" @click="loadOrder($route.params.id)">
-        <i class="fa-solid fa-rotate"></i> &nbsp; Refresh
-      </button>
+      <button class="btn btn-lg btn-success float-end" @click="loadOrder($route.params.id)"><i class="fa-solid fa-rotate"></i> &nbsp; Refresh</button>
     </h1>
 
     <error-box :error="error" />
@@ -46,19 +44,12 @@ export default {
     }
   },
 
-  mounted() {
-    this.loadOrder(this.$route.params.id)
-  },
-
-  methods: {
-    async loadOrder(id) {
-      this.order = null
-      try {
-        this.order = await api.orderGet(id)
-      } catch (err) {
-        this.error = err
-      }
+  async mounted() {
+    try {
+      this.order = await api.orderGet(this.$route.params.id)
+    } catch (err) {
+      this.error = err
     }
-  }
+  },
 }
 </script>

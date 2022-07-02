@@ -13,7 +13,7 @@
       <div class="col"><!-- empty padding --></div>
       <div class="col-9">
         <div class="card">
-          <img src="photo/home.jpg" class="card-img" alt="Dapr Menswear">
+          <img src="photo/home.jpg" class="card-img" alt="Dapr Menswear" />
           <div class="card-img-overlay">
             <div class="card-text">Dapper clothes with Dapr microservices</div>
           </div>
@@ -26,7 +26,7 @@
       <div class="col">
         <div class="card">
           <router-link to="/catalog">
-            <img src="photo/catalog.jpg" class="card-img" alt="Catalog">
+            <img src="photo/catalog.jpg" class="card-img" alt="Catalog" />
             <div class="card-img-overlay">
               <div class="card-text">Catalog</div>
             </div>
@@ -36,7 +36,7 @@
       <div class="col">
         <div class="card">
           <router-link to="/offers">
-            <img src="photo/sale.jpg" class="card-img" alt="Sale">
+            <img src="photo/sale.jpg" class="card-img" alt="Sale" />
             <div class="card-img-overlay">
               <div class="card-text">Sale</div>
             </div>
@@ -46,7 +46,7 @@
       <div class="col">
         <div class="card">
           <router-link to="/about">
-            <img src="photo/about.jpg" class="card-img" alt="About Us">
+            <img src="photo/about.jpg" class="card-img" alt="About Us" />
             <div class="card-img-overlay">
               <div class="card-text">About Us</div>
             </div>

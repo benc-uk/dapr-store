@@ -5,8 +5,7 @@
 // Dapr Store frontend - main app initialization and startup
 // ----------------------------------------------------------------------------
 
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createApp } from 'vue'
 import App from './App.vue'
 
 // Global services
@@ -15,11 +14,9 @@ import api from './services/api'
 
 // Use Bootstrap and theme
 import 'bootswatch/dist/materia/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 // And client side routes (held in router.js)
 import router from './router'
-Vue.use(VueRouter)
 
 // Let's go!
 appStartup()
@@ -50,9 +47,6 @@ async function appStartup() {
   auth.configure(AUTH_CLIENT_ID, true)
   api.configure(API_ENDPOINT, AUTH_CLIENT_ID, 'store-api')
 
-  // Actually mount & start the Vue app, kinda important
-  new Vue({
-    router,
-    render: (h) => h(App)
-  }).$mount('#app')
+  const app = createApp(App)
+  app.use(router).mount('#app')
 }

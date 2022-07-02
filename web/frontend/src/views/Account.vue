@@ -12,14 +12,14 @@
     <error-box :error="error" />
     <h1>
       User Account
-      <div class="btn btn-lg btn-danger float-end" @click="logout"> <i class="fa-solid fa-right-from-bracket"></i> &nbsp; LOGOUT </div>
+      <div class="btn btn-lg btn-danger float-end" @click="logout"><i class="fa-solid fa-right-from-bracket"></i> &nbsp; LOGOUT</div>
     </h1>
     <br />
 
     <div v-if="!registeredUser" class="text-center">
       <div class="spinner-border text-success" role="status"><span class="visually-hidden">Not Registered...</span></div>
     </div>
-    
+
     <div v-if="registeredUser" class="card details">
       <div class="card-body">
         <img class="profile d-md-block float-end" :src="photo" />
@@ -33,7 +33,7 @@
     <br />
     <h1>
       Orders
-      <div class="btn btn-lg btn-success float-end" @click="reloadOrders"> <i class="fa-solid fa-rotate"></i> &nbsp; Refresh </div>
+      <div class="btn btn-lg btn-success float-end" @click="reloadOrders"><i class="fa-solid fa-rotate"></i> &nbsp; Refresh</div>
     </h1>
 
     <div v-if="!ordersLoaded" class="text-center">

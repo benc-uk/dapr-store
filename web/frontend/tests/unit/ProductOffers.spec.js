@@ -1,9 +1,6 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
-import BootstrapVue from 'bootstrap-vue'
-const localVue = createLocalVue()
-localVue.use(BootstrapVue)
-
+import router from '@/router'
 import ProductOffers from '@/views/ProductOffers.vue'
 
 jest.mock('@/services/api')
@@ -11,10 +8,13 @@ jest.mock('@/services/api')
 describe('ProductOffers.vue', () => {
   it('renders products on offer', async () => {
     const wrapper = mount(ProductOffers, {
-      localVue
+      global: {
+        plugins: [router]
+      }
     })
 
     await flushPromises()
-    expect(wrapper).toMatchSnapshot()
+    expect(wrapper.html()).toMatch('Black')
+    expect(wrapper.html()).not.toMatch('Cravat')
   })
 })

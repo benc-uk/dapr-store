@@ -20,9 +20,7 @@
           <div class="card-header">🙍‍♂️ Existing User - Sign In</div>
           <div class="card-body text-center">
             <div class="text-center">If you have already registered on Dapr eShop, sign in using your Microsoft identity.</div>
-            <div class="btn btn-dark btn-lg" @click="login">
-              <img src="../assets/img/ms-tiny-logo.png" /> &nbsp; Sign-in using Microsoft Account
-            </div>
+            <div class="btn btn-dark btn-lg" @click="login"><img src="../assets/img/ms-tiny-logo.png" /> &nbsp; Sign-in using Microsoft Account</div>
           </div>
         </div>
         <div v-else class="card">
@@ -30,9 +28,7 @@
           <div class="card-body text-center">
             <h3>DEMO MODE</h3>
             <div class="text-center">Sign in with the demo user account</div>
-            <div class="btn btn-dark btn-lg mt-3" @click="login">
-              <i class="fa-solid fa-user-pen"></i> &nbsp; Sign in with Demo User 
-            </div>
+            <div class="btn btn-dark btn-lg mt-3" @click="login"><i class="fa-solid fa-user-pen"></i> &nbsp; Sign in with Demo User</div>
           </div>
         </div>
       </div>
@@ -54,9 +50,7 @@
             <div class="card-body text-center">
               <h3>DEMO MODE</h3>
               <div class="text-center">Register demo user account. You only need to do this once.</div>
-              <div class="btn btn-dark btn-lg mt-3" @click="register">
-                <i class="fa-solid fa-user-pen"></i> &nbsp; Register Demo User Account 
-              </div>
+              <div class="btn btn-dark btn-lg mt-3" @click="register"><i class="fa-solid fa-user-pen"></i> &nbsp; Register Demo User Account</div>
             </div>
           </div>
         </div>

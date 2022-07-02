@@ -1,29 +1,24 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
-import BootstrapVue from 'bootstrap-vue'
-const localVue = createLocalVue()
-localVue.use(BootstrapVue)
-
-import VueRouter from 'vue-router'
-localVue.use(VueRouter)
-const router = new VueRouter()
-
-import ViewOrder from '@/views/ViewOrder.vue'
+import ProductSearch from '@/views/ViewOrder.vue'
+import router from '@/router'
 
 jest.mock('@/services/api')
+jest.mock('@/services/auth')
 
-const orderId = 'order123'
+describe('ViewOrder.vue', () => {
+  it('shows order details', async () => {
+    router.push('/order/ord-mock')
+    await router.isReady()
 
-describe('ProductSingle.vue', () => {
-  it('renders product details', async () => {
-    router.push({ name: 'view-order', params: { id: orderId } })
-
-    const wrapper = mount(ViewOrder, {
-      localVue,
-      router
+    const wrapper = mount(ProductSearch, {
+      global: {
+        plugins: [router]
+      }
     })
 
     await flushPromises()
-    expect(wrapper).toMatchSnapshot()
+    expect(wrapper.html()).toMatch('ord-mock')
+    expect(wrapper.html()).toMatch('Ascot')
   })
 })

@@ -19,7 +19,7 @@
 
     <div v-if="newOrder" class="alert alert-success">
       <h4>Order accepted! 😄</h4>
-      <router-link :to="`order/` + newOrder.id">
+      <router-link :to="`/order/` + newOrder.id">
         <div>
           Your order for <b>£{{ newOrder.amount }}</b> has been accepted, the order ID is: <b>{{ newOrder.id }}</b
           ><br />
@@ -40,10 +40,18 @@
           <h2>Count:</h2>
           <input :value="cart.products[product.id]" type="text" readonly class="m-3" />
 
-          <button class="btn btn-sm btn-warning ml-5 mr-3" :disabled="!cart || cart.products.length == 0" @click="modifyProductAmmount(product.id, -1)">
+          <button
+            class="btn btn-sm btn-warning ml-5 mr-3"
+            :disabled="!cart || cart.products.length == 0"
+            @click="modifyProductAmmount(product.id, -1)"
+          >
             <i class="fa-solid fa-circle-minus"></i>
           </button>
-          <button class="btn btn-sm btn-success ml-5 mr-3" :disabled="!cart || cart.products.length == 0" @click="modifyProductAmmount(product.id, 1)">
+          <button
+            class="btn btn-sm btn-success ml-5 mr-3"
+            :disabled="!cart || cart.products.length == 0"
+            @click="modifyProductAmmount(product.id, 1)"
+          >
             <i class="fa-solid fa-circle-plus"></i>
           </button>
           <img :src="product.image" class="thumb" />

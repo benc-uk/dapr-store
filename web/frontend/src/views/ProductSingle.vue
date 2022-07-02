@@ -30,9 +30,7 @@
               {{ product.description }}
             </div>
 
-            <h3>
-              £{{ product.cost }}
-            </h3>
+            <h3>£{{ product.cost }}</h3>
 
             <button id="addBut" class="btn btn-primary" :disabled="!isLoggedIn()" @click="addToCart">
               <i class="fa-solid fa-basket-shopping"></i>
@@ -52,9 +50,7 @@
     <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 11">
       <div ref="addedToast" class="toast hide" role="alert">
         <div class="d-flex">
-          <div class="toast-body fs-4">
-            {{ name }} was added to your cart!
-          </div>
+          <div class="toast-body fs-4">{{ name }} was added to your cart!</div>
           <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
       </div>
@@ -86,7 +82,7 @@ export default {
   },
 
   watch: {
-    product: function(prod) {
+    product: function (prod) {
       if (prod) {
         this.name = prod.name
       }
@@ -124,7 +120,7 @@ export default {
         return true
       }
       return false
-    },
+    }
   }
 }
 </script>
