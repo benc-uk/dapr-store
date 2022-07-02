@@ -10,54 +10,87 @@
 <template>
   <div>
     <div v-if="!products" class="text-center">
-      <b-spinner variant="success" style="width: 5rem; height: 5rem" />
+      <div class="spinner-border text-success" role="status"><span class="visually-hidden">...</span></div>
     </div>
 
-    <b-card v-for="product in products" :key="product.id">
-      <b-row>
-        <b-col>
-          <b-link :to="`/product/` + product.id">
-            <b-card-title>
-              {{ product.name }}
-            </b-card-title>
-          </b-link>
-          <b-card-text>
-            {{ product.description }}
-            <br /><br />
-            <h4>£{{ product.cost }}</h4>
-          </b-card-text>
+    <error-box-list :error="error" />
 
-          <b-button :disabled="!isLoggedIn()" href="#" variant="primary" class="d-none d-md-inline" @click="addToCart(product)">
-            <fa icon="shopping-cart" />
-            &nbsp; Add to Cart
-          </b-button>
-        </b-col>
+    <div v-for="product in products" :key="product.id" class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <router-link :to="`/product/` + product.id">
+              <div class="card-title">
+                {{ product.name }}
+              </div>
+            </router-link>
+            <div class="card-text">
+              {{ product.description }}
+              <h4 class="mt-4">£{{ product.cost }}</h4>
+            </div>
 
-        <b-col class="flex-grow-0 d-none d-md-block">
-          <div class="product-img">
-            <span v-if="product.onOffer" class="onsale">On Sale</span>
-            <b-link :to="`/product/` + product.id">
-              <img :src="product.image" />
-            </b-link>
+            <button :disabled="!isLoggedIn()" href="#" class="btn btn-primary d-none d-md-inline" @click="addToCart(product)">
+              <i class="fa-solid fa-basket-shopping"></i>
+              &nbsp; Add to Cart
+            </button>
           </div>
-        </b-col>
-      </b-row>
-    </b-card>
+
+          <div class="col flex-grow-0 d-none d-md-block">
+            <div class="product-img">
+              <span v-if="product.onOffer" class="onsale">On Sale</span>
+              <router-link :to="`/product/` + product.id">
+                <img :src="product.image" />
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 11">
+      <div ref="addedToast" class="toast hide" role="alert">
+        <div class="d-flex">
+          <div class="toast-body fs-4">{{ name }} was added to your cart!</div>
+          <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import api from '../services/api'
 import auth from '../services/auth'
+import ErrorBox from '../components/ErrorBox'
+
+import { Toast } from 'bootstrap/dist/js/bootstrap.min.js'
+let toast
 
 export default {
   name: 'ProductList',
+
+  components: {
+    'error-box-list': ErrorBox
+  },
 
   props: {
     products: {
       type: Array,
       default: () => []
     }
+  },
+
+  data() {
+    return {
+      error: null,
+      name: ''
+    }
+  },
+
+  async mounted() {
+    toast = new Toast(this.$refs.addedToast, {
+      delay: 2000
+    })
   },
 
   methods: {
@@ -68,9 +101,10 @@ export default {
         }
 
         await api.cartAddAmount(auth.user().username, product.id, +1)
-        this.showToast('Added to your cart!', 'success', product)
+        this.name = product.name
+        toast.show()
       } catch (err) {
-        this.showToast('Error adding to cart 😫 ' + err.toString(), 'danger', product)
+        this.error = err
       }
     },
 
@@ -79,23 +113,15 @@ export default {
         return true
       }
       return false
-    },
-
-    showToast(msg, variant, product) {
-      this.$bvToast.toast(`${product.name}`, {
-        title: msg,
-        variant: variant,
-        autoHideDelay: 3000,
-        appendToast: true,
-        toaster: 'b-toaster-top-center',
-        solid: true
-      })
     }
   }
 }
 </script>
 
 <style scoped>
+a {
+  text-decoration: none;
+}
 .card {
   margin: 1rem;
 }
@@ -104,6 +130,7 @@ export default {
 }
 .product-img {
   float: right;
+  position: relative;
 }
 .product-img img {
   width: 12rem;
@@ -115,7 +142,7 @@ export default {
 .onsale {
   display: inline-block;
   position: absolute;
-  bottom: 0;
+  bottom: 0px;
   width: 12rem;
   height: 1.5rem;
   font-size: 1rem;

@@ -5,7 +5,7 @@
 // Dapr Store frontend - client side routes
 // ----------------------------------------------------------------------------
 
-import VueRouter from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 import auth from './services/auth'
 
@@ -20,8 +20,8 @@ import Home from './views/Home'
 import About from './views/About'
 import Cart from './views/Cart'
 
-const router = new VueRouter({
-  mode: 'history',
+const router = createRouter({
+  history: createWebHistory(),
   routes: [
     {
       name: 'home',
@@ -73,8 +73,8 @@ const router = new VueRouter({
     {
       name: 'view-order',
       path: '/order/:id',
-      component: ViewOrder,
-      beforeEnter: signedInCheck
+      component: ViewOrder
+      //beforeEnter: signedInCheck
     }
   ]
 })

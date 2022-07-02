@@ -8,10 +8,10 @@
 -->
 
 <template>
-  <b-card class="order">
-    <b-link :to="`/order/` + order.id">
+  <div class="card order p-4">
+    <router-link :to="`/order/` + order.id">
       <h2>{{ order.title }}</h2>
-    </b-link>
+    </router-link>
     <h2>
       Status: <span class="text-capitalize order-status" :class="['order-' + order.status]">{{ order.status }}</span>
     </h2>
@@ -23,7 +23,7 @@
         <li v-for="(line, index) in order.lineItems" :key="index">{{ line.count }} x {{ line.product.name }} &mdash; £{{ line.product.cost }}</li>
       </ul>
     </ul>
-  </b-card>
+  </div>
 </template>
 
 <script>

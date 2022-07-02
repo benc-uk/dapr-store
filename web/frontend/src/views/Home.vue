@@ -8,35 +8,53 @@
 -->
 
 <template>
-  <b-container>
-    <b-row class="m-2">
-      <b-col><!-- empty padding --></b-col>
-      <b-col cols="9">
-        <b-card overlay img-src="photo/home.jpg" img-alt="Dapr Menswear" text-variant="white" title="Dapr Menswear">
-          <b-card-text> Dapper clothes with Dapr microservices </b-card-text>
-        </b-card>
-      </b-col>
-      <b-col><!-- empty padding --></b-col>
-    </b-row>
+  <div>
+    <div class="row m-2">
+      <div class="col"><!-- empty padding --></div>
+      <div class="col-9">
+        <div class="card">
+          <img src="photo/home.jpg" class="card-img" alt="Dapr Menswear" />
+          <div class="card-img-overlay">
+            <div class="card-text">Dapper clothes with Dapr microservices</div>
+          </div>
+        </div>
+      </div>
+      <div class="col"><!-- empty padding --></div>
+    </div>
 
-    <b-row class="m-2">
-      <b-col>
-        <b-link to="/catalog">
-          <b-card overlay img-src="photo/catalog.jpg" img-alt="Catalog" text-variant="white" title="Catalog" />
-        </b-link>
-      </b-col>
-      <b-col>
-        <b-link to="/offers">
-          <b-card overlay img-src="photo/sale.jpg" img-alt="Sale" text-variant="white" title="On Sale" />
-        </b-link>
-      </b-col>
-      <b-col>
-        <b-link to="/about">
-          <b-card overlay img-src="photo/about.jpg" img-alt="About" text-variant="white" title="About Us" />
-        </b-link>
-      </b-col>
-    </b-row>
-  </b-container>
+    <div class="row m-2">
+      <div class="col">
+        <div class="card">
+          <router-link to="/catalog">
+            <img src="photo/catalog.jpg" class="card-img" alt="Catalog" />
+            <div class="card-img-overlay">
+              <div class="card-text">Catalog</div>
+            </div>
+          </router-link>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <router-link to="/offers">
+            <img src="photo/sale.jpg" class="card-img" alt="Sale" />
+            <div class="card-img-overlay">
+              <div class="card-text">Sale</div>
+            </div>
+          </router-link>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <router-link to="/about">
+            <img src="photo/about.jpg" class="card-img" alt="About Us" />
+            <div class="card-img-overlay">
+              <div class="card-text">About Us</div>
+            </div>
+          </router-link>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>

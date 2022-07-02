@@ -5,57 +5,18 @@
 // Dapr Store frontend - main app initialization and startup
 // ----------------------------------------------------------------------------
 
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createApp } from 'vue'
 import App from './App.vue'
 
 // Global services
 import auth from './services/auth'
 import api from './services/api'
 
-// Use Vue Bootstrap and theme
-import BootstrapVue from 'bootstrap-vue'
-Vue.use(BootstrapVue)
+// Use Bootstrap and theme
 import 'bootswatch/dist/materia/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-
-// Set up FontAwesome
-import { library as faIcons } from '@fortawesome/fontawesome-svg-core'
-import {
-  faUser,
-  faUserPlus,
-  faShoppingBasket,
-  faTrophy,
-  faIdCard,
-  faShoppingCart,
-  faSignOutAlt,
-  faTrashAlt,
-  faRedoAlt,
-  faSearch,
-  faPlusCircle,
-  faMinusCircle
-} from '@fortawesome/free-solid-svg-icons'
-
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-faIcons.add(
-  faUser,
-  faUserPlus,
-  faShoppingBasket,
-  faTrophy,
-  faIdCard,
-  faShoppingCart,
-  faSignOutAlt,
-  faTrashAlt,
-  faRedoAlt,
-  faSearch,
-  faPlusCircle,
-  faMinusCircle
-)
-Vue.component('Fa', FontAwesomeIcon)
 
 // And client side routes (held in router.js)
 import router from './router'
-Vue.use(VueRouter)
 
 // Let's go!
 appStartup()
@@ -86,9 +47,6 @@ async function appStartup() {
   auth.configure(AUTH_CLIENT_ID, true)
   api.configure(API_ENDPOINT, AUTH_CLIENT_ID, 'store-api')
 
-  // Actually mount & start the Vue app, kinda important
-  new Vue({
-    router,
-    render: (h) => h(App)
-  }).$mount('#app')
+  const app = createApp(App)
+  app.use(router).mount('#app')
 }

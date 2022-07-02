@@ -8,12 +8,12 @@
 -->
 
 <template>
-  <b-alert v-if="error" show variant="warning">
+  <div v-if="error" class="alert alert-danger" show>
     <h4>There was a problem 😥</h4>
     <div class="errmsg">
       {{ error }}
     </div>
-  </b-alert>
+  </div>
 </template>
 
 <script>

@@ -84,7 +84,7 @@ func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 	// Build up line item array
 	lineItems := []orderspec.LineItem{}
 
-	var orderAmount float32 = 0.0
+	var orderAmount float32
 	for productID, count := range cart.Products {
 		resp, err := s.InvokeGet("products", `get/`+productID)
 		if err != nil || resp.StatusCode != 200 {

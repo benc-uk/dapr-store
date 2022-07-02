@@ -13,33 +13,48 @@
     <error-box :error="error" />
 
     <div v-if="!product && !error" class="text-center">
-      <b-spinner variant="success" style="width: 5rem; height: 5rem" />
+      <div class="spinner-border text-success" role="status"><span class="visually-hidden">...</span></div>
     </div>
 
-    <b-card v-if="product">
-      <b-row class="d-flex">
-        <b-col class="mb-3">
-          <b-card-title>
-            {{ product.name }}
-          </b-card-title>
-          <div v-if="product.onOffer" class="onsale">On Sale</div>
-          <br /><br /><br />
-          {{ product.description }}
-          <br /><br />
-          £{{ product.cost }} <br /><br />
-          <b-button id="addBut" :disabled="!isLoggedIn()" variant="primary" @click="addToCart">
-            <fa icon="shopping-cart" />
-            &nbsp; Add to Cart
-          </b-button>
-        </b-col>
+    <div v-if="product" class="card">
+      <div class="card-body">
+        <div class="row d-flex">
+          <div class="col mb-3">
+            <div class="card-title">
+              {{ product.name }}
+            </div>
 
-        <b-col>
-          <div class="product-img">
-            <img :src="product.image" />
+            <div v-if="product.onOffer" class="onsale">On Sale</div>
+
+            <div class="m-3">
+              {{ product.description }}
+            </div>
+
+            <h3>£{{ product.cost }}</h3>
+
+            <button id="addBut" class="btn btn-primary" :disabled="!isLoggedIn()" @click="addToCart">
+              <i class="fa-solid fa-basket-shopping"></i>
+              &nbsp; Add to Cart
+            </button>
           </div>
-        </b-col>
-      </b-row>
-    </b-card>
+
+          <div class="col">
+            <div class="product-img">
+              <img :src="product.image" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 11">
+      <div ref="addedToast" class="toast hide" role="alert">
+        <div class="d-flex">
+          <div class="toast-body fs-4">{{ name }} was added to your cart!</div>
+          <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -47,6 +62,9 @@
 import ErrorBox from '../components/ErrorBox'
 import api from '../services/api'
 import auth from '../services/auth'
+
+import { Toast } from 'bootstrap/dist/js/bootstrap.min.js'
+let toast
 
 export default {
   name: 'ProductSingle',
@@ -58,12 +76,24 @@ export default {
   data() {
     return {
       product: null,
+      name: null,
       error: null
+    }
+  },
+
+  watch: {
+    product: function (prod) {
+      if (prod) {
+        this.name = prod.name
+      }
     }
   },
 
   async mounted() {
     try {
+      toast = new Toast(this.$refs.addedToast, {
+        delay: 2000
+      })
       this.product = await api.productGet(this.$route.params.id)
     } catch (err) {
       this.error = err
@@ -79,9 +109,9 @@ export default {
         }
 
         await api.cartAddAmount(user.username, this.product.id, +1)
-        this.showToast('Added to your cart!', 'success')
+        toast.show()
       } catch (err) {
-        this.showToast('Error adding to cart 😫 ' + err.toString(), 'danger')
+        this.error = err
       }
     },
 
@@ -90,17 +120,6 @@ export default {
         return true
       }
       return false
-    },
-
-    showToast(msg, variant) {
-      this.$bvToast.toast(`${this.product.name}`, {
-        title: msg,
-        variant: variant,
-        autoHideDelay: 3000,
-        appendToast: true,
-        toaster: 'b-toaster-top-center',
-        solid: true
-      })
     }
   }
 }

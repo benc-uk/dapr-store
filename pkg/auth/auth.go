@@ -8,6 +8,7 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -19,10 +20,11 @@ import (
 	"github.com/lestrrat-go/jwx/jwk"
 )
 
+// Fix the JWKS URL to be the one for Azure AD / MSIP
 const jwksURL = `https://login.microsoftonline.com/common/discovery/v2.0/keys`
 const appScopeName = "store-api"
 
-var jwkSet *jwk.Set
+var jwkSet jwk.Set
 
 //
 // JWTValidator added around any route will protect it
@@ -92,10 +94,10 @@ func JWTValidator(next http.HandlerFunc) http.HandlerFunc {
 // Get key for given token (from it's kid header)
 //
 func getKeyFromJWKS(token *jwt.Token) (interface{}, error) {
-	// We only support one JWKS, but most identity platforms have just the one
+	// We only support one JWKS, but most identity platforms have just the one, right?
 	if jwkSet == nil {
 		var err error
-		jwkSet, err = jwk.FetchHTTP(jwksURL)
+		jwkSet, err = jwk.Fetch(context.Background(), jwksURL)
 		if err != nil {
 			return nil, err
 		}
@@ -106,10 +108,10 @@ func getKeyFromJWKS(token *jwt.Token) (interface{}, error) {
 		return nil, errors.New("Expecting JWT header to have kid")
 	}
 
-	if key := jwkSet.LookupKeyID(keyID); len(key) == 1 {
+	if key, found := jwkSet.LookupKeyID(keyID); found {
 		// This I *think* gets the key value as raw bytes
 		var keyReturn interface{}
-		key[0].Raw(&keyReturn)
+		key.Raw(&keyReturn)
 		return keyReturn, nil
 	}
 

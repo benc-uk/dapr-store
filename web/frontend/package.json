@@ -1,14 +1,13 @@
 {
   "name": "dapr-store-frontend",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 8000",
     "build": "vue-cli-service build",
     "lint-fix": "vue-cli-service lint && prettier --write src",
     "lint": "vue-cli-service lint --no-fix && prettier --check src",
-    "test": "vue-cli-service test:unit",
-    "test-update": "vue-cli-service test:unit --updateSnapshot"
+    "test": "vue-cli-service test:unit"
   },
   "author": {
     "name": "Ben Coleman",
@@ -18,32 +17,32 @@
     "url": "https://github.com/benc-uk/dapr-store"
   },
   "dependencies": {
-    "@azure/msal-browser": "^2.13.0",
-    "@fortawesome/fontawesome-svg-core": "^1.2.35",
-    "@fortawesome/free-solid-svg-icons": "^5.15.3",
-    "@fortawesome/vue-fontawesome": "^2.0.2",
-    "bootstrap-vue": "^2.21.2",
-    "bootswatch": "^4.6.0",
-    "core-js": "^3.10.0",
-    "node-fetch": "^3.2.0",
-    "vue": "^2.6.12",
-    "vue-router": "^3.5.1"
+    "@azure/msal-browser": "^2.26.0",
+    "bootstrap": "^5.1.3",
+    "bootswatch": "^5.1.3",
+    "core-js": "^3.23.3",
+    "node-fetch": "^3.2.6",
+    "vue": "^3.2.37",
+    "vue-router": "^4.0.16"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.12",
-    "@vue/cli-plugin-eslint": "~4.5.12",
-    "@vue/cli-plugin-unit-jest": "^4.5.12",
-    "@vue/cli-service": "~4.5.12",
-    "@vue/test-utils": "1.1.3",
-    "eslint": "^6.2.2",
-    "eslint-plugin-vue": "^7.9.0",
+    "@babel/preset-env": "^7.18.6",
+    "@vue/cli-plugin-eslint": "^5.0.6",
+    "@vue/cli-plugin-unit-jest": "^5.0.6",
+    "@vue/cli-service": "^5.0.6",
+    "@vue/test-utils": "^2.0.0",
+    "@vue/vue3-jest": "^27.0.0",
+    "babel-jest": "^27.0.0",
+    "eslint": "^8.19.0",
+    "eslint-plugin-vue": "^9.1.1",
     "flush-promises": "^1.0.2",
     "identity-obj-proxy": "^3.0.0",
-    "jest-junit": "^12.0.0",
+    "jest": "^27.0.0",
+    "jest-junit": "^14.0.0",
     "json-server": "^0.17.0",
-    "prettier": "^2.2.1",
-    "vue-template-compiler": "^2.6.12",
-    "xunit-viewer": "^7.1.5"
+    "prettier": "^2.7.1",
+    "vue-template-compiler": "^2.7.0",
+    "xunit-viewer": "^7.1.9"
   },
   "browserslist": [
     "> 1%",

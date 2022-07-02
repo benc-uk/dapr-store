@@ -1,20 +1,22 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
-import BootstrapVue from 'bootstrap-vue'
-const localVue = createLocalVue()
-localVue.use(BootstrapVue)
-
+import router from '@/router'
 import ProductCatalog from '@/views/ProductCatalog.vue'
 
 jest.mock('@/services/api')
 
 describe('ProductCatalog.vue', () => {
   it('renders products in catalog', async () => {
-    const wrapper = mount(ProductCatalog, { localVue,
-      propsData: { }, sync: true
+    const wrapper = mount(ProductCatalog, {
+      propsData: {},
+      sync: true,
+      global: {
+        plugins: [router]
+      }
     })
 
     await flushPromises()
-    expect(wrapper).toMatchSnapshot()
+    expect(wrapper.html()).toMatch('Tie')
+    expect(wrapper.html()).toMatch('Cravat')
   })
 })

@@ -11,15 +11,13 @@
   <div>
     <h1>
       View Order Status
-      <b-button size="lg" variant="success" class="float-right" @click="loadOrder($route.params.id)">
-        <fa icon="redo-alt" /> &nbsp; Refresh
-      </b-button>
+      <button class="btn btn-lg btn-success float-end" @click="loadOrder($route.params.id)"><i class="fa-solid fa-rotate"></i> &nbsp; Refresh</button>
     </h1>
 
     <error-box :error="error" />
 
     <div v-if="!order && !error" class="text-center">
-      <b-spinner variant="success" style="width: 5rem; height: 5rem" />
+      <div class="spinner-border text-success" role="status"><span class="visually-hidden">Not Registered...</span></div>
     </div>
 
     <order v-if="order" :order="order" />
@@ -46,18 +44,11 @@ export default {
     }
   },
 
-  mounted() {
-    this.loadOrder(this.$route.params.id)
-  },
-
-  methods: {
-    async loadOrder(id) {
-      this.order = null
-      try {
-        this.order = await api.orderGet(id)
-      } catch (err) {
-        this.error = err
-      }
+  async mounted() {
+    try {
+      this.order = await api.orderGet(this.$route.params.id)
+    } catch (err) {
+      this.error = err
     }
   }
 }

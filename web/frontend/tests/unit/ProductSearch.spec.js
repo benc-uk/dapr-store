@@ -1,28 +1,22 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
-
-import BootstrapVue from 'bootstrap-vue'
-const localVue = createLocalVue()
-localVue.use(BootstrapVue)
-
-import VueRouter from 'vue-router'
-localVue.use(VueRouter)
-const router = new VueRouter()
-
 import ProductSearch from '@/views/ProductSearch.vue'
+import router from '@/router'
 
 jest.mock('@/services/api')
 
 describe('ProductSearch.vue', () => {
   it('renders search for Ascot', async () => {
-    router.push({ name: 'search', params: { query: 'Ascot' } })
+    router.push('/search/Ascot')
+    await router.isReady()
 
     const wrapper = mount(ProductSearch, {
-      localVue,
-      router
+      global: {
+        plugins: [router]
+      }
     })
 
     await flushPromises()
-    expect(wrapper).toMatchSnapshot()
+    expect(wrapper.html()).toMatch('Ascot')
   })
 })
