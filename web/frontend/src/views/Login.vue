@@ -20,7 +20,9 @@
           <div class="card-header"><i class="fa-solid fa-right-to-bracket"></i> Existing User - Sign In</div>
           <div class="card-body text-center">
             <div class="text-center">If you have already registered on Dapr eShop, sign in using your Microsoft identity</div>
-            <div class="btn btn-dark btn-lg mt-3" @click="login"><img src="../assets/img/ms-tiny-logo.png" /> &nbsp; Sign-in with Microsoft Account</div>
+            <div class="btn btn-dark btn-lg mt-3" @click="login">
+              <img src="../assets/img/ms-tiny-logo.png" /> &nbsp; Sign-in with Microsoft Account
+            </div>
           </div>
         </div>
         <div v-else class="card">
@@ -80,7 +82,7 @@ export default {
   },
 
   created() {
-    this.demoMode = false;//auth.clientId() ? false : true
+    this.demoMode = false //auth.clientId() ? false : true
   },
 
   methods: {
