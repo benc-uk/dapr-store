@@ -9,6 +9,7 @@ controller:
     labels:
       purpose: "daprstore-api-gateway"
   # Use a special class to not clash with any other controllers installed
+  ingressClass: "dapr"
   ingressClassResource:
     name: "dapr"
 

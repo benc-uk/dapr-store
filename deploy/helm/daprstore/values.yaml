@@ -1,51 +1,76 @@
 #
-# Default values for dapr-store.
+# Default values for dapr-store Helm chart
 #
 
 image:
+  # -- Image registry, only change if you're using your own images
   registry: ghcr.io
+  # -- Image repository
   repo: benc-uk/daprstore
+  # -- Image tag
   tag: latest
+  # -- Any pullsecrets that are required to pull the image
   pullSecrets: []
 
 auth:
+  # -- Set this to enable authentication, leave unset to run in demo mode
   clientId:
 
 ingress:
+  # -- Ingress host DNS name
   host:
+  # -- Set this to enable TLS, leave unset to run in insecure mode
   certName:
+  # -- Cert manager issuer, leave unset to run in insecure mode
   certIssuer:
 
 resources:
   limits:
+    # -- CPU limit for the containers, leave alone mostly
     cpu: 100m
+    # -- Memory limit for the containers, leave alone mostly
     memory: 200M
 
 cart:
+  # -- Dapr store cart annotations
   annotations:
+  # -- Dapr store cart replica count
   replicas: 1
 
 orders:
+  # -- Dapr store orders annotations
   annotations:
+  # -- Dapr store orders replica count
   replicas: 1
 
 products:
+  # -- Dapr store products annotations
   annotations:
+  # -- Dapr store products replica count
   replicas: 1
 
 users:
+  # -- Dapr store users annotations
   annotations:
+  # -- Dapr store users replica count
   replicas: 1
 
 frontendHost:
+  # -- Dapr store frontend host annotations
   annotations:
+  # -- Dapr store frontend host replica count
   replicas: 1
 
 daprComponents:
+  # -- Enable to deploy the Dapr components
   deploy: true
   state:
+    # -- Dapr state store component name
     name: statestore
+    # -- Hostname of redis, fullnameOverride should be used when deploying redis helm chart
     redisHost: daprstore-redis-master:6379
   pubsub:
+    # -- Dapr pubsub component name
     name: pubsub
+    # -- Hostname of redis, fullnameOverride should be used when deploying redis helm chart
     redisHost: daprstore-redis-master:6379

@@ -34,7 +34,7 @@ spec:
     {{ end }}
         paths:
           # Only expose the Dapr invoke API, lets us call our services and nothing more
-          - path: /v1.0/invoke/
+          - path: /v1.0/invoke
             pathType: Prefix
             backend:
               service:
