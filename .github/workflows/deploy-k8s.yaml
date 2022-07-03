@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: "Helm deploy Dapr Store app"
-        uses: deliverybot/helm@v1
+        uses: glopezep/helm@v1.7.1
         env:
           KUBECONFIG_FILE: ${{ secrets.KUBE_CONFIG }}
         with:
