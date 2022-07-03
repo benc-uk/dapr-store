@@ -17,14 +17,16 @@
       <!-- Login -->
       <div class="col">
         <div v-if="!demoMode" class="card">
-          <div class="card-header">🙍‍♂️ Existing User - Sign In</div>
+          <div class="card-header"><i class="fa-solid fa-right-to-bracket"></i> Existing User - Sign In</div>
           <div class="card-body text-center">
-            <div class="text-center">If you have already registered on Dapr eShop, sign in using your Microsoft identity.</div>
-            <div class="btn btn-dark btn-lg" @click="login"><img src="../assets/img/ms-tiny-logo.png" /> &nbsp; Sign-in using Microsoft Account</div>
+            <div class="text-center">If you have already registered on Dapr eShop, sign in using your Microsoft identity</div>
+            <div class="btn btn-dark btn-lg mt-3" @click="login">
+              <img src="../assets/img/ms-tiny-logo.png" /> &nbsp; Sign-in with Microsoft Account
+            </div>
           </div>
         </div>
         <div v-else class="card">
-          <div class="card-header">🙍‍♂️ Demo User - Sign In</div>
+          <div class="card-header"><i class="fa-solid fa-right-to-bracket"></i> Demo User - Sign In</div>
           <div class="card-body text-center">
             <h3>DEMO MODE</h3>
             <div class="text-center">Sign in with the demo user account</div>
@@ -37,16 +39,16 @@
       <div class="col">
         <div class="card">
           <div v-if="!demoMode" class="card">
-            <div class="card-header">🚩 New users - Register</div>
+            <div class="card-header"><i class="fa-solid fa-address-card"></i> New users - Register</div>
             <div class="card-body text-center">
-              <div class="text-center">If you have already registered on Dapr eShop, sign in using your Microsoft identity.</div>
-              <div class="btn btn-dark btn-lg" @click="register">
-                <img src="../assets/img/ms-tiny-logo.png" /> &nbsp; Sign-in using Microsoft Account
+              <div class="text-center">Register a new account using your Microsoft identity, either MSA or Work & School.</div>
+              <div class="btn btn-dark btn-lg mt-3" @click="register">
+                <img src="../assets/img/ms-tiny-logo.png" /> &nbsp; Register With Microsoft Account
               </div>
             </div>
           </div>
           <div v-else class="card">
-            <div class="card-header">🚩 Demo User - Register</div>
+            <div class="card-header"><i class="fa-solid fa-address-card"></i> Demo User - Register</div>
             <div class="card-body text-center">
               <h3>DEMO MODE</h3>
               <div class="text-center">Register demo user account. You only need to do this once.</div>
@@ -80,7 +82,7 @@ export default {
   },
 
   created() {
-    this.demoMode = auth.clientId() ? false : true
+    this.demoMode = false //auth.clientId() ? false : true
   },
 
   methods: {

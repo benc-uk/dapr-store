@@ -1,7 +1,7 @@
 #
 # ********* LIVE VALUES FOR DEPLOYING CERT *******
 #
-apiVersion: cert-manager.io/v1alpha3
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: kube-benco-io-cert

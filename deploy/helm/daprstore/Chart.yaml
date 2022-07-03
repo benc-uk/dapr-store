@@ -5,7 +5,7 @@ description: A reference application showcasing the use of Dapr
 type: application
 
 # This is the chart version.
-version: 0.6.0
+version: 0.7.1
 
 # This is the version number of the application being deployed.
-appVersion: 0.6.0
+appVersion: 0.7.1

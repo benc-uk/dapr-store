@@ -1,7 +1,7 @@
 #
 # ********* LIVE VALUES FOR DEPLOYING INGRESS API GATEWAY *******
 # install with
-#  helm install api-gateway ingress-nginx/ingress-nginx --values ~/dev/dapr-store/deploy/config/live-ingress-values.yaml --namespace dapr-store
+#  helm install api-gateway ingress-nginx/ingress-nginx --values ~/dev/dapr-store/deploy/live/ingress-values.yaml --namespace dapr-store
 #
 
 controller:
@@ -11,11 +11,15 @@ controller:
 
     # Static IP so DNS can remain static too
     # This is manually pre-created
-    loadBalancerIP: "20.86.99.160"
+    loadBalancerIP: "20.26.193.151"
   ingressClass: "dapr"
+  ingressClassResource:
+    name: "dapr"
   podAnnotations:
     dapr.io/enabled: "true"
     dapr.io/app-id: "api-gateway"
     dapr.io/app-port: "80"
+    # Really important! Without this the trick of sending traffic to the daprized service won't work
+    dapr.io/sidecar-listen-addresses: "0.0.0.0"
   scope:
     enabled: true
