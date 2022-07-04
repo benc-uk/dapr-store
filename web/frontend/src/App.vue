@@ -90,7 +90,7 @@ html,
 .logo {
   height: 3rem;
   padding-right: 1rem;
-  vertical-align: middle
+  vertical-align: middle;
 }
 
 .logo-text {
@@ -98,7 +98,7 @@ html,
   font-size: 2.3rem;
   padding-right: 1rem;
   line-height: 1.7rem;
-  vertical-align: middle
+  vertical-align: middle;
 }
 
 @media (max-width: 500px) {

@@ -13,7 +13,7 @@
       <div class="col"><!-- empty padding --></div>
       <div class="col-9">
         <div class="card" style="max-height: 20rem">
-          <img src="photo/home.jpg" class="card-img" alt="Dapr Menswear" style="max-height: 20rem"/>
+          <img src="photo/home.jpg" class="card-img" alt="Dapr Menswear" style="max-height: 20rem" />
           <div class="card-img-overlay">
             <div class="card-text">Dapper clothes with Dapr microservices</div>
           </div>
