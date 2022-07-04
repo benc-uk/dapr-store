@@ -86,16 +86,19 @@ html,
   padding: 0;
   height: 100%;
 }
+
 .logo {
   height: 3rem;
   padding-right: 1rem;
+  vertical-align: middle;
 }
 
 .logo-text {
-  font-family: 'Cinzel Decorative', cursive;
-  font-size: 1.7rem;
-  padding-right: 3rem;
-  line-height: 3rem;
+  font-family: 'Josefin Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 2.3rem;
+  padding-right: 1rem;
+  line-height: 1.7rem;
+  vertical-align: middle;
 }
 
 @media (max-width: 500px) {

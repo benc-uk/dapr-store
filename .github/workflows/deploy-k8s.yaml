@@ -54,7 +54,7 @@ jobs:
       # - name: "Run API tests"
       #   uses: matt-ball/newman-action@master
       #   with:
-      #     collection: ./testing/postman_collection.json
+      #     collection: ./testing/postman_api_tests.json
       #     # Can't set this without a file, kinda lame
-      #     environment: ./testing/postman_env_staging.json
+      #     environment: ./testing/postman_env_aks.json
       #     folder: "Smoke Tests"

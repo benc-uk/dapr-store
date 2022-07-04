@@ -1,0 +1,9 @@
+{
+  "values": [
+    {
+      "comment": "Local dev and testing",
+      "key": "endpoint",
+      "value": "localhost:9000"
+    }
+  ]
+}

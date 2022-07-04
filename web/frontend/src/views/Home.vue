@@ -12,8 +12,8 @@
     <div class="row m-2">
       <div class="col"><!-- empty padding --></div>
       <div class="col-9">
-        <div class="card">
-          <img src="photo/home.jpg" class="card-img" alt="Dapr Menswear" />
+        <div class="card" style="max-height: 20rem">
+          <img src="photo/home.jpg" class="card-img" alt="Dapr Menswear" style="max-height: 20rem" />
           <div class="card-img-overlay">
             <div class="card-text">Dapper clothes with Dapr microservices</div>
           </div>
@@ -69,7 +69,7 @@
 }
 .card-text {
   font-variant: small-caps;
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: white !important;
 }
 .card-title,
 .card-text {
@@ -81,28 +81,24 @@
   .card-title,
   .card-text {
     font-size: 3rem;
-    /* color: yellow; */
   }
 }
 @media (max-width: 992px) {
   .card-title,
   .card-text {
     font-size: 2rem;
-    /* color: red; */
   }
 }
 @media (max-width: 768px) {
   .card-title,
   .card-text {
     font-size: 1.3rem;
-    /* color: blue; */
   }
 }
 @media (max-width: 576px) {
   .card-title,
   .card-text {
     font-size: 1rem;
-    /* color: green; */
   }
 }
 </style>

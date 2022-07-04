@@ -1,6 +1,7 @@
 {
   "values": [
     {
+      "comment": "This instance is the one deployed live to AKS",
       "key": "endpoint",
       "value": "daprstore.kube.benco.io"
     }
