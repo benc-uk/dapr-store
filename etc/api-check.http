@@ -18,7 +18,7 @@ GET http://{{host}}/v1.0/invoke/products/method/get/prd006
 
 ###
 
-GET http://{{host}}/v1.0/invoke/products/method/search/tied
+GET http://{{host}}/v1.0/invoke/products/method/search/Paisley
 
 
 
@@ -60,10 +60,10 @@ GET http://{{host}}/v1.0/invoke/orders/method/getForUser/demo@example.net
 # ===================================================================
 
 ### Check a user
-GET http://{{host}}/v1.0/invoke/users/method/isregistered/benc.uk@outlook.com
+GET http://{{host}}/v1.0/invoke/users/method/isregistered/demo@example.net
 
 ### Get a user
-GET http://{{host}}/v1.0/invoke/users/method/get/benc.uk@outlook.com
+GET http://{{host}}/v1.0/invoke/users/method/get/demo@example.net
 
 ### Register new user
 POST http://{{host}}/v1.0/invoke/users/method/register

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# Little helper to wipe down redis
+#
+
 echo "🠶🠶🠶  WARNING! 💥 This will clear all Redis state"
 read -r -p "🠶🠶🠶  Press enter to continue, or ctrl-c to exit"
 

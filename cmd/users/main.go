@@ -56,8 +56,15 @@ func main() {
 		impl.NewService(serviceName),
 	}
 
-	// Add routes for this service
+	// Add application routes for this service
 	api.addRoutes(router)
+
+	// Add middleware routes, these are all optional
+	api.AddStatus(router)  // Add status and information endpoint
+	api.AddLogging(router) // Add request logging
+	api.AddHealth(router)  // Add health endpoint
+	api.AddMetrics(router) // Expose metrics, in prometheus format
+	api.AddRoot(router)    // Respond to root request with a simple 200 OK
 
 	// Start server
 	log.Printf("### Server listening on %v\n", serverPort)
