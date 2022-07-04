@@ -12,15 +12,15 @@
     <img src="../assets/img/logo.svg" class="logo" />
     <h1>Dapr eShop</h1>
     A reference app built using microservices and the Dapr framework<br />
-    <b>Ben Coleman, 2020~2021 [MIT License]</b><br />
+    <b>Ben Coleman, 2020 - 2022 [MIT License]</b><br />
     <br />
     Version: {{ version }}<br />
     Build Info:
     <pre>{{ buildInfo }}</pre>
     <br />
-    &bull; Learn more about Dapr - <a href="https://dapr.io/" target="_blank">dapr.io</a><br />
     &bull; Project home - <a href="https://code.benco.io/dapr-store/" target="_blank">https://code.benco.io/dapr-store</a><br />
-    &bull; GitHub project - <a href="https://github.com/benc-uk/dapr-store" target="_blank">github.com/benc-uk/dapr-store</a>
+    &bull; GitHub project - <a href="https://github.com/benc-uk/dapr-store" target="_blank">github.com/benc-uk/dapr-store</a><br />
+    &bull; Learn more about Dapr - <a href="https://dapr.io/" target="_blank">dapr.io</a><br />
   </div>
 </template>
 

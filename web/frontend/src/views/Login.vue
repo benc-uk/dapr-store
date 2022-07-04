@@ -10,9 +10,7 @@
 <template>
   <div>
     <error-box :error="error" />
-    <div v-if="demoMode" class="alert alert-info" show dismissible>
-      Real user sign-in disabled, as AUTH_CLIENT_ID is not set. <br />Running in demo mode, using a dummy user account
-    </div>
+
     <div class="row">
       <!-- Login -->
       <div class="col">
@@ -58,6 +56,9 @@
         </div>
       </div>
     </div>
+    <div v-if="demoMode" class="alert alert-info fs-5 mt-3" show dismissible>
+      Real user sign-in disabled, as AUTH_CLIENT_ID is not set. <br />Running in demo mode, using a dummy user account
+    </div>
   </div>
 </template>
 
@@ -82,7 +83,7 @@ export default {
   },
 
   created() {
-    this.demoMode = false //auth.clientId() ? false : true
+    this.demoMode = auth.clientId() ? false : true
   },
 
   methods: {
