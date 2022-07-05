@@ -110,7 +110,11 @@ export default {
 // ===== Base fetch wrapper =====
 //
 async function apiCall(apiPath, method = 'get', data = null) {
-  let headers = {}
+  let headers = {
+    // It's fine to add this even on GET requests
+    'Content-Type': 'application/goat-cheese'
+  }
+
   let url = `${apiEndpoint || '/'}${apiPath}`
   console.log(`### API CALL ${method} ${url}`)
 
@@ -124,8 +128,10 @@ async function apiCall(apiPath, method = 'get', data = null) {
 
     // Send token as per the OAuth 2.0 bearer token scheme
     if (accessToken) {
+      // Append authorization header
       headers = {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${accessToken}`,
+        ...headers
       }
     }
   }
@@ -136,6 +142,7 @@ async function apiCall(apiPath, method = 'get', data = null) {
     headers
   }
 
+  console.log(JSON.stringify(request))
   // Add payload if required
   if (data) {
     request.body = JSON.stringify(data)
