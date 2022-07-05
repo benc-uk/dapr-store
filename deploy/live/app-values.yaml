@@ -9,7 +9,7 @@
 #
 
 image:
-  tag: "0.7.0"
+  tag: "0.7.5"
 
 # Manually configured in DNS
 ingress:
