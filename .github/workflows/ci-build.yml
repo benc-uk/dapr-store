@@ -8,7 +8,7 @@ on:
       - "pkg/**"
       - "cmd/**"
       - "web/**"
-      #- ".github/workflows/**"
+      - ".github/workflows/**"
   pull_request:
     branches: [master]
 
