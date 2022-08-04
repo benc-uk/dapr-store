@@ -49,5 +49,6 @@ func Validate(o Order) error {
 	if o.Amount <= 0 || len(o.LineItems) == 0 || o.Title == "" || o.ForUser == "" {
 		return errors.New("order failed validation")
 	}
+
 	return nil
 }

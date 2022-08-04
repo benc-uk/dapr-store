@@ -30,10 +30,12 @@ func (api API) addRoutes(router *mux.Router) {
 //
 func (api API) getProduct(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
+
 	products, err := api.service.QueryProducts("ID", vars["id"])
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
@@ -41,10 +43,12 @@ func (api API) getProduct(resp http.ResponseWriter, req *http.Request) {
 	if len(products) < 1 {
 		prob := problem.New("err://products-db", "Not found", 404, "Product id: '"+vars["id"]+"' not found in DB", serviceName)
 		prob.Send(resp)
+
 		return
 	}
 
 	json, _ := json.Marshal(products[0])
+
 	resp.Header().Set("Content-Type", "application/json")
 	_, _ = resp.Write(json)
 }
@@ -57,10 +61,12 @@ func (api API) getCatalog(resp http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
 	json, _ := json.Marshal(products)
+
 	resp.Header().Set("Content-Type", "application/json")
 	_, _ = resp.Write(json)
 }
@@ -73,10 +79,12 @@ func (api API) getOffers(resp http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
 	json, _ := json.Marshal(products)
+
 	resp.Header().Set("Content-Type", "application/json")
 	_, _ = resp.Write(json)
 }
@@ -86,14 +94,17 @@ func (api API) getOffers(resp http.ResponseWriter, req *http.Request) {
 //
 func (api API) searchProducts(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
+
 	products, err := api.service.SearchProducts(vars["query"])
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
 	json, _ := json.Marshal(products)
+
 	resp.Header().Set("Content-Type", "application/json")
 	_, _ = resp.Write(json)
 }

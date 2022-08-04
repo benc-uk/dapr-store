@@ -9,10 +9,10 @@
 
 <template>
   <div>
-    <h1>
-      View Order Status
-      <button class="btn btn-lg btn-success float-end" @click="loadOrder()"><i class="fa-solid fa-rotate"></i> &nbsp; Refresh</button>
-    </h1>
+    <div class="d-flex justify-content-between mb-2">
+      <h1>View Order Status</h1>
+      <!--button class="btn btn-lg btn-success" @click="loadOrder()"><i class="fa-solid fa-rotate"></i> &nbsp; Refresh</button-->
+    </div>
 
     <error-box :error="error" />
 
@@ -28,6 +28,7 @@
 import ErrorBox from '../components/ErrorBox'
 import api from '../services/api'
 import Order from '../components/Order'
+var timerId = null
 
 export default {
   name: 'ViewOrder',
@@ -46,6 +47,13 @@ export default {
 
   async mounted() {
     this.loadOrder()
+
+    // Refresh in the background every 5 seconds
+    timerId = setInterval(this.loadOrder, 5000)
+  },
+
+  unmounted() {
+    clearInterval(timerId)
   },
 
   methods: {

@@ -34,10 +34,12 @@ func (api API) addRoutes(router *mux.Router) {
 //
 func (api API) setProductCount(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
+
 	cart, err := api.service.Get(vars["username"])
 	if err != nil {
 		prob := err.(problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
@@ -51,10 +53,12 @@ func (api API) setProductCount(resp http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
 	resp.Header().Set("Content-Type", "application/json")
+
 	json, _ := json.Marshal(cart)
 	log.Printf("cart %s", json)
 	_, _ = resp.Write(json)
@@ -65,15 +69,19 @@ func (api API) setProductCount(resp http.ResponseWriter, req *http.Request) {
 //
 func (api API) getCart(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
+
 	cart, err := api.service.Get(vars["username"])
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
 	resp.Header().Set("Content-Type", "application/json")
+
 	json, _ := json.Marshal(cart)
+
 	log.Printf("cart %s", json)
 	_, _ = resp.Write(json)
 }
@@ -83,10 +91,12 @@ func (api API) getCart(resp http.ResponseWriter, req *http.Request) {
 //
 func (api API) clearCart(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
+
 	cart, err := api.service.Get(vars["username"])
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
@@ -96,6 +106,7 @@ func (api API) clearCart(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	resp.Header().Set("Content-Type", "application/json")
+
 	json, _ := json.Marshal(cart)
 	log.Printf("cart %s", json)
 	_, _ = resp.Write(json)
@@ -119,6 +130,7 @@ func (api API) submitCart(resp http.ResponseWriter, req *http.Request) {
 		problem.New("err://json-decode", "Malformed JSON", 400, "JSON could not be decoded", api.ServiceName).Send(resp)
 		return
 	}
+
 	if username == "" {
 		problem.New("err://json-error", "Malformed JSON", 400, "Post should include username", api.ServiceName).Send(resp)
 		return
@@ -128,6 +140,7 @@ func (api API) submitCart(resp http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
@@ -135,11 +148,13 @@ func (api API) submitCart(resp http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
 	// Send the _order_ back, created from submitting the cart
 	resp.Header().Set("Content-Type", "application/json")
+
 	json, _ := json.Marshal(order)
 	_, _ = resp.Write(json)
 }

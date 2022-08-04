@@ -9,6 +9,7 @@ package mock
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 
 	"github.com/benc-uk/dapr-store/cmd/users/spec"
@@ -27,6 +28,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
 	err = json.Unmarshal(mockJSON, &mockUsers)
 	if err != nil {
 		panic(err)
@@ -41,7 +43,7 @@ func (s UserService) GetUser(username string) (*spec.User, error) {
 		}
 	}
 
-	return nil, nil
+	return nil, fmt.Errorf("user %s not found", username)
 }
 
 // AddUser mock
@@ -51,6 +53,8 @@ func (s UserService) AddUser(user spec.User) error {
 		prob := problem.New("err://user-exists", user.Username+" already registered", 400, user.Username+" already registered", "users")
 		return prob
 	}
+
 	mockUsers = append(mockUsers, user)
+
 	return nil
 }

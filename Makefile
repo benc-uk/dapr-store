@@ -1,7 +1,7 @@
 SERVICE_DIR := cmd
 FRONTEND_DIR := web/frontend
 OUTPUT_DIR := ./output
-VERSION ?= 0.7.5
+VERSION ?= 0.7.6
 BUILD_INFO ?= "Makefile build"
 DAPR_RUN_LOGLEVEL := warn
 
@@ -19,11 +19,11 @@ help:  ## 💬 This help message :)
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 lint: $(FRONTEND_DIR)/node_modules      ## 🔎 Lint & format, check to be run in CI, sets exit code on error
-	cd $(SERVICE_DIR); golangci-lint run --modules-download-mode=mod ./...
+	golangci-lint run --modules-download-mode=mod ./...
 	cd $(FRONTEND_DIR); npm run lint
 
 lint-fix: $(FRONTEND_DIR)/node_modules  ## 📝 Lint & format, fixes errors and modifies code
-	cd $(SERVICE_DIR); golangci-lint run --modules-download-mode=mod ./... --fix
+	golangci-lint run --modules-download-mode=mod --fix ./...
 	cd $(FRONTEND_DIR); npm run lint-fix
 
 test:  ## 🎯 Unit tests for services and snapshot tests for SPA frontend 

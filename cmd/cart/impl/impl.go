@@ -67,13 +67,16 @@ func (s CartService) Get(username string) (*cartspec.Cart, error) {
 		cart := &cartspec.Cart{}
 		cart.ForUser = username
 		cart.Products = make(map[string]int)
+
 		return cart, nil
 	}
 
 	cart := &cartspec.Cart{}
+
 	err = json.Unmarshal(data.Value, cart)
 	if err != nil {
 		prob := problem.New("err://json-decode", "Malformed cart JSON", 500, "JSON could not be decoded", s.serviceName)
+
 		return nil, prob
 	}
 
@@ -94,6 +97,7 @@ func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 	// Process the cart server side, calculating the order price
 	// This involves a service to service call to invoke the products service
 	var orderAmount float32
+
 	for productID, count := range cart.Products {
 		resp, err := s.client.InvokeMethod(context.Background(), "products", `get/`+productID, "get")
 		if err != nil {
@@ -101,6 +105,7 @@ func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 		}
 
 		product := &productspec.Product{}
+
 		err = json.Unmarshal(resp, product)
 		if err != nil {
 			prob := problem.New("err://json-decode", "Malformed JSON", 500, "Product JSON could not be decoded", s.serviceName)
@@ -158,6 +163,7 @@ func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, coun
 	if err != nil {
 		return problem.New500("err://json-marshall", "State JSON marshalling error", s.serviceName, nil, err)
 	}
+
 	if err = s.client.SaveState(context.Background(), s.storeName, cart.ForUser, jsonPayload, nil); err != nil {
 		return problem.NewDaprStateProblem(err, s.serviceName)
 	}
@@ -175,9 +181,11 @@ func (s CartService) Clear(cart *cartspec.Cart) error {
 	if err != nil {
 		return problem.New500("err://json-marshall", "State JSON marshalling error", s.serviceName, nil, err)
 	}
+
 	if err = s.client.SaveState(context.Background(), s.storeName, cart.ForUser, jsonPayload, nil); err != nil {
 		return problem.NewDaprStateProblem(err, s.serviceName)
 	}
+
 	return nil
 }
 
@@ -187,6 +195,7 @@ func (s CartService) Clear(cart *cartspec.Cart) error {
 func makeID(length int) string {
 	id := ""
 	possible := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
 	rand.Seed(time.Now().UnixNano())
 
 	for i := 0; i < length; i++ {

@@ -74,15 +74,19 @@ func (s ProductService) SearchProducts(query string) ([]spec.Product, error) {
 
 // Helper function to take a bunch of rows and return as a slice of Products
 func (s ProductService) processRows(rows *sql.Rows) ([]spec.Product, error) {
-	products := []spec.Product{}
 	defer rows.Close()
+
+	products := []spec.Product{}
+
 	for rows.Next() {
 		p := spec.Product{}
 		err := rows.Scan(&p.ID, &p.Name, &p.Description, &p.Cost, &p.Image, &p.OnOffer)
+
 		if err != nil {
 			prob := problem.New("err://products-db", "Error reading row", 500, err.Error(), s.serviceName)
 			return nil, prob
 		}
+
 		products = append(products, p)
 	}
 

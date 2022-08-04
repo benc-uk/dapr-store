@@ -62,6 +62,7 @@ func (s *UserService) AddUser(user spec.User) error {
 	if err != nil {
 		return problem.New500("err://json-marshall", "State JSON marshalling error", s.serviceName, nil, err)
 	}
+
 	if err := s.client.SaveState(context.Background(), s.storeName, user.Username, jsonPayload, nil); err != nil {
 		return problem.NewDaprStateProblem(err, s.serviceName)
 	}
@@ -82,6 +83,7 @@ func (s *UserService) GetUser(username string) (*spec.User, error) {
 	}
 
 	user := &spec.User{}
+
 	err = json.Unmarshal(data.Value, user)
 	if err != nil {
 		prob := problem.New("err://json-decode", "Malformed user JSON", 500, "JSON could not be decoded", s.serviceName)

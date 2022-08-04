@@ -38,6 +38,7 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 		problem.New("err://body-missing", "Zero length body", 400, "Zero length body", api.ServiceName).Send(resp)
 		return
 	}
+
 	user := spec.User{}
 	err := json.NewDecoder(req.Body).Decode(&user)
 
@@ -46,16 +47,19 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 		problem.New("err://json-decode", "Malformed user JSON", 400, "JSON could not be decoded", api.ServiceName).Send(resp)
 		return
 	}
+
 	if len(user.DisplayName) == 0 || len(user.Username) == 0 {
 		problem.New("err://json-error", "Malformed user JSON", 400, "User failed validation, check spec", api.ServiceName).Send(resp)
 		return
 	}
+
 	log.Printf("### Registering user %+v\n", user)
 
 	err = api.service.AddUser(user)
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
@@ -69,10 +73,17 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 //
 func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
+
 	user, err := api.service.GetUser(vars["username"])
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		prob, isProb := err.(*problem.Problem)
+		if isProb {
+			prob.Send(resp)
+		} else {
+			resp.WriteHeader(404)
+			_, _ = resp.Write([]byte(err.Error()))
+		}
+
 		return
 	}
 
@@ -82,6 +93,7 @@ func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	resp.Header().Set("Content-Type", "application/json")
+
 	json, _ := json.Marshal(user)
 	_, _ = resp.Write(json)
 }
@@ -91,10 +103,12 @@ func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 //
 func (api API) checkRegistered(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
+
 	_, err := api.service.GetUser(vars["username"])
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 

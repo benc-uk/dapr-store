@@ -38,7 +38,9 @@ jobs:
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
 
       - name: "Check code & lint"
-        run: make lint
+        run: |
+          go get ./...
+          make lint
 
       - name: "Run all unit tests"
         run: make test-reports
