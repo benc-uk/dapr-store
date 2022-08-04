@@ -10,31 +10,38 @@
 <template>
   <div>
     <error-box :error="error" />
-    <h1>
-      User Account
-      <div class="btn btn-lg btn-danger float-end" @click="logout"><i class="fa-solid fa-right-from-bracket"></i> &nbsp; LOGOUT</div>
-    </h1>
-    <br />
+
+    <div class="d-flex justify-content-between mb-2">
+      <h1>User Account</h1>
+      <button class="btn btn-danger" style="height: 3rem" @click="logout"><i class="fa-solid fa-right-from-bracket"></i> &nbsp; LOGOUT</button>
+    </div>
 
     <div v-if="!registeredUser" class="text-center">
       <div class="spinner-border text-success" role="status"><span class="visually-hidden">Not Registered...</span></div>
     </div>
 
-    <div v-if="registeredUser" class="card details">
+    <div v-if="registeredUser" class="card mb-5">
       <div class="card-body">
-        <img class="profile d-md-block float-end" :src="photo" />
-
-        Display Name: <b>{{ registeredUser.displayName }}</b>
-        <br />
-        Username: <b>{{ registeredUser.username }}</b>
+        <div class="d-flex justify-content-between mb-2">
+          <table class="details">
+            <tr>
+              <td>Display Name</td>
+              <td>{{ registeredUser.displayName }}</td>
+            </tr>
+            <tr>
+              <td>Username</td>
+              <td>{{ registeredUser.username }}</td>
+            </tr>
+          </table>
+          <img class="profile d-md-block" :src="photo" />
+        </div>
       </div>
     </div>
 
-    <br />
-    <h1>
-      Orders
-      <div class="btn btn-lg btn-success float-end" @click="reloadOrders"><i class="fa-solid fa-rotate"></i> &nbsp; Refresh</div>
-    </h1>
+    <div class="d-flex justify-content-between">
+      <h1>Orders</h1>
+      <div class="btn btn-success" style="height: 3rem"  @click="reloadOrders"><i class="fa-solid fa-rotate"></i> &nbsp; Refresh</div>
+    </div>
 
     <div v-if="!ordersLoaded" class="text-center">
       <div class="spinner-border text-success" role="status">
@@ -42,7 +49,7 @@
       </div>
     </div>
 
-    <order v-for="order in orders" :key="order.id" :order="order" />
+    <order v-for="order in orders" :key="order.id" :order="order" :hideDetailsButton=false />
   </div>
 </template>
 
@@ -133,6 +140,12 @@ export default {
 </script>
 
 <style scoped>
+td {
+  width: 200px;
+}
+td + td {
+  font-weight: 700;
+}
 code {
   color: rgb(23, 38, 173);
   font-size: 1.2rem;

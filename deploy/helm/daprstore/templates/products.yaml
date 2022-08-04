@@ -47,7 +47,7 @@ spec:
 
         readinessProbe:
           httpGet:
-            path: /healthz
+            path: /health
             port: 9002
             httpHeaders:
               - name: "No-Log"

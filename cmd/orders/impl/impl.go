@@ -161,11 +161,12 @@ func (s *OrderService) ProcessOrder(order spec.Order) error {
 	// For these to work configure the components in cmd/orders/components
 	// If un-configured then nothing happens, and no output is send or generated
 
-	// TEMPORARY DISABLED I DON'T THINK THE SENDGRID COMPONENT IS WORKING
-	// err = s.EmailNotify(order)
-	// if err != nil {
-	// 	log.Printf("### Email notification failed %s\n", err)
-	// }
+	// Currently the SendGrid integration in Dapr is fubar
+	// To be fixed by this PR https://github.com/dapr/components-contrib/pull/1867
+	err = s.EmailNotify(order)
+	if err != nil {
+		log.Printf("### Email notification failed %s\n", err)
+	}
 
 	err = s.SaveReport(order)
 	if err != nil {

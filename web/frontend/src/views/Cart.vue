@@ -40,18 +40,10 @@
           <h2>Count:</h2>
           <input :value="cart.products[product.id]" type="text" readonly class="m-3" />
 
-          <button
-            class="btn btn-sm btn-warning ml-5 mr-3"
-            :disabled="!cart || cart.products.length == 0"
-            @click="modifyProductAmmount(product.id, -1)"
-          >
+          <button class="btn btn-warning p-2 px-3 mx-3" :disabled="!cart || cart.products.length == 0" @click="modifyProductAmmount(product.id, -1)">
             <i class="fa-solid fa-circle-minus"></i>
           </button>
-          <button
-            class="btn btn-sm btn-success ml-5 mr-3"
-            :disabled="!cart || cart.products.length == 0"
-            @click="modifyProductAmmount(product.id, 1)"
-          >
+          <button class="btn btn-success p-2 px-3" :disabled="!cart || cart.products.length == 0" @click="modifyProductAmmount(product.id, 1)">
             <i class="fa-solid fa-circle-plus"></i>
           </button>
           <img :src="product.image" class="thumb" />
@@ -59,13 +51,14 @@
       </div>
     </div>
 
-    <button class="btn btn-lg btn-primary ml-5 mr-3" :disabled="!cart || cartProducts.length == 0" @click="submitOrder">
-      <i class="fa-solid fa-basket-shopping"></i> &nbsp; CHECKOUT
-    </button>
-    &nbsp;
-    <button class="btn btn-lg btn-warning ml-5 mr-3 float-end" :disabled="!cart || cartProducts.length == 0" @click="clearCart">
-      <i class="fa-solid fa-trash-can"></i> &nbsp; EMPTY CART
-    </button>
+    <div class="d-flex justify-content-between mt-4">
+      <button class="btn btn-lg btn-primary" :disabled="!cart || cartProducts.length == 0" @click="submitOrder">
+        <i class="fa-solid fa-basket-shopping"></i> &nbsp; CHECKOUT
+      </button>
+      <button class="btn btn-lg btn-warning" :disabled="!cart || cartProducts.length == 0" @click="clearCart">
+        <i class="fa-solid fa-trash-can"></i> &nbsp; EMPTY CART
+      </button>
+    </div>
   </div>
 </template>
 
