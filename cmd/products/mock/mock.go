@@ -28,6 +28,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
 	err = json.Unmarshal(mockJSON, &mockProducts)
 	if err != nil {
 		panic(err)
@@ -37,21 +38,25 @@ func init() {
 // SearchProducts mock/fake DB
 func (s ProductService) SearchProducts(query string) ([]spec.Product, error) {
 	results := []spec.Product{}
+
 	for _, prod := range mockProducts {
 		if strings.Contains(prod.Name, query) || strings.Contains(prod.Description, query) {
 			results = append(results, prod)
 		}
 	}
+
 	return results, nil
 }
 
 // QueryProducts mock/fake DB
 func (s ProductService) QueryProducts(field, term string) ([]spec.Product, error) {
 	results := []spec.Product{}
+
 	for _, prod := range mockProducts {
 		if field == "ID" && prod.ID == term {
 			results = append(results, prod)
 		}
+
 		if field == "onoffer" {
 			termBool, _ := strconv.ParseBool(term)
 			if prod.OnOffer == termBool {
@@ -59,6 +64,7 @@ func (s ProductService) QueryProducts(field, term string) ([]spec.Product, error
 			}
 		}
 	}
+
 	return results, nil
 }
 

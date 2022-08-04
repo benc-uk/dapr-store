@@ -1,10 +1,45 @@
-linters-settings:
-  golint:
-    min-confidence: 0
+# =================================================================
+# An opinionated config for linting Go code with golangci-lint
+# See https://golangci-lint.run/usage/linters 
+# =================================================================
+
 linters:
   enable:
-    - revive
-    - gofmt
-#issues:
-#include:
-#  - EXC0002
+    - revive      # Replacement for golint
+    - gofmt       # Runs gofmt as part of the linter
+    #- gosec       # Find security issues
+    - wsl         # Whitespace style enforcer, a matter of taste
+    - stylecheck  # A few Go style rules
+    - nosnakecase # We are not writing Python here
+    - misspell    # Find misspelled words
+    - cyclop      # Find cyclomatic complexity
+    - gocyclo     # Also find cyclomatic complexity
+    - bodyclose   # Check for HTTP body close errors
+    - nilerr      # Find bad nil/err handling
+    - nilnil      # Also find bad nil/err handling
+    #- tagliatelle # Find badly named struct tags
+    #- gomnd       # Find magic numbers, enable at your peril
+
+linters-settings:
+  misspell:
+    locale: UK # Enable UK spelling
+
+  # Check struck tag naming
+  tagliatelle:
+    case:
+      use-field-name: true
+      rules:
+        json: goCamel
+        yaml: goCamel
+
+  revive:
+    severity: error 
+    enable-all-rules: false
+    confidence: 0.5
+    rules:
+      # There are MANY rules you could enable...
+      # See https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md
+      # And https://golangci-lint.run/usage/linters/#revive
+      - name: line-length-limit
+        severity: error
+        arguments: [160]

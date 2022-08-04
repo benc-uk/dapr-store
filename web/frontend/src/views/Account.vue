@@ -40,7 +40,7 @@
 
     <div class="d-flex justify-content-between">
       <h1>Orders</h1>
-      <div class="btn btn-success" style="height: 3rem"  @click="reloadOrders"><i class="fa-solid fa-rotate"></i> &nbsp; Refresh</div>
+      <div class="btn btn-success" style="height: 3rem" @click="reloadOrders"><i class="fa-solid fa-rotate"></i> &nbsp; Refresh</div>
     </div>
 
     <div v-if="!ordersLoaded" class="text-center">
@@ -49,7 +49,7 @@
       </div>
     </div>
 
-    <order v-for="order in orders" :key="order.id" :order="order" :hideDetailsButton=false />
+    <order v-for="order in orders" :key="order.id" :order="order" :hideDetailsButton="false" />
   </div>
 </template>
 

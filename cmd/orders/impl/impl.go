@@ -70,6 +70,7 @@ func (s *OrderService) AddOrder(order spec.Order) error {
 	if err != nil {
 		return problem.New500("err://json-marshall", "State JSON marshalling error", s.serviceName, nil, err)
 	}
+
 	if err := s.client.SaveState(context.Background(), s.storeName, order.ID, jsonPayload, nil); err != nil {
 		return problem.NewDaprStateProblem(err, s.serviceName)
 	}
@@ -85,6 +86,7 @@ func (s *OrderService) AddOrder(order spec.Order) error {
 	_ = json.Unmarshal(data.Value, &userOrders)
 
 	alreadyExists := false
+
 	for _, oid := range userOrders {
 		if order.ID == oid {
 			alreadyExists = true
@@ -102,6 +104,7 @@ func (s *OrderService) AddOrder(order spec.Order) error {
 	if err != nil {
 		return problem.New500("err://json-marshall", "State JSON marshalling error", s.serviceName, nil, err)
 	}
+
 	if err := s.client.SaveState(context.Background(), s.storeName, order.ForUser, jsonPayload, nil); err != nil {
 		log.Printf("### Error!, unable to save order list for user '%s'", order.ForUser)
 		return problem.NewDaprStateProblem(err, s.serviceName)
@@ -123,6 +126,7 @@ func (s *OrderService) GetOrder(orderID string) (*spec.Order, error) {
 	}
 
 	order := &spec.Order{}
+
 	err = json.Unmarshal(data.Value, order)
 	if err != nil {
 		prob := problem.New("err://json-decode", "Malformed order JSON", 500, "JSON could not be decoded", s.serviceName)
@@ -222,6 +226,7 @@ func (s *OrderService) SetStatus(order *spec.Order, status spec.OrderStatus) err
 	if err != nil {
 		return problem.New500("err://json-marshall", "State JSON marshalling error", s.serviceName, nil, err)
 	}
+
 	if err := s.client.SaveState(context.Background(), s.storeName, order.ID, jsonPayload, nil); err != nil {
 		log.Printf("### Error! Unable to update status of order '%s'", order.ID)
 		return problem.NewDaprStateProblem(err, s.serviceName)
@@ -283,6 +288,7 @@ func (s *OrderService) SaveReport(order spec.Order) error {
 // It is registered as the receiver for new messages on the Dapr pub/sub order topic
 func (s *OrderService) pubSubOrderReceiver(ctx context.Context, e *common.TopicEvent) (bool, error) {
 	order := spec.Order{}
+
 	err := json.Unmarshal(e.RawData, &order)
 	if err != nil {
 		return false, err

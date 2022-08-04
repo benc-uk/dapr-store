@@ -29,14 +29,17 @@ func (api API) addRoutes(router *mux.Router) {
 //
 func (api API) getOrder(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
+
 	order, err := api.service.GetOrder(vars["id"])
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
 	resp.Header().Set("Content-Type", "application/json")
+
 	json, _ := json.Marshal(order)
 	_, _ = resp.Write(json)
 }
@@ -46,14 +49,17 @@ func (api API) getOrder(resp http.ResponseWriter, req *http.Request) {
 //
 func (api API) getOrdersForUser(resp http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
+
 	orders, err := api.service.GetOrdersForUser(vars["username"])
 	if err != nil {
 		prob := err.(*problem.Problem)
 		prob.Send(resp)
+
 		return
 	}
 
 	resp.Header().Set("Content-Type", "application/json")
+
 	json, _ := json.Marshal(orders)
 	_, _ = resp.Write(json)
 }

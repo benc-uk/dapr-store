@@ -24,14 +24,17 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
 	err = json.Unmarshal(mockJSON, &MockOrders)
 	if err != nil {
 		panic(err)
 	}
+
 	mockJSON, err = ioutil.ReadFile("../../testing/mock-data/user-orders.json")
 	if err != nil {
 		panic(err)
 	}
+
 	err = json.Unmarshal(mockJSON, &mockUserOrders)
 	if err != nil {
 		panic(err)
@@ -103,6 +106,7 @@ func (s OrderService) AddOrder(order orderspec.Order) error {
 func (s OrderService) SetStatus(order *orderspec.Order, status orderspec.OrderStatus) error {
 	order.Status = status
 	MockOrders[0] = *order
+
 	return nil
 }
 

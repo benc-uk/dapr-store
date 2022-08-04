@@ -23,14 +23,17 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
 	err = json.Unmarshal(mockJSON, &mockCarts)
 	if err != nil {
 		panic(err)
 	}
+
 	mockJSON, err = ioutil.ReadFile("../../testing/mock-data/orders.json")
 	if err != nil {
 		panic(err)
 	}
+
 	err = json.Unmarshal(mockJSON, &mockOrders)
 	if err != nil {
 		panic(err)
@@ -50,6 +53,7 @@ func (s CartService) Get(username string) (*cartspec.Cart, error) {
 	cart := &cartspec.Cart{}
 	cart.ForUser = username
 	cart.Products = make(map[string]int)
+
 	return cart, nil
 }
 
@@ -58,6 +62,7 @@ func (s CartService) Get(username string) (*cartspec.Cart, error) {
 //
 func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 	log.Printf("%+v", cart)
+
 	if len(cart.Products) == 0 {
 		return nil, problem.New("err://bad", "Cart empty", 400, "Cart empty", "mock-cart")
 	}
@@ -72,11 +77,14 @@ func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, coun
 	if count < 0 {
 		return problem.New("err://bad", "SetProductCount", 500, "count can not be negative", "mock-cart")
 	}
+
 	if count == 0 {
 		delete(mockCarts[0].Products, productID)
 		return nil
 	}
+
 	mockCarts[0].Products[productID] = count
+
 	return nil
 }
 
@@ -85,10 +93,12 @@ func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, coun
 //
 func (s CartService) Clear(cart *cartspec.Cart) error {
 	cart.Products = map[string]int{}
+
 	for i, c := range mockCarts {
 		if c.ForUser == cart.ForUser {
 			mockCarts[i] = *cart
 		}
 	}
+
 	return nil
 }

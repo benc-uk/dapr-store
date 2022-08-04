@@ -68,6 +68,7 @@ func main() {
 
 	// Start server
 	log.Printf("### Server listening on %v\n", serverPort)
+
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         fmt.Sprintf(":%d", serverPort),
@@ -75,6 +76,7 @@ func main() {
 		ReadTimeout:  10 * time.Second,
 		IdleTimeout:  10 * time.Second,
 	}
+
 	err := srv.ListenAndServe()
 	if err != nil {
 		panic(err.Error())

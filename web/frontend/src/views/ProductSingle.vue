@@ -13,7 +13,9 @@
     <error-box :error="error" />
 
     <div v-if="!product && !error" class="text-center">
-      <div class="spinner-border text-success" role="status"><span class="visually-hidden">...</span></div>
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">...</span>
+      </div>
     </div>
 
     <div v-if="product" class="card">

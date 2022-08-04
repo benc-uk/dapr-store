@@ -21,8 +21,10 @@
       <h4>Order accepted! 😄</h4>
       <router-link :to="`/order/` + newOrder.id">
         <div>
-          Your order for <b>£{{ newOrder.amount }}</b> has been accepted, the order ID is: <b>{{ newOrder.id }}</b
-          ><br />
+          Your order for <b>£{{ newOrder.amount }}</b> has been accepted, the order ID is: <b>{{ newOrder.id }}</b>
+
+          <br />
+
           Check your account for progress on your order(s)
         </div>
       </router-link>

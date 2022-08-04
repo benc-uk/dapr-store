@@ -49,7 +49,7 @@ export default {
     this.loadOrder()
 
     // Refresh in the background every 5 seconds
-    timerId = setInterval(this.loadOrder, 5000) 
+    timerId = setInterval(this.loadOrder, 5000)
   },
 
   unmounted() {

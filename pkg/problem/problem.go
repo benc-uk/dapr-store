@@ -37,7 +37,7 @@ func (p *Problem) Send(resp http.ResponseWriter) {
 	log.Printf("### API %s", p.Error())
 	resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(p.Status)
-	json.NewEncoder(resp).Encode(p)
+	_ = json.NewEncoder(resp).Encode(p)
 }
 
 //
@@ -52,6 +52,7 @@ func New500(url string, title string, instance string, apiResp *http.Response, e
 	} else {
 		p = New(url, title, 500, "Other error occurred", instance)
 	}
+
 	return p
 }
 

@@ -11,7 +11,9 @@
   <div class="card order p-4">
     <div class="d-flex justify-content-between mb-2">
       <h2>{{ order.title }}</h2>
-      <router-link v-if="!hideDetailsButton" class="btn btn-primary" :to="`/order/` + order.id"><i class="fa-solid fa-list-check"></i> &nbsp; ORDER DETAILS</router-link>
+      <router-link v-if="!hideDetailsButton" class="btn btn-primary" :to="`/order/` + order.id">
+        <i class="fa-solid fa-list-check"></i> &nbsp; ORDER DETAILS
+      </router-link>
     </div>
     <h2>
       Status: <span class="text-capitalize order-status" :class="['order-' + order.status]">{{ order.status }}</span>

@@ -29,6 +29,7 @@ var jwkSet jwk.Set
 //
 // JWTValidator added around any route will protect it
 //
+//nolint:wsl
 func JWTValidator(next http.HandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -46,6 +47,7 @@ func JWTValidator(next http.HandlerFunc) http.HandlerFunc {
 		if len(clientID) == 0 {
 			log.Printf("### Auth (%s): No validation as AUTH_CLIENT_ID is not set\n", r.URL)
 			next(w, r)
+
 			return
 		}
 
@@ -53,17 +55,21 @@ func JWTValidator(next http.HandlerFunc) http.HandlerFunc {
 		authHeader := r.Header.Get("Authorization")
 		if len(authHeader) == 0 {
 			w.WriteHeader(401)
+
 			return
 		}
+
 		authParts := strings.Split(authHeader, " ")
 		if len(authParts) != 2 {
 			w.WriteHeader(401)
 			return
 		}
+
 		if strings.ToLower(authParts[0]) != "bearer" {
 			w.WriteHeader(401)
 			return
 		}
+
 		tokenString := authParts[1]
 
 		// Decode the token, using getKeyFromJWKS to get the key
@@ -79,6 +85,7 @@ func JWTValidator(next http.HandlerFunc) http.HandlerFunc {
 			w.WriteHeader(401)
 			return
 		}
+
 		if claims["aud"] != clientID {
 			w.WriteHeader(401)
 			return
@@ -97,6 +104,7 @@ func getKeyFromJWKS(token *jwt.Token) (interface{}, error) {
 	// We only support one JWKS, but most identity platforms have just the one, right?
 	if jwkSet == nil {
 		var err error
+
 		jwkSet, err = jwk.Fetch(context.Background(), jwksURL)
 		if err != nil {
 			return nil, err
@@ -105,15 +113,20 @@ func getKeyFromJWKS(token *jwt.Token) (interface{}, error) {
 
 	keyID, ok := token.Header["kid"].(string)
 	if !ok {
-		return nil, errors.New("Expecting JWT header to have kid")
+		return nil, errors.New("expecting JWT header to have kid")
 	}
 
 	if key, found := jwkSet.LookupKeyID(keyID); found {
 		// This I *think* gets the key value as raw bytes
 		var keyReturn interface{}
-		key.Raw(&keyReturn)
+
+		err := key.Raw(&keyReturn)
+		if err != nil {
+			return nil, err
+		}
+
 		return keyReturn, nil
 	}
 
-	return nil, fmt.Errorf("Unable to find key: %q", keyID)
+	return nil, fmt.Errorf("unable to find key: %q", keyID)
 }
