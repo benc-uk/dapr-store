@@ -76,8 +76,13 @@ func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
 
 	user, err := api.service.GetUser(vars["username"])
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		prob, isProb := err.(*problem.Problem)
+		if isProb {
+			prob.Send(resp)
+		} else {
+			resp.WriteHeader(404)
+			_, _ = resp.Write([]byte(err.Error()))
+		}
 
 		return
 	}
