@@ -19,11 +19,11 @@ help:  ## 💬 This help message :)
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 lint: $(FRONTEND_DIR)/node_modules      ## 🔎 Lint & format, check to be run in CI, sets exit code on error
-	golangci-lint run ./...
+	golangci-lint run --modules-download-mode=mod ./...
 	cd $(FRONTEND_DIR); npm run lint
 
 lint-fix: $(FRONTEND_DIR)/node_modules  ## 📝 Lint & format, fixes errors and modifies code
-	golangci-lint run ./... --fix
+	golangci-lint run --modules-download-mode=mod --fix ./...
 	cd $(FRONTEND_DIR); npm run lint-fix
 
 test:  ## 🎯 Unit tests for services and snapshot tests for SPA frontend 
