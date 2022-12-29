@@ -56,8 +56,8 @@ func main() {
 
 	// Enabling of auth is optional, set via AUTH_CLIENT_ID env var
 	var validator auth.Validator
-	if clientID := env.GetEnvString("AUTH_CLIENT_ID", ""); clientID == "" {
 
+	if clientID := env.GetEnvString("AUTH_CLIENT_ID", ""); clientID == "" {
 		log.Println("### 🚨 No AUTH_CLIENT_ID set, API auth will be disabled")
 
 		validator = auth.NewPassthroughValidator()

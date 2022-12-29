@@ -9,7 +9,7 @@ package mock
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 
@@ -24,7 +24,7 @@ type ProductService struct {
 var mockProducts []spec.Product
 
 func init() {
-	mockJSON, err := ioutil.ReadFile("../../testing/mock-data/products.json")
+	mockJSON, err := os.ReadFile("../../testing/mock-data/products.json")
 	if err != nil {
 		panic(err)
 	}

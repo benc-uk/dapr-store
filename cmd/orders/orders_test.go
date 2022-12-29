@@ -8,7 +8,7 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"strings"
 	"testing"
@@ -23,7 +23,7 @@ import (
 )
 
 func TestOrders(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 
 	// Mock of CartService
 	mockOrdersSvc := &mock.OrderService{}

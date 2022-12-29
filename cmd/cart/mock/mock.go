@@ -2,8 +2,8 @@ package mock
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
+	"os"
 
 	"github.com/benc-uk/dapr-store/cmd/cart/impl"
 	cartspec "github.com/benc-uk/dapr-store/cmd/cart/spec"
@@ -19,7 +19,7 @@ var mockCarts []cartspec.Cart
 var mockOrders []orderspec.Order
 
 func init() {
-	mockJSON, err := ioutil.ReadFile("../../testing/mock-data/carts.json")
+	mockJSON, err := os.ReadFile("../../testing/mock-data/carts.json")
 	if err != nil {
 		panic(err)
 	}
@@ -29,7 +29,7 @@ func init() {
 		panic(err)
 	}
 
-	mockJSON, err = ioutil.ReadFile("../../testing/mock-data/orders.json")
+	mockJSON, err = os.ReadFile("../../testing/mock-data/orders.json")
 	if err != nil {
 		panic(err)
 	}

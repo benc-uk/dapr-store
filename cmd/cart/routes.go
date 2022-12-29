@@ -118,6 +118,7 @@ func (api API) submitCart(resp http.ResponseWriter, req *http.Request) {
 			problem.Wrap(400, req.RequestURI, username, cartErr).Send(resp)
 			return
 		}
+
 		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
 
 		return
