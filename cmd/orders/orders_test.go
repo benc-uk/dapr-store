@@ -8,7 +8,7 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"strings"
 	"testing"
@@ -16,25 +16,26 @@ import (
 
 	"github.com/benc-uk/dapr-store/cmd/orders/mock"
 	"github.com/benc-uk/dapr-store/cmd/orders/spec"
-	"github.com/benc-uk/dapr-store/pkg/api"
-	"github.com/benc-uk/dapr-store/pkg/apitests"
-	"github.com/gorilla/mux"
+	"github.com/benc-uk/go-rest-api/pkg/api"
+	"github.com/benc-uk/go-rest-api/pkg/auth"
+	"github.com/benc-uk/go-rest-api/pkg/httptester"
+	"github.com/go-chi/chi/v5"
 )
 
 func TestOrders(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 
 	// Mock of CartService
 	mockOrdersSvc := &mock.OrderService{}
 
-	router := mux.NewRouter()
+	router := chi.NewRouter()
 	api := API{
-		api.NewBase("orders", "ignore", "ignore", true, router),
+		api.NewBase("orders", "ignore", "ignore", true),
 		mockOrdersSvc,
 	}
-	api.addRoutes(router)
+	api.addRoutes(router, auth.NewPassthroughValidator())
 
-	apitests.Run(t, router, testCases)
+	httptester.Run(t, router, testCases)
 
 	// Rest of tests don't go through the router/api
 
@@ -91,7 +92,7 @@ func TestOrders(t *testing.T) {
 	})
 }
 
-var testCases = []apitests.Test{
+var testCases = []httptester.TestCase{
 	{
 		Name:           "get an existing order",
 		URL:            "/get/ord-mock",

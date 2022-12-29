@@ -14,7 +14,7 @@ GET http://{{host}}/v1.0/invoke/products/method/offers
 
 ###
 
-GET http://{{host}}/v1.0/invoke/products/method/get/prd006
+GET http://{{host}}/v1.0/invoke/products/method/get/prd003
 
 ###
 

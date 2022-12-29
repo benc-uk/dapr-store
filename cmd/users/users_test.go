@@ -8,33 +8,37 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"testing"
 
 	"github.com/benc-uk/dapr-store/cmd/users/mock"
-	"github.com/benc-uk/dapr-store/pkg/api"
-	"github.com/benc-uk/dapr-store/pkg/apitests"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
+
+	"github.com/benc-uk/go-rest-api/pkg/api"
+	"github.com/benc-uk/go-rest-api/pkg/auth"
+	"github.com/benc-uk/go-rest-api/pkg/httptester"
 )
 
 func TestUsers(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	// Comment out to see logs
+	log.SetOutput(io.Discard)
 
 	// Mock of UserService
 	mockUserSvc := &mock.UserService{}
 
-	router := mux.NewRouter()
+	router := chi.NewRouter()
 	api := API{
-		api.NewBase("users", "ignore", "ignore", true, router),
+		api.NewBase("users", "ignore", "ignore", true),
 		mockUserSvc,
 	}
-	api.addRoutes(router)
 
-	apitests.Run(t, router, testCases)
+	api.addRoutes(router, auth.NewPassthroughValidator())
+
+	httptester.Run(t, router, testCases)
 }
 
-var testCases = []apitests.Test{
+var testCases = []httptester.TestCase{
 	{
 		Name:   "register valid user",
 		URL:    "/register",
@@ -55,9 +59,9 @@ var testCases = []apitests.Test{
 			"username": "test@example.net",
 			"displayName": "Mr Test"
 		}`,
-		CheckBody:      "already registered",
-		CheckBodyCount: 2,
-		CheckStatus:    400,
+		CheckBody:      "already",
+		CheckBodyCount: 1,
+		CheckStatus:    409,
 	},
 	{
 		Name:   "register existing user 2",
@@ -67,9 +71,9 @@ var testCases = []apitests.Test{
 			"username": "mock@example.net",
 			"displayName": "Mock user"
 		}`,
-		CheckBody:      "already registered",
-		CheckBodyCount: 2,
-		CheckStatus:    400,
+		CheckBody:      "already",
+		CheckBodyCount: 1,
+		CheckStatus:    409,
 	},
 	{
 		Name:   "register invalid user",
@@ -87,7 +91,7 @@ var testCases = []apitests.Test{
 		URL:            "/register",
 		Method:         "POST",
 		Body:           `lemon_curd`,
-		CheckBody:      "Malformed",
+		CheckBody:      "invalid",
 		CheckBodyCount: 1,
 		CheckStatus:    400,
 	},

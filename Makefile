@@ -1,7 +1,7 @@
 SERVICE_DIR := cmd
 FRONTEND_DIR := web/frontend
 OUTPUT_DIR := ./output
-VERSION ?= 0.7.6
+VERSION ?= 0.8.0
 BUILD_INFO ?= "Makefile build"
 DAPR_RUN_LOGLEVEL := warn
 
@@ -107,7 +107,7 @@ clean:  ## 🧹 Clean the project, remove modules, binaries and outputs
 	rm -rf $(SERVICE_DIR)/frontend-host/frontend-host
 
 run:  ## 🚀 Start & run everything locally
-	cd $(FRONTEND_DIR); npm run serve &
+#cd $(FRONTEND_DIR); npm run serve &
 	dapr run --app-id cart     --app-port 9001 --log-level $(DAPR_RUN_LOGLEVEL) go run github.com/benc-uk/dapr-store/cmd/cart &
 	dapr run --app-id products --app-port 9002 --log-level $(DAPR_RUN_LOGLEVEL) go run github.com/benc-uk/dapr-store/cmd/products ./cmd/products/sqlite.db &
 	dapr run --app-id users    --app-port 9003 --log-level $(DAPR_RUN_LOGLEVEL) go run github.com/benc-uk/dapr-store/cmd/users &

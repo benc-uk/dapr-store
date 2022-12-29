@@ -2,12 +2,12 @@ package mock
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
+	"os"
 
+	"github.com/benc-uk/dapr-store/cmd/cart/impl"
 	cartspec "github.com/benc-uk/dapr-store/cmd/cart/spec"
 	orderspec "github.com/benc-uk/dapr-store/cmd/orders/spec"
-	"github.com/benc-uk/dapr-store/pkg/problem"
 )
 
 // CartService mock
@@ -19,7 +19,7 @@ var mockCarts []cartspec.Cart
 var mockOrders []orderspec.Order
 
 func init() {
-	mockJSON, err := ioutil.ReadFile("../../testing/mock-data/carts.json")
+	mockJSON, err := os.ReadFile("../../testing/mock-data/carts.json")
 	if err != nil {
 		panic(err)
 	}
@@ -29,7 +29,7 @@ func init() {
 		panic(err)
 	}
 
-	mockJSON, err = ioutil.ReadFile("../../testing/mock-data/orders.json")
+	mockJSON, err = os.ReadFile("../../testing/mock-data/orders.json")
 	if err != nil {
 		panic(err)
 	}
@@ -40,9 +40,7 @@ func init() {
 	}
 }
 
-//
 // Get fetches saved cart for a given user, if not exists an empty cart is returned
-//
 func (s CartService) Get(username string) (*cartspec.Cart, error) {
 	for _, cart := range mockCarts {
 		if cart.ForUser == username {
@@ -57,25 +55,21 @@ func (s CartService) Get(username string) (*cartspec.Cart, error) {
 	return cart, nil
 }
 
-//
 // Submit a cart and turn into an order
-//
 func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 	log.Printf("%+v", cart)
 
 	if len(cart.Products) == 0 {
-		return nil, problem.New("err://bad", "Cart empty", 400, "Cart empty", "mock-cart")
+		return nil, impl.EmptyCartError()
 	}
 
 	return &mockOrders[0], nil
 }
 
-//
 // SetProductCount updates the count of a given product in the cart
-//
 func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, count int) error {
 	if count < 0 {
-		return problem.New("err://bad", "SetProductCount", 500, "count can not be negative", "mock-cart")
+		return impl.ProductCountError()
 	}
 
 	if count == 0 {
@@ -88,9 +82,7 @@ func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, coun
 	return nil
 }
 
-//
 // Clear the cart
-//
 func (s CartService) Clear(cart *cartspec.Cart) error {
 	cart.Products = map[string]int{}
 

@@ -1,7 +1,7 @@
 # ===================================================================================
 # === Stage 1: Build the Go service code into 'server' exe ==========================
 # ===================================================================================
-FROM golang:1.18-alpine as go-build
+FROM golang:1.19-alpine as go-build
 
 ARG SERVICE_NAME="SET_ON_COMMAND_LINE"
 ARG VERSION="0.0.1"
@@ -20,7 +20,6 @@ RUN go mod download
 
 # Copy in Go source files
 COPY cmd/ ./cmd/
-COPY pkg/ ./pkg/
 
 # Now run the build
 # Inject version and build details, to be available at runtime 

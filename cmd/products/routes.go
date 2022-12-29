@@ -8,103 +8,76 @@
 package main
 
 import (
-	"encoding/json"
+	"errors"
 	"net/http"
 
-	"github.com/benc-uk/dapr-store/pkg/problem"
-	"github.com/gorilla/mux"
+	"github.com/benc-uk/go-rest-api/pkg/problem"
+	"github.com/go-chi/chi/v5"
 )
 
-//
 // All routes we need should be registered here
-//
-func (api API) addRoutes(router *mux.Router) {
-	router.HandleFunc("/get/{id}", api.getProduct)
-	router.HandleFunc("/catalog", api.getCatalog)
-	router.HandleFunc("/offers", api.getOffers)
-	router.HandleFunc("/search/{query}", api.searchProducts)
+func (api API) addRoutes(router chi.Router) {
+	router.Get("/get/{id}", api.getProduct)
+	router.Get("/catalog", api.getCatalog)
+	router.Get("/offers", api.getOffers)
+	router.Get("/search/{query}", api.searchProducts)
 }
 
-//
 // Return a single product
-//
 func (api API) getProduct(resp http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
+	id := chi.URLParam(req, "id")
 
-	products, err := api.service.QueryProducts("ID", vars["id"])
+	products, err := api.service.QueryProducts("ID", id)
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		problem.Wrap(500, req.RequestURI, id, err).Send(resp)
 
 		return
 	}
 
 	// Handle no results
 	if len(products) < 1 {
-		prob := problem.New("err://products-db", "Not found", 404, "Product id: '"+vars["id"]+"' not found in DB", serviceName)
-		prob.Send(resp)
+		problem.Wrap(404, req.RequestURI, id, errors.New("product not found")).Send(resp)
 
 		return
 	}
 
-	json, _ := json.Marshal(products[0])
-
-	resp.Header().Set("Content-Type", "application/json")
-	_, _ = resp.Write(json)
+	api.ReturnJSON(resp, products[0])
 }
 
-//
 // Return the product catalog
-//
 func (api API) getCatalog(resp http.ResponseWriter, req *http.Request) {
 	products, err := api.service.AllProducts()
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		problem.Wrap(500, req.RequestURI, "catalog", err).Send(resp)
 
 		return
 	}
 
-	json, _ := json.Marshal(products)
-
-	resp.Header().Set("Content-Type", "application/json")
-	_, _ = resp.Write(json)
+	api.ReturnJSON(resp, products)
 }
 
-//
 // Return the products on offer
-//
 func (api API) getOffers(resp http.ResponseWriter, req *http.Request) {
 	products, err := api.service.QueryProducts("onoffer", "1")
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		problem.Wrap(500, req.RequestURI, "offers", err).Send(resp)
 
 		return
 	}
 
-	json, _ := json.Marshal(products)
-
-	resp.Header().Set("Content-Type", "application/json")
-	_, _ = resp.Write(json)
+	api.ReturnJSON(resp, products)
 }
 
-//
 // Search the products table
-//
 func (api API) searchProducts(resp http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
+	query := chi.URLParam(req, "query")
 
-	products, err := api.service.SearchProducts(vars["query"])
+	products, err := api.service.SearchProducts(query)
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		problem.Wrap(500, req.RequestURI, query, err).Send(resp)
 
 		return
 	}
 
-	json, _ := json.Marshal(products)
-
-	resp.Header().Set("Content-Type", "application/json")
-	_, _ = resp.Write(json)
+	api.ReturnJSON(resp, products)
 }

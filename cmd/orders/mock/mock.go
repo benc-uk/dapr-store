@@ -3,12 +3,12 @@ package mock
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"log"
+	"os"
 	"time"
 
+	"github.com/benc-uk/dapr-store/cmd/orders/impl"
 	orderspec "github.com/benc-uk/dapr-store/cmd/orders/spec"
-	"github.com/benc-uk/dapr-store/pkg/problem"
 )
 
 // OrderService mock
@@ -20,7 +20,7 @@ var MockOrders []orderspec.Order
 var mockUserOrders []string
 
 func init() {
-	mockJSON, err := ioutil.ReadFile("../../testing/mock-data/orders.json")
+	mockJSON, err := os.ReadFile("../../testing/mock-data/orders.json")
 	if err != nil {
 		panic(err)
 	}
@@ -30,7 +30,7 @@ func init() {
 		panic(err)
 	}
 
-	mockJSON, err = ioutil.ReadFile("../../testing/mock-data/user-orders.json")
+	mockJSON, err = os.ReadFile("../../testing/mock-data/user-orders.json")
 	if err != nil {
 		panic(err)
 	}
@@ -47,7 +47,7 @@ func (s OrderService) GetOrder(orderID string) (*orderspec.Order, error) {
 		return &MockOrders[0], nil
 	}
 
-	return nil, problem.New("err://not-found", "No data returned", 404, "Order: '"+orderID+"' not found", "orders")
+	return nil, impl.OrderNotFoundError()
 }
 
 // GetOrdersForUser mock

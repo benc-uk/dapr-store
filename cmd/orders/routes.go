@@ -8,58 +8,50 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 
-	"github.com/benc-uk/dapr-store/pkg/auth"
-	"github.com/benc-uk/dapr-store/pkg/problem"
-	"github.com/gorilla/mux"
+	"github.com/benc-uk/dapr-store/cmd/orders/impl"
+	"github.com/benc-uk/go-rest-api/pkg/auth"
+	"github.com/benc-uk/go-rest-api/pkg/problem"
+	"github.com/go-chi/chi/v5"
 )
 
-//
 // All routes we need should be registered here
-//
-func (api API) addRoutes(router *mux.Router) {
-	router.HandleFunc("/get/{id}", auth.JWTValidator(api.getOrder))
-	router.HandleFunc("/getForUser/{username}", auth.JWTValidator(api.getOrdersForUser))
+func (api API) addRoutes(router chi.Router, v auth.Validator) {
+	router.Get("/get/{id}", v.Protect(api.getOrder))
+	router.Get("/getForUser/{username}", v.Protect(api.getOrdersForUser))
 }
 
-//
 // Fetch existing order by id
-//
 func (api API) getOrder(resp http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
+	id := chi.URLParam(req, "id")
 
-	order, err := api.service.GetOrder(vars["id"])
+	order, err := api.service.GetOrder(id)
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		if orderError, ok := err.(impl.OrdersError); ok && orderError.Error() == impl.NotFoundError {
+			problem.Wrap(404, req.RequestURI, id, err).Send(resp)
+
+			return
+		}
+
+		problem.Wrap(500, req.RequestURI, id, err).Send(resp)
 
 		return
 	}
 
-	resp.Header().Set("Content-Type", "application/json")
-
-	json, _ := json.Marshal(order)
-	_, _ = resp.Write(json)
+	api.ReturnJSON(resp, order)
 }
 
-//
 // Fetch all orders for a given user
-//
 func (api API) getOrdersForUser(resp http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
+	username := chi.URLParam(req, "username")
 
-	orders, err := api.service.GetOrdersForUser(vars["username"])
+	orders, err := api.service.GetOrdersForUser(username)
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
 
 		return
 	}
 
-	resp.Header().Set("Content-Type", "application/json")
-
-	json, _ := json.Marshal(orders)
-	_, _ = resp.Write(json)
+	api.ReturnJSON(resp, orders)
 }
