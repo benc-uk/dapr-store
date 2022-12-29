@@ -142,7 +142,6 @@ async function apiCall(apiPath, method = 'get', data = null) {
     headers
   }
 
-  console.log(JSON.stringify(request))
   // Add payload if required
   if (data) {
     request.body = JSON.stringify(data)
