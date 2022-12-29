@@ -3,13 +3,13 @@ name: CI Build App
 on:
   workflow_dispatch:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - "cmd/**"
       - "web/**"
       - ".github/workflows/**"
   pull_request:
-    branches: [master]
+    branches: [main]
 
 env:
   VERSION: 0.6.0-dev
@@ -70,9 +70,9 @@ jobs:
           make image-all IMAGE_TAG=$IMAGE_TAG VERSION=$VERSION BUILD_INFO="$BUILD_INFO"
           make image-all IMAGE_TAG=latest VERSION=$VERSION BUILD_INFO="$BUILD_INFO"
 
-      # Steps after this are only run when merging or pushing into master
+      # Steps after this are only run when merging or pushing into main
       - name: "Push to container registry"
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login $IMAGE_REG -u $GITHUB_ACTOR --password-stdin
           make push-all IMAGE_TAG=$IMAGE_TAG
@@ -80,7 +80,7 @@ jobs:
 
       # Continuous deployment trigger
       - name: "Trigger deployment with workflows_dispatch"
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: Deploy To Kubernetes

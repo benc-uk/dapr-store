@@ -1,1378 +1,1233 @@
 {
-	"info": {
-		"_postman_id": "dc39e63e-8dc4-4337-9441-e5189fcfc4e6",
-		"name": "Dapr Store",
-		"description": "A set of API requests to test and validate the Dapr Store external API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Normal Requests",
-			"item": [
-				{
-					"name": "Products - Get by ID",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('product is valid', function() {",
-									"    pm.response.to.have.jsonSchema(pm.variables.get(\"schema\"));",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
-									"    pm.variables.set(\"schema\", response.json())\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/get/prd001",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"products",
-								"method",
-								"get",
-								"prd001"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "Products - Get by ID",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "http://{{endpoint}}/v1.0/invoke/products/method/get/prd001",
-									"protocol": "http",
-									"host": [
-										"{{endpoint}}"
-									],
-									"path": [
-										"v1.0",
-										"invoke",
-										"products",
-										"method",
-										"get",
-										"prd001"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Server",
-									"value": "nginx/1.17.10"
-								},
-								{
-									"key": "Date",
-									"value": "Tue, 02 Jun 2020 14:02:16 GMT"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Content-Length",
-									"value": "144"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"id\": \"prd001\",\n    \"name\": \"Top Hat (6″)\",\n    \"cost\": 39.95,\n    \"description\": \"Made from 100% Wool and nice\",\n    \"image\": \"/img/catalog/1.jpg\",\n    \"onOffer\": false\n}"
-						}
-					]
-				},
-				{
-					"name": "Products - Get Catalog",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('multiple products are returned', function() {",
-									"    pm.expect(pm.response.json()).to.be.an('array');",
-									"    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
-									"});",
-									"",
-									"pm.test('all products are valid', function() {",
-									"    const schema = pm.environment.get(\"productSchema\");",
-									"    for(let product of pm.response.json())",
-									"        pm.expect(product).to.have.jsonSchema(pm.variables.get(\"schema\"));",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
-									"    pm.variables.set(\"schema\", response.json())\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/catalog",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"products",
-								"method",
-								"catalog"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Products - Get Offers",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('multiple products are returned', function() {",
-									"    pm.expect(pm.response.json()).to.be.an('array');",
-									"    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
-									"});",
-									"",
-									"pm.test('all products are valid', function() {",
-									"    const schema = pm.environment.get(\"productSchema\");",
-									"    for(let product of pm.response.json()) {",
-									"        pm.expect(product).to.have.jsonSchema(pm.variables.get(\"schema\"));",
-									"    }",
-									"});",
-									"",
-									"pm.test('all products are on offer', function() {",
-									"    for(let product of pm.response.json()) {",
-									"        pm.expect(product.onOffer).to.be.true",
-									"    }",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
-									"    pm.variables.set(\"schema\", response.json())\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/offers",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"products",
-								"method",
-								"offers"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Products - Search",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('multiple products are returned', function() {",
-									"    pm.expect(pm.response.json()).to.be.an('array');",
-									"    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
-									"});",
-									"",
-									"pm.test('all products are valid', function() {",
-									"    const schema = pm.environment.get(\"productSchema\");",
-									"    for(let product of pm.response.json()) {",
-									"        pm.expect(product).to.have.jsonSchema(pm.variables.get(\"schema\"));",
-									"    }",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
-									"    pm.variables.set(\"schema\", response.json());\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/search/silk",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"products",
-								"method",
-								"search",
-								"silk"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Users - Register",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.environment.set(\"username\", pm.variables.replaceIn('{{$randomExampleEmail}}'));"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"username\": \"{{username}}\",\n\t\"displayName\": \"Demo User API\",\n\t\"profileImage\": \"demo.jpg\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/users/method/register",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"users",
-								"method",
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Users - Get",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('user is valid', function() {",
-									"    pm.response.to.have.jsonSchema(pm.variables.get(\"schema\"));",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.sendRequest(pm.variables.get(\"userSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"userSchemaUrl\"));\r",
-									"    pm.variables.set(\"schema\", response.json())\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/users/method/get/{{username}}",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"users",
-								"method",
-								"get",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Users - Check Reg",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is 204\", function () {",
-									"    pm.response.to.have.status(204);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.sendRequest(pm.variables.get(\"userSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"userSchemaUrl\"));\r",
-									"    pm.variables.set(\"schema\", response.json())\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/users/method/isregistered/{{username}}",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"users",
-								"method",
-								"isregistered",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Cart - Clear",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"returned cart is empty\", function () {",
-									"    pm.expect(pm.response.json().products).to.be.empty",
-									"    pm.expect(pm.response.json().forUser).to.be.equal(pm.variables.get(\"username\"))",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/cart/method/clear/{{username}}",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"cart",
-								"method",
-								"clear",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Cart - Add Product",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"product is in cart\", function () {",
-									"    pm.expect(pm.response.json().products).to.not.be.empty",
-									"    pm.expect(pm.response.json().products[\"prd001\"]).to.be.equal(3)",
-									"    pm.expect(pm.response.json().forUser).to.be.equal(pm.variables.get(\"username\"))",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/cart/method/setProduct/{{username}}/prd001/3",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"cart",
-								"method",
-								"setProduct",
-								"{{username}}",
-								"prd001",
-								"3"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Cart - Get Contents",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"cart contains products\", function () {",
-									"    pm.expect(pm.response.json().products).to.not.be.empty",
-									"    pm.expect(pm.response.json().forUser).to.be.equal(pm.variables.get(\"username\"))",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/cart/method/get/{{username}}",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"cart",
-								"method",
-								"get",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Cart - Submit Order",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"order is returned\", function () {",
-									"    var order = pm.response.json();",
-									"    pm.expect(order.id).to.have.lengthOf.at.least(4);",
-									"    pm.environment.set(\"orderId\", order.id);",
-									"});",
-									"",
-									"pm.test('order is valid', function() {",
-									"    const ajv = new require('ajv')({});",
-									"",
-									"    // Load both products and order schemas",
-									"    var validate = ajv.addSchema(pm.variables.get(\"schemaProd\")).compile(pm.variables.get(\"schema\"));",
-									"",
-									"    let valid = validate(pm.response.json());",
-									"    pm.expect(valid).to.be.true;",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.sendRequest(pm.variables.get(\"orderSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"orderSchemaUrl\"));\r",
-									"    pm.variables.set(\"schema\", response.json())\r",
-									"});\r",
-									"\r",
-									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
-									"    pm.variables.set(\"schemaProd\", response.json())\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "\"{{username}}\"",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/cart/method/submit",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"cart",
-								"method",
-								"submit"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Orders - Get by ID",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"",
-									"pm.test('order is valid', function() {",
-									"    const ajv = new require('ajv')({});",
-									"",
-									"    // Load both products and order schemas",
-									"    var validate = ajv.addSchema(pm.variables.get(\"schemaProd\")).compile(pm.variables.get(\"schema\"));",
-									"",
-									"    let valid = validate(pm.response.json())",
-									"    pm.expect(valid).to.be.true",
-									"});",
-									"",
-									"",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.sendRequest(pm.variables.get(\"orderSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"orderSchemaUrl\"));\r",
-									"    pm.variables.set(\"schema\", response.json())\r",
-									"});\r",
-									"\r",
-									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
-									"    pm.variables.set(\"schemaProd\", response.json())\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/orders/method/get/{{orderId}}",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"orders",
-								"method",
-								"get",
-								"{{orderId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Orders - Get for User",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"result contains orders\", function () {",
-									"    pm.expect(pm.response.json()).to.be.an('array');",
-									"    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
-									"});",
-									"",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.sendRequest(pm.variables.get(\"orderSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"orderSchemaUrl\"));\r",
-									"    pm.variables.set(\"schema\", response.json())\r",
-									"});\r",
-									"\r",
-									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
-									"    pm.variables.set(\"schemaProd\", response.json())\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/orders/method/getForUser/{{username}}",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"orders",
-								"method",
-								"getForUser",
-								"{{username}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Error Validation",
-			"item": [
-				{
-					"name": "Products - Get Invalid",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is 404 and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(404);",
-									"});",
-									"",
-									"pm.test(\"result has already registered error\", function () {",
-									"    var error = pm.response.json();",
-									"    pm.expect(error.title).to.include('Not found')",
-									"    console.log(pm.response.json())",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/get/blahblah",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"products",
-								"method",
-								"get",
-								"blahblah"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Users - Register Again",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is 400\", function () {",
-									"    var error = pm.response.json();",
-									"    pm.response.to.have.status(400);",
-									"});",
-									"",
-									"pm.test(\"result has already registered error\", function () {",
-									"    var error = pm.response.json();",
-									"    pm.expect(error.title).to.include('already registered')",
-									"    console.log(pm.response.json())",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"username\": \"{{username}}\",\n\t\"displayName\": \"Demo User API\",\n\t\"profileImage\": \"demo.jpg\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/users/method/register",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"users",
-								"method",
-								"register"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Smoke Tests",
-			"item": [
-				{
-					"name": "Products - Get Catalog",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('multiple products are returned', function() {",
-									"    pm.expect(pm.response.json()).to.be.an('array');",
-									"    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
-									"    pm.expect(pm.response.json()[0].id).to.be.a('string')",
-									"    pm.expect(pm.response.json()[0].name).to.be.a('string')",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
-									"    pm.variables.set(\"schema\", response.json())\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/catalog",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"products",
-								"method",
-								"catalog"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Products - Get by ID",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('product is valid', function() {",
-									"    pm.expect(pm.response.json()).to.be.an('object');",
-									"    pm.expect(pm.response.json().name).to.exist;",
-									"    pm.expect(pm.response.json().cost).to.be.a('number')",
-									"    pm.expect(pm.response.json().id).to.be.a('string')",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
-									"    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
-									"    pm.variables.set(\"schema\", response.json())\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/get/prd001",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"products",
-								"method",
-								"get",
-								"prd001"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "Products - Get by ID",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "http://{{endpoint}}/v1.0/invoke/products/method/get/prd001",
-									"protocol": "http",
-									"host": [
-										"{{endpoint}}"
-									],
-									"path": [
-										"v1.0",
-										"invoke",
-										"products",
-										"method",
-										"get",
-										"prd001"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Server",
-									"value": "nginx/1.17.10"
-								},
-								{
-									"key": "Date",
-									"value": "Tue, 02 Jun 2020 14:02:16 GMT"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Content-Length",
-									"value": "144"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"id\": \"prd001\",\n    \"name\": \"Top Hat (6″)\",\n    \"cost\": 39.95,\n    \"description\": \"Made from 100% Wool and nice\",\n    \"image\": \"/img/catalog/1.jpg\",\n    \"onOffer\": false\n}"
-						}
-					]
-				},
-				{
-					"name": "Frontend",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and HTML\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"pm.test(\"page is correct\", function () {\r",
-									"    pm.expect(pm.response.text()).to.include(\"Dapr\");\r",
-									"    pm.expect(pm.response.text()).to.include(\"js/app.\");\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Users - Status",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {\r",
-									"    var jsonData = pm.response.json();\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"pm.test('status is correct', function() {\r",
-									"    pm.expect(pm.response.json()).to.be.an('object');\r",
-									"    pm.expect(pm.response.json().healthy).to.be.true;\r",
-									"    pm.expect(pm.response.json().service).to.be.eq(\"users\");\r",
-									"    pm.expect(pm.response.json().buildInfo).to.exist;\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/users/method/status",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"users",
-								"method",
-								"status"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Orders - Status",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {\r",
-									"    var jsonData = pm.response.json();\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"pm.test('status is correct', function() {\r",
-									"    pm.expect(pm.response.json()).to.be.an('object');\r",
-									"    pm.expect(pm.response.json().healthy).to.be.true;\r",
-									"    pm.expect(pm.response.json().service).to.be.eq(\"orders\");\r",
-									"    pm.expect(pm.response.json().buildInfo).to.exist;\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/orders/method/status",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"orders",
-								"method",
-								"status"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Cart - Status",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {\r",
-									"    var jsonData = pm.response.json();\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"pm.test('status is correct', function() {\r",
-									"    pm.expect(pm.response.json()).to.be.an('object');\r",
-									"    pm.expect(pm.response.json().healthy).to.be.true;\r",
-									"    pm.expect(pm.response.json().service).to.be.eq(\"cart\");\r",
-									"    pm.expect(pm.response.json().buildInfo).to.exist;\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/cart/method/status",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"cart",
-								"method",
-								"status"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Products - Status",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"result is OK and JSON\", function () {\r",
-									"    var jsonData = pm.response.json();\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"pm.test('status is correct', function() {\r",
-									"    pm.expect(pm.response.json()).to.be.an('object');\r",
-									"    pm.expect(pm.response.json().healthy).to.be.true;\r",
-									"    pm.expect(pm.response.json().service).to.be.eq(\"products\");\r",
-									"    pm.expect(pm.response.json().buildInfo).to.exist;\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://{{endpoint}}/v1.0/invoke/products/method/status",
-							"protocol": "http",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"v1.0",
-								"invoke",
-								"products",
-								"method",
-								"status"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"id": "e122e74b-ab9b-4629-ab73-d93b0a7b1b5e",
-			"key": "productSchemaUrl",
-			"value": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/products/spec/schema.json"
-		},
-		{
-			"id": "fa9e6fc5-afd5-4055-a910-661dfa7d5cbc",
-			"key": "userSchemaUrl",
-			"value": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/users/spec/schema.json"
-		},
-		{
-			"id": "b51f5d00-bb71-4210-aafa-57da418da3a2",
-			"key": "orderSchemaUrl",
-			"value": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/orders/spec/schema.json"
-		}
-	]
+  "info": {
+    "_postman_id": "dc39e63e-8dc4-4337-9441-e5189fcfc4e6",
+    "name": "Dapr Store",
+    "description": "A set of API requests to test and validate the Dapr Store external API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Normal Requests",
+      "item": [
+        {
+          "name": "Products - Get by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('product is valid', function() {",
+                  "    pm.response.to.have.jsonSchema(pm.variables.get(\"schema\"));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schema\", response.json())\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/products/method/get/prd001",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "products", "method", "get", "prd001"]
+            }
+          },
+          "response": [
+            {
+              "name": "Products - Get by ID",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://{{endpoint}}/v1.0/invoke/products/method/get/prd001",
+                  "protocol": "http",
+                  "host": ["{{endpoint}}"],
+                  "path": [
+                    "v1.0",
+                    "invoke",
+                    "products",
+                    "method",
+                    "get",
+                    "prd001"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "nginx/1.17.10"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 02 Jun 2020 14:02:16 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "144"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"prd001\",\n    \"name\": \"Top Hat (6″)\",\n    \"cost\": 39.95,\n    \"description\": \"Made from 100% Wool and nice\",\n    \"image\": \"/img/catalog/1.jpg\",\n    \"onOffer\": false\n}"
+            }
+          ]
+        },
+        {
+          "name": "Products - Get Catalog",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('multiple products are returned', function() {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
+                  "});",
+                  "",
+                  "pm.test('all products are valid', function() {",
+                  "    const schema = pm.environment.get(\"productSchema\");",
+                  "    for(let product of pm.response.json())",
+                  "        pm.expect(product).to.have.jsonSchema(pm.variables.get(\"schema\"));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schema\", response.json())\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/products/method/catalog",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "products", "method", "catalog"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Products - Get Offers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('multiple products are returned', function() {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
+                  "});",
+                  "",
+                  "pm.test('all products are valid', function() {",
+                  "    const schema = pm.environment.get(\"productSchema\");",
+                  "    for(let product of pm.response.json()) {",
+                  "        pm.expect(product).to.have.jsonSchema(pm.variables.get(\"schema\"));",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test('all products are on offer', function() {",
+                  "    for(let product of pm.response.json()) {",
+                  "        pm.expect(product.onOffer).to.be.true",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schema\", response.json())\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/products/method/offers",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "products", "method", "offers"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Products - Search",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('multiple products are returned', function() {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
+                  "});",
+                  "",
+                  "pm.test('all products are valid', function() {",
+                  "    const schema = pm.environment.get(\"productSchema\");",
+                  "    for(let product of pm.response.json()) {",
+                  "        pm.expect(product).to.have.jsonSchema(pm.variables.get(\"schema\"));",
+                  "    }",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schema\", response.json());\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/products/method/search/silk",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "products", "method", "search", "silk"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Users - Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"username\", pm.variables.replaceIn('{{$randomExampleEmail}}'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"username\": \"{{username}}\",\n\t\"displayName\": \"Demo User API\",\n\t\"profileImage\": \"demo.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/users/method/register",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "users", "method", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Users - Get",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('user is valid', function() {",
+                  "    pm.response.to.have.jsonSchema(pm.variables.get(\"schema\"));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest(pm.variables.get(\"userSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"userSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schema\", response.json())\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/users/method/get/{{username}}",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": [
+                "v1.0",
+                "invoke",
+                "users",
+                "method",
+                "get",
+                "{{username}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Users - Check Reg",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest(pm.variables.get(\"userSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"userSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schema\", response.json())\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/users/method/isregistered/{{username}}",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": [
+                "v1.0",
+                "invoke",
+                "users",
+                "method",
+                "isregistered",
+                "{{username}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cart - Clear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"returned cart is empty\", function () {",
+                  "    pm.expect(pm.response.json().products).to.be.empty",
+                  "    pm.expect(pm.response.json().forUser).to.be.equal(pm.variables.get(\"username\"))",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/cart/method/clear/{{username}}",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": [
+                "v1.0",
+                "invoke",
+                "cart",
+                "method",
+                "clear",
+                "{{username}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cart - Add Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"product is in cart\", function () {",
+                  "    pm.expect(pm.response.json().products).to.not.be.empty",
+                  "    pm.expect(pm.response.json().products[\"prd001\"]).to.be.equal(3)",
+                  "    pm.expect(pm.response.json().forUser).to.be.equal(pm.variables.get(\"username\"))",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/cart/method/setProduct/{{username}}/prd001/3",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": [
+                "v1.0",
+                "invoke",
+                "cart",
+                "method",
+                "setProduct",
+                "{{username}}",
+                "prd001",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cart - Get Contents",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"cart contains products\", function () {",
+                  "    pm.expect(pm.response.json().products).to.not.be.empty",
+                  "    pm.expect(pm.response.json().forUser).to.be.equal(pm.variables.get(\"username\"))",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/cart/method/get/{{username}}",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": [
+                "v1.0",
+                "invoke",
+                "cart",
+                "method",
+                "get",
+                "{{username}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cart - Submit Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"order is returned\", function () {",
+                  "    var order = pm.response.json();",
+                  "    pm.expect(order.id).to.have.lengthOf.at.least(4);",
+                  "    pm.environment.set(\"orderId\", order.id);",
+                  "});",
+                  "",
+                  "pm.test('order is valid', function() {",
+                  "    const ajv = new require('ajv')({});",
+                  "",
+                  "    // Load both products and order schemas",
+                  "    var validate = ajv.addSchema(pm.variables.get(\"schemaProd\")).compile(pm.variables.get(\"schema\"));",
+                  "",
+                  "    let valid = validate(pm.response.json());",
+                  "    pm.expect(valid).to.be.true;",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest(pm.variables.get(\"orderSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"orderSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schema\", response.json())\r",
+                  "});\r",
+                  "\r",
+                  "pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schemaProd\", response.json())\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\"{{username}}\"",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/cart/method/submit",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "cart", "method", "submit"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Orders - Get by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "",
+                  "pm.test('order is valid', function() {",
+                  "    const ajv = new require('ajv')({});",
+                  "",
+                  "    // Load both products and order schemas",
+                  "    var validate = ajv.addSchema(pm.variables.get(\"schemaProd\")).compile(pm.variables.get(\"schema\"));",
+                  "",
+                  "    let valid = validate(pm.response.json())",
+                  "    pm.expect(valid).to.be.true",
+                  "});",
+                  "",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest(pm.variables.get(\"orderSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"orderSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schema\", response.json())\r",
+                  "});\r",
+                  "\r",
+                  "pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schemaProd\", response.json())\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/orders/method/get/{{orderId}}",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": [
+                "v1.0",
+                "invoke",
+                "orders",
+                "method",
+                "get",
+                "{{orderId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Orders - Get for User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"result contains orders\", function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest(pm.variables.get(\"orderSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"orderSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schema\", response.json())\r",
+                  "});\r",
+                  "\r",
+                  "pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schemaProd\", response.json())\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/orders/method/getForUser/{{username}}",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": [
+                "v1.0",
+                "invoke",
+                "orders",
+                "method",
+                "getForUser",
+                "{{username}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Validation",
+      "item": [
+        {
+          "name": "Products - Get Invalid",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is 404 and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"result has already registered error\", function () {",
+                  "    var error = pm.response.json();",
+                  "    pm.expect(error.title).to.include('Not found')",
+                  "    console.log(pm.response.json())",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/products/method/get/blahblah",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": [
+                "v1.0",
+                "invoke",
+                "products",
+                "method",
+                "get",
+                "blahblah"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Users - Register Again",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is 400\", function () {",
+                  "    var error = pm.response.json();",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"result has already registered error\", function () {",
+                  "    var error = pm.response.json();",
+                  "    pm.expect(error.title).to.include('already registered')",
+                  "    console.log(pm.response.json())",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"username\": \"{{username}}\",\n\t\"displayName\": \"Demo User API\",\n\t\"profileImage\": \"demo.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/users/method/register",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "users", "method", "register"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Smoke Tests",
+      "item": [
+        {
+          "name": "Products - Get Catalog",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('multiple products are returned', function() {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "    pm.expect(pm.response.json()).to.have.lengthOf.at.least(1);",
+                  "    pm.expect(pm.response.json()[0].id).to.be.a('string')",
+                  "    pm.expect(pm.response.json()[0].name).to.be.a('string')",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schema\", response.json())\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/products/method/catalog",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "products", "method", "catalog"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Products - Get by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('product is valid', function() {",
+                  "    pm.expect(pm.response.json()).to.be.an('object');",
+                  "    pm.expect(pm.response.json().name).to.exist;",
+                  "    pm.expect(pm.response.json().cost).to.be.a('number')",
+                  "    pm.expect(pm.response.json().id).to.be.a('string')",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest(pm.variables.get(\"productSchemaUrl\"), (error, response) => {\r",
+                  "    if (error || response.code != 200) throw new Error(\"loading schema from \"+pm.variables.get(\"productSchemaUrl\"));\r",
+                  "    pm.variables.set(\"schema\", response.json())\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/products/method/get/prd001",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "products", "method", "get", "prd001"]
+            }
+          },
+          "response": [
+            {
+              "name": "Products - Get by ID",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://{{endpoint}}/v1.0/invoke/products/method/get/prd001",
+                  "protocol": "http",
+                  "host": ["{{endpoint}}"],
+                  "path": [
+                    "v1.0",
+                    "invoke",
+                    "products",
+                    "method",
+                    "get",
+                    "prd001"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "nginx/1.17.10"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 02 Jun 2020 14:02:16 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "144"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"prd001\",\n    \"name\": \"Top Hat (6″)\",\n    \"cost\": 39.95,\n    \"description\": \"Made from 100% Wool and nice\",\n    \"image\": \"/img/catalog/1.jpg\",\n    \"onOffer\": false\n}"
+            }
+          ]
+        },
+        {
+          "name": "Frontend",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and HTML\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"page is correct\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"Dapr\");\r",
+                  "    pm.expect(pm.response.text()).to.include(\"js/app.\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": [""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Users - Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test('status is correct', function() {\r",
+                  "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                  "    pm.expect(pm.response.json().healthy).to.be.true;\r",
+                  "    pm.expect(pm.response.json().service).to.be.eq(\"users\");\r",
+                  "    pm.expect(pm.response.json().buildInfo).to.exist;\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/users/method/status",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "users", "method", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Orders - Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test('status is correct', function() {\r",
+                  "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                  "    pm.expect(pm.response.json().healthy).to.be.true;\r",
+                  "    pm.expect(pm.response.json().service).to.be.eq(\"orders\");\r",
+                  "    pm.expect(pm.response.json().buildInfo).to.exist;\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/orders/method/status",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "orders", "method", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cart - Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test('status is correct', function() {\r",
+                  "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                  "    pm.expect(pm.response.json().healthy).to.be.true;\r",
+                  "    pm.expect(pm.response.json().service).to.be.eq(\"cart\");\r",
+                  "    pm.expect(pm.response.json().buildInfo).to.exist;\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/cart/method/status",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "cart", "method", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Products - Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"result is OK and JSON\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test('status is correct', function() {\r",
+                  "    pm.expect(pm.response.json()).to.be.an('object');\r",
+                  "    pm.expect(pm.response.json().healthy).to.be.true;\r",
+                  "    pm.expect(pm.response.json().service).to.be.eq(\"products\");\r",
+                  "    pm.expect(pm.response.json().buildInfo).to.exist;\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{endpoint}}/v1.0/invoke/products/method/status",
+              "protocol": "http",
+              "host": ["{{endpoint}}"],
+              "path": ["v1.0", "invoke", "products", "method", "status"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "id": "e122e74b-ab9b-4629-ab73-d93b0a7b1b5e",
+      "key": "productSchemaUrl",
+      "value": "https://raw.githubusercontent.com/benc-uk/dapr-store/main/cmd/products/spec/schema.json"
+    },
+    {
+      "id": "fa9e6fc5-afd5-4055-a910-661dfa7d5cbc",
+      "key": "userSchemaUrl",
+      "value": "https://raw.githubusercontent.com/benc-uk/dapr-store/main/cmd/users/spec/schema.json"
+    },
+    {
+      "id": "b51f5d00-bb71-4210-aafa-57da418da3a2",
+      "key": "orderSchemaUrl",
+      "value": "https://raw.githubusercontent.com/benc-uk/dapr-store/main/cmd/orders/spec/schema.json"
+    }
+  ]
 }
