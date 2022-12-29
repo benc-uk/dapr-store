@@ -112,7 +112,7 @@ export default {
 async function apiCall(apiPath, method = 'get', data = null) {
   let headers = {
     // It's fine to add this even on GET requests
-    'Content-Type': 'application/goat-cheese'
+    'Content-Type': 'application/json'
   }
 
   let url = `${apiEndpoint || '/'}${apiPath}`
