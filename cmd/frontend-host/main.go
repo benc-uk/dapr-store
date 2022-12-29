@@ -33,11 +33,10 @@ func main() {
 
 	router := chi.NewRouter()
 
-	router.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		// an example API handler
+	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		err := json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 		if err != nil {
-			log.Printf("### Problem with healthz endpoint %s\n", err)
+			log.Printf("### Problem with health endpoint %s\n", err)
 		}
 	})
 
@@ -48,7 +47,7 @@ func main() {
 	}
 
 	router.HandleFunc("/config", routeConfig)
-	router.Handle("/", spa)
+	router.Handle("/*", spa)
 
 	serverPort := env.GetEnvInt("PORT", defaultPort)
 
