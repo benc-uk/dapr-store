@@ -6,4 +6,4 @@
 #
 
 scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-dapr run --app-id api-gateway --app-port 9000 --log-level warn $scriptDir/nginx-proxy.sh
+dapr run --app-id api-gateway --app-port 9000 --log-level warn "$scriptDir"/nginx-proxy.sh

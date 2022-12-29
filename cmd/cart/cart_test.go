@@ -8,35 +8,37 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"testing"
 
 	"github.com/benc-uk/dapr-store/cmd/cart/mock"
-	"github.com/benc-uk/dapr-store/pkg/api"
-	"github.com/benc-uk/dapr-store/pkg/apitests"
-	"github.com/gorilla/mux"
+	"github.com/benc-uk/go-rest-api/pkg/api"
+	"github.com/benc-uk/go-rest-api/pkg/auth"
+	"github.com/benc-uk/go-rest-api/pkg/httptester"
+	"github.com/go-chi/chi/v5"
 )
 
 func TestCart(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	// Comment out to see logs
+	log.SetOutput(io.Discard)
 
 	// Mock of CartService
 	mockCartSvc := &mock.CartService{}
 
-	router := mux.NewRouter()
+	router := chi.NewRouter()
 	api := API{
-		api.NewBase("cart", "ignore", "ignore", true, router),
+		api.NewBase("cart", "ignore", "ignore", true),
 		mockCartSvc,
 	}
-	api.addRoutes(router)
+	api.addRoutes(router, auth.NewPassthroughValidator())
 
-	apitests.Run(t, router, testCases)
+	httptester.Run(t, router, testCases)
 }
 
 // ==========================================================================
 
-var testCases = []apitests.Test{
+var testCases = []httptester.TestCase{
 	{
 		Name:           "set count to 1",
 		URL:            "/setProduct/mock@example.net/fake-01/1",
@@ -69,16 +71,16 @@ var testCases = []apitests.Test{
 		URL:            "/setProduct/mock@example.net/fake-77/blah",
 		Method:         "PUT",
 		Body:           "",
-		CheckBody:      "setProductCount failed",
+		CheckBody:      "invalid syntax",
 		CheckBodyCount: 1,
-		CheckStatus:    500,
+		CheckStatus:    400,
 	},
 	{
 		Name:           "set count to -1",
 		URL:            "/setProduct/mock@example.net/fake-77/-1",
 		Method:         "PUT",
 		Body:           "",
-		CheckBody:      "negative",
+		CheckBody:      "product count",
 		CheckBodyCount: 1,
 		CheckStatus:    500,
 	},

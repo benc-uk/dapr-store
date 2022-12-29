@@ -9,105 +9,89 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"log"
 	"net/http"
-	"strconv"
 
+	"github.com/benc-uk/dapr-store/cmd/users/impl"
 	"github.com/benc-uk/dapr-store/cmd/users/spec"
-	"github.com/benc-uk/dapr-store/pkg/auth"
-	"github.com/benc-uk/dapr-store/pkg/problem"
-	"github.com/gorilla/mux"
+	"github.com/benc-uk/go-rest-api/pkg/auth"
+	"github.com/benc-uk/go-rest-api/pkg/problem"
+	"github.com/go-chi/chi/v5"
 )
 
-//
 // All routes we need should be registered here
-//
-func (api API) addRoutes(router *mux.Router) {
-	router.HandleFunc("/register", auth.JWTValidator(api.registerUser)).Methods("POST")
-	router.HandleFunc("/get/{username}", auth.JWTValidator(api.getUser))
-	router.HandleFunc("/isregistered/{username}", api.checkRegistered)
+func (api API) addRoutes(router chi.Router, v auth.Validator) {
+	router.Post("/register", v.Protect(api.registerUser))
+	router.Get("/get/{username}", v.Protect(api.getUser))
+	router.Get("/isregistered/{username}", api.checkRegistered)
 }
 
-//
 // Register new user
-//
 func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
-	cl, _ := strconv.Atoi(req.Header.Get("content-length"))
-	if cl <= 0 {
-		problem.New("err://body-missing", "Zero length body", 400, "Zero length body", api.ServiceName).Send(resp)
-		return
-	}
-
 	user := spec.User{}
-	err := json.NewDecoder(req.Body).Decode(&user)
 
 	// Some basic validation and checking on what we've been posted
-	if err != nil {
-		problem.New("err://json-decode", "Malformed user JSON", 400, "JSON could not be decoded", api.ServiceName).Send(resp)
+	if err := json.NewDecoder(req.Body).Decode(&user); err != nil {
+		problem.Wrap(400, req.RequestURI, "new-user", err).Send(resp)
 		return
 	}
 
 	if len(user.DisplayName) == 0 || len(user.Username) == 0 {
-		problem.New("err://json-error", "Malformed user JSON", 400, "User failed validation, check spec", api.ServiceName).Send(resp)
+		problem.Wrap(400, req.RequestURI, "new-user", errors.New("failed validation, check spec")).Send(resp)
 		return
 	}
 
 	log.Printf("### Registering user %+v\n", user)
 
-	err = api.service.AddUser(user)
-	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+	if err := api.service.AddUser(user); err != nil {
+		if userError, isError := err.(impl.UserError); isError && userError.Error() == impl.DuplicateError {
+			problem.Wrap(409, req.RequestURI, user.Username, err).Send(resp)
+			return
+		}
+
+		problem.Wrap(500, req.RequestURI, user.Username, err).Send(resp)
 
 		return
 	}
 
 	// Send success message back
-	resp.Header().Set("Content-Type", "application/json")
-	_, _ = resp.Write([]byte(fmt.Sprintf(`{"registrationStatus":"success", "username":"%s"}`, user.Username)))
+	api.ReturnJSON(resp, map[string]string{
+		"registrationStatus": "success",
+		"username":           user.Username,
+	})
 }
 
-//
 // Fetch existing user, return 404 if they don't exist
-//
 func (api API) getUser(resp http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
+	username := chi.URLParam(req, "username")
 
-	user, err := api.service.GetUser(vars["username"])
+	user, err := api.service.GetUser(username)
 	if err != nil {
-		prob, isProb := err.(*problem.Problem)
-		if isProb {
-			prob.Send(resp)
-		} else {
-			resp.WriteHeader(404)
-			_, _ = resp.Write([]byte(err.Error()))
+		if userError, isError := err.(impl.UserError); isError && userError.Error() == impl.NotFoundError {
+			problem.Wrap(404, req.RequestURI, username, err).Send(resp)
+			return
 		}
 
+		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
+
 		return
 	}
 
-	if user == nil {
-		resp.WriteHeader(404)
-		return
-	}
-
-	resp.Header().Set("Content-Type", "application/json")
-
-	json, _ := json.Marshal(user)
-	_, _ = resp.Write(json)
+	api.ReturnJSON(resp, user)
 }
 
-//
 // Returns 204 if registered and 404 if not
-//
 func (api API) checkRegistered(resp http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
+	username := chi.URLParam(req, "username")
 
-	_, err := api.service.GetUser(vars["username"])
-	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+	if _, err := api.service.GetUser(username); err != nil {
+		if userError, isError := err.(impl.UserError); isError && userError.Error() == impl.NotFoundError {
+			problem.Wrap(404, req.RequestURI, username, err).Send(resp)
+			return
+		}
+
+		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
 
 		return
 	}

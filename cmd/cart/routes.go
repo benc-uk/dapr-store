@@ -9,50 +9,46 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
 
-	"github.com/benc-uk/dapr-store/pkg/auth"
-	"github.com/benc-uk/dapr-store/pkg/problem"
-
-	"github.com/gorilla/mux"
+	"github.com/benc-uk/dapr-store/cmd/cart/impl"
+	"github.com/benc-uk/go-rest-api/pkg/auth"
+	"github.com/benc-uk/go-rest-api/pkg/problem"
+	"github.com/go-chi/chi/v5"
 )
 
-//
 // All routes we need should be registered here
-//
-func (api API) addRoutes(router *mux.Router) {
-	router.HandleFunc("/setProduct/{username}/{productId}/{count}", auth.JWTValidator(api.setProductCount)).Methods("PUT")
-	router.HandleFunc("/get/{username}", auth.JWTValidator(api.getCart)).Methods("GET")
-	router.HandleFunc("/submit", auth.JWTValidator(api.submitCart)).Methods("POST")
-	router.HandleFunc("/clear/{username}", auth.JWTValidator(api.clearCart)).Methods("PUT")
+func (api API) addRoutes(router chi.Router, v auth.Validator) {
+	router.Put("/setProduct/{username}/{productId}/{count}", v.Protect(api.setProductCount))
+	router.Get("/get/{username}", v.Protect(api.getCart))
+	router.Post("/submit", v.Protect(api.submitCart))
+	router.Put("/clear/{username}", v.Protect(api.clearCart))
 }
 
-//
-//
-//
 func (api API) setProductCount(resp http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
+	username := chi.URLParam(req, "username")
+	productID := chi.URLParam(req, "productId")
+	countString := chi.URLParam(req, "count")
 
-	cart, err := api.service.Get(vars["username"])
+	cart, err := api.service.Get(username)
 	if err != nil {
-		prob := err.(problem.Problem)
-		prob.Send(resp)
+		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
 
 		return
 	}
 
-	count, err := strconv.Atoi(vars["count"])
+	count, err := strconv.Atoi(countString)
 	if err != nil {
-		problem.New("err://invalid-count", "setProductCount failed", 500, err.Error(), api.ServiceName).Send(resp)
+		problem.Wrap(400, req.RequestURI, productID, err).Send(resp)
 		return
 	}
 
-	err = api.service.SetProductCount(cart, vars["productId"], count)
+	err = api.service.SetProductCount(cart, productID, count)
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		problem.Wrap(500, req.RequestURI, productID, err).Send(resp)
 
 		return
 	}
@@ -64,38 +60,25 @@ func (api API) setProductCount(resp http.ResponseWriter, req *http.Request) {
 	_, _ = resp.Write(json)
 }
 
-//
-//
-//
 func (api API) getCart(resp http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
+	username := chi.URLParam(req, "username")
 
-	cart, err := api.service.Get(vars["username"])
+	cart, err := api.service.Get(username)
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
 
 		return
 	}
 
-	resp.Header().Set("Content-Type", "application/json")
-
-	json, _ := json.Marshal(cart)
-
-	log.Printf("cart %s", json)
-	_, _ = resp.Write(json)
+	api.ReturnJSON(resp, cart)
 }
 
-//
-//
-//
 func (api API) clearCart(resp http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
+	username := chi.URLParam(req, "username")
 
-	cart, err := api.service.Get(vars["username"])
+	cart, err := api.service.Get(username)
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
 
 		return
 	}
@@ -105,56 +88,41 @@ func (api API) clearCart(resp http.ResponseWriter, req *http.Request) {
 		log.Printf("### Warning failed to clear cart %s", err)
 	}
 
-	resp.Header().Set("Content-Type", "application/json")
-
-	json, _ := json.Marshal(cart)
-	log.Printf("cart %s", json)
-	_, _ = resp.Write(json)
+	api.ReturnJSON(resp, cart)
 }
 
-//
-//
-//
 func (api API) submitCart(resp http.ResponseWriter, req *http.Request) {
-	cl, _ := strconv.Atoi(req.Header.Get("content-length"))
-	if cl <= 0 {
-		problem.New("err://body-missing", "Zero length body", 400, "Zero length body", api.ServiceName).Send(resp)
-		return
-	}
-
 	username := ""
-	err := json.NewDecoder(req.Body).Decode(&username)
 
-	// Some basic validation and checking on what we've been posted
+	err := json.NewDecoder(req.Body).Decode(&username)
 	if err != nil {
-		problem.New("err://json-decode", "Malformed JSON", 400, "JSON could not be decoded", api.ServiceName).Send(resp)
+		problem.Wrap(400, req.RequestURI, "none", err).Send(resp)
 		return
 	}
 
 	if username == "" {
-		problem.New("err://json-error", "Malformed JSON", 400, "Post should include username", api.ServiceName).Send(resp)
+		problem.Wrap(400, req.RequestURI, "none", errors.New("username missing from request")).Send(resp)
 		return
 	}
 
 	cart, err := api.service.Get(username)
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
 
 		return
 	}
 
 	order, err := api.service.Submit(*cart)
 	if err != nil {
-		prob := err.(*problem.Problem)
-		prob.Send(resp)
+		if cartErr, ok := err.(impl.CartError); ok && cartErr.Error() == impl.EmptyError {
+			problem.Wrap(400, req.RequestURI, username, cartErr).Send(resp)
+			return
+		}
+		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
 
 		return
 	}
 
 	// Send the _order_ back, created from submitting the cart
-	resp.Header().Set("Content-Type", "application/json")
-
-	json, _ := json.Marshal(order)
-	_, _ = resp.Write(json)
+	api.ReturnJSON(resp, order)
 }

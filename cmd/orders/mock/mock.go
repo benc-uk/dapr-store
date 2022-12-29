@@ -7,8 +7,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/benc-uk/dapr-store/cmd/orders/impl"
 	orderspec "github.com/benc-uk/dapr-store/cmd/orders/spec"
-	"github.com/benc-uk/dapr-store/pkg/problem"
 )
 
 // OrderService mock
@@ -47,7 +47,7 @@ func (s OrderService) GetOrder(orderID string) (*orderspec.Order, error) {
 		return &MockOrders[0], nil
 	}
 
-	return nil, problem.New("err://not-found", "No data returned", 404, "Order: '"+orderID+"' not found", "orders")
+	return nil, impl.OrderNotFoundError()
 }
 
 // GetOrdersForUser mock

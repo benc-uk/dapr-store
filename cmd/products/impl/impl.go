@@ -13,7 +13,6 @@ import (
 	"log"
 
 	"github.com/benc-uk/dapr-store/cmd/products/spec"
-	"github.com/benc-uk/dapr-store/pkg/problem"
 )
 
 // ProductService is a Dapr based implementation of ProductService interface
@@ -43,8 +42,7 @@ func NewService(serviceName string, dbFilePath string) *ProductService {
 func (s ProductService) QueryProducts(column, term string) ([]spec.Product, error) {
 	rows, err := s.Query("SELECT * FROM products WHERE "+column+" = ?", term)
 	if err != nil {
-		prob := problem.New("err://products-db", "Database query error", 500, err.Error(), s.serviceName)
-		return nil, prob
+		return nil, err
 	}
 
 	return s.processRows(rows)
@@ -54,8 +52,7 @@ func (s ProductService) QueryProducts(column, term string) ([]spec.Product, erro
 func (s ProductService) AllProducts() ([]spec.Product, error) {
 	rows, err := s.Query("SELECT * FROM products")
 	if err != nil {
-		prob := problem.New("err://products-db", "Database query error", 500, err.Error(), s.serviceName)
-		return nil, prob
+		return nil, err
 	}
 
 	return s.processRows(rows)
@@ -65,8 +62,7 @@ func (s ProductService) AllProducts() ([]spec.Product, error) {
 func (s ProductService) SearchProducts(query string) ([]spec.Product, error) {
 	rows, err := s.Query("SELECT * FROM products WHERE (description LIKE ? OR name LIKE ?)", "%"+query+"%", "%"+query+"%")
 	if err != nil {
-		prob := problem.New("err://products-db", "Database query error", 500, err.Error(), s.serviceName)
-		return nil, prob
+		return nil, err
 	}
 
 	return s.processRows(rows)
@@ -83,8 +79,7 @@ func (s ProductService) processRows(rows *sql.Rows) ([]spec.Product, error) {
 		err := rows.Scan(&p.ID, &p.Name, &p.Description, &p.Cost, &p.Image, &p.OnOffer)
 
 		if err != nil {
-			prob := problem.New("err://products-db", "Error reading row", 500, err.Error(), s.serviceName)
-			return nil, prob
+			return nil, err
 		}
 
 		products = append(products, p)

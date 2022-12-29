@@ -8,33 +8,35 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"testing"
 
 	"github.com/benc-uk/dapr-store/cmd/products/mock"
-	"github.com/benc-uk/dapr-store/pkg/api"
-	"github.com/benc-uk/dapr-store/pkg/apitests"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
+
+	"github.com/benc-uk/go-rest-api/pkg/api"
+	"github.com/benc-uk/go-rest-api/pkg/httptester"
 )
 
 func TestProducts(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	// Comment out to see logs
+	log.SetOutput(io.Discard)
 
 	// Mock of ProductsService
 	mockProductSvc := &mock.ProductService{}
 
-	router := mux.NewRouter()
+	router := chi.NewRouter()
 	api := API{
-		api.NewBase("products", "ignore", "ignore", true, router),
+		api.NewBase("products", "ignore", "ignore", true),
 		mockProductSvc,
 	}
 	api.addRoutes(router)
 
-	apitests.Run(t, router, testCases)
+	httptester.Run(t, router, testCases)
 }
 
-var testCases = []apitests.Test{
+var testCases = []httptester.TestCase{
 	{
 		Name:           "search for 'Hat'",
 		URL:            "/search/Hat",

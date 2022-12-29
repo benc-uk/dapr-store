@@ -35,15 +35,8 @@ Deployed instance: https://daprstore.kube.benco.io/
 
 The main elements and microservices that make up the Dapr Store system are described here
 
-## Shared Go packages
-
-Shared Go code lives in the `pkg/` directory, which is used by all the services, and consists of the following packages:
-
-- `pkg/api` - A base API extended by all services, provides health & status endpoints.
-- `pkg/apitests` - A simple helper for running sets of router/API based tests.
-- `pkg/auth` - Server side token validation of JWT using JWK.
-- `pkg/env` - Very simple `os.LookupEnv` wrapper with fallback defaults.
-- `pkg/problem` - Standarized REST error messages using [RFC 7807 Problem Details](https://tools.ietf.org/html/rfc7807).
+Each service uses my [Go REST API Starter Kit & Library](https://github.com/benc-uk/go-rest-api) as a starting basis, lots of the boilerplate and 
+repeated code is located there.
 
 ## Service Code
 
@@ -133,8 +126,6 @@ It is written in Go, source is in `cmd/cart` and it exposes the following API ro
 /submit                                       POST submit a cart, and turn it into an 'Order'
 /clear/{username}                             PUT clear a user's cart
 ```
-
-See `pkg/models` for details of the **Order** struct.
 
 The service is responsible for maintaining shopping carts for each user and persisting them. Submitting a cart will validate the contents and turn it into a order, which is sent to the Orders service for processing
 
@@ -301,4 +292,4 @@ Clarity of terminology is sometimes important, here's a small glossary
 - **Service** - The microservices, written in Go and exposing REST API, either invoked through Dapr and.or using the Dapr API for things such as state.
 - **API Gateway** - NGINX reverse proxy sitting in front of the services. This is not to be confused with Azure API Management, Azure App Gateway or AWS API Gateway
 - **State** - Dapr state API, backed with a Dapr component state provider, e.g. Redis
-- **Entity** - A data object, typically a JSON representation of one of the structs in `pkg/models`, can be client or server side
+- **Entity** - A data object, typically a JSON representation of one of the structs in the spec folder, can be client or server side

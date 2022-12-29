@@ -3,18 +3,15 @@ package impl
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"time"
 
 	"github.com/benc-uk/dapr-store/cmd/orders/spec"
-	"github.com/benc-uk/dapr-store/pkg/env"
-	"github.com/benc-uk/dapr-store/pkg/problem"
+	"github.com/benc-uk/go-rest-api/pkg/dapr/pubsub"
+	"github.com/benc-uk/go-rest-api/pkg/env"
+
 	dapr "github.com/dapr/go-sdk/client"
-	"github.com/dapr/go-sdk/service/common"
-	daprhttp "github.com/dapr/go-sdk/service/http"
-	"github.com/gorilla/mux"
 )
 
 // OrderService is a Dapr based implementation of OrderService interface
@@ -27,7 +24,7 @@ type OrderService struct {
 }
 
 // NewService creates a new OrderService
-func NewService(serviceName string, router *mux.Router) *OrderService {
+func NewService(serviceName string) *OrderService {
 	storeName := env.GetEnvString("DAPR_STORE_NAME", "statestore")
 
 	// Set up Dapr client & checks for Dapr sidecar, otherwise die
@@ -38,28 +35,11 @@ func NewService(serviceName string, router *mux.Router) *OrderService {
 
 	service := &OrderService{
 		storeName,
-		"orders-email",  // Hard coded, !TODO move to config env var
+		"orders-email",  // Hard coded, !TODO move to config env var\
 		"orders-report", // Hard coded, !TODO move to config env var
 		serviceName,
 		client,
 	}
-
-	// We don't actually use the service as we have one already
-	// But we need to call AddTopicEventHandler to register the handler
-	dummyService := daprhttp.NewServiceWithMux("notUsed", router)
-
-	// Topic subscription
-	var sub = &common.Subscription{
-		PubsubName: env.GetEnvString("DAPR_PUBSUB_NAME", "pubsub"),
-		Topic:      env.GetEnvString("DAPR_ORDERS_TOPIC", "orders-queue"),
-		Route:      "/process-order",
-	}
-
-	if err := dummyService.AddTopicEventHandler(sub, service.pubSubOrderReceiver); err != nil {
-		log.Printf("### Error adding topic subscription: %v", err)
-	}
-	// Suppress error, this will always fail, but we have to call Start to register the handler
-	_ = dummyService.Start()
 
 	return service
 }
@@ -68,11 +48,11 @@ func NewService(serviceName string, router *mux.Router) *OrderService {
 func (s *OrderService) AddOrder(order spec.Order) error {
 	jsonPayload, err := json.Marshal(order)
 	if err != nil {
-		return problem.New500("err://json-marshall", "State JSON marshalling error", s.serviceName, nil, err)
+		return err
 	}
 
 	if err := s.client.SaveState(context.Background(), s.storeName, order.ID, jsonPayload, nil); err != nil {
-		return problem.NewDaprStateProblem(err, s.serviceName)
+		return err
 	}
 
 	// This is a list of orderIDs for the user
@@ -80,8 +60,9 @@ func (s *OrderService) AddOrder(order spec.Order) error {
 	// NOTE We use the username as a key in the orders state set, to hold an index of orders
 	data, err := s.client.GetState(context.Background(), s.storeName, order.ForUser, nil)
 	if err != nil {
-		return problem.NewDaprStateProblem(err, s.serviceName)
+		return err
 	}
+
 	// Ignore any problem, it's possible it doesn't exist yet (user's first order)
 	_ = json.Unmarshal(data.Value, &userOrders)
 
@@ -102,12 +83,12 @@ func (s *OrderService) AddOrder(order spec.Order) error {
 	// Save updated order list back, again keyed using user id
 	jsonPayload, err = json.Marshal(userOrders)
 	if err != nil {
-		return problem.New500("err://json-marshall", "State JSON marshalling error", s.serviceName, nil, err)
+		return err
 	}
 
 	if err := s.client.SaveState(context.Background(), s.storeName, order.ForUser, jsonPayload, nil); err != nil {
 		log.Printf("### Error!, unable to save order list for user '%s'", order.ForUser)
-		return problem.NewDaprStateProblem(err, s.serviceName)
+		return err
 	}
 
 	return nil
@@ -117,20 +98,18 @@ func (s *OrderService) AddOrder(order spec.Order) error {
 func (s *OrderService) GetOrder(orderID string) (*spec.Order, error) {
 	data, err := s.client.GetState(context.Background(), s.storeName, orderID, nil)
 	if err != nil {
-		return nil, problem.NewDaprStateProblem(err, s.serviceName)
+		return nil, err
 	}
 
 	if data.Value == nil {
-		prob := problem.New("err://not-found", "No data returned", 404, "Order: '"+orderID+"' not found", s.serviceName)
-		return nil, prob
+		return nil, OrderNotFoundError()
 	}
 
 	order := &spec.Order{}
 
 	err = json.Unmarshal(data.Value, order)
 	if err != nil {
-		prob := problem.New("err://json-decode", "Malformed order JSON", 500, "JSON could not be decoded", s.serviceName)
-		return nil, prob
+		return nil, err
 	}
 
 	return order, nil
@@ -145,12 +124,11 @@ func (s *OrderService) ProcessOrder(order spec.Order) error {
 
 	// Check we have a new order
 	if order.Status != spec.OrderNew {
-		return errors.New("order not in correct status")
+		return OrderStatusError()
 	}
 
-	prob := s.AddOrder(order)
-	if prob != nil {
-		return prob
+	if err := s.AddOrder(order); err != nil {
+		return err
 	}
 
 	err = s.SetStatus(&order, spec.OrderReceived)
@@ -163,7 +141,7 @@ func (s *OrderService) ProcessOrder(order spec.Order) error {
 	// Save order to blob storage as a text file "report"
 	// Also email to the user via SendGrid
 	// For these to work configure the components in cmd/orders/components
-	// If un-configured then nothing happens, and no output is send or generated
+	// If un-configured then nothing happens (maybe some errors are logged)
 
 	// Currently the SendGrid integration in Dapr is fubar
 	// To be fixed by this PR https://github.com/dapr/components-contrib/pull/1867
@@ -177,13 +155,13 @@ func (s *OrderService) ProcessOrder(order spec.Order) error {
 		log.Printf("### Saving order report failed %s\n", err)
 	}
 
-	// Fake background order processing
+	// Fake background order processing, move to processing after 30 seconds
 	time.AfterFunc(30*time.Second, func() {
 		log.Printf("### Order %s is now processing\n", order.ID)
 		_ = s.SetStatus(&order, spec.OrderProcessing)
 	})
 
-	// Fake background order completion
+	// Fake background order completion, move to complete after 2 minutes
 	time.AfterFunc(120*time.Second, func() {
 		log.Printf("### Order %s completed\n", order.ID)
 		_ = s.SetStatus(&order, spec.OrderComplete)
@@ -197,7 +175,7 @@ func (s *OrderService) GetOrdersForUser(userName string) ([]string, error) {
 	// NOTE We use the username as a key in the orders state set, to hold an index of orders
 	data, err := s.client.GetState(context.Background(), s.storeName, userName, nil)
 	if err != nil {
-		return nil, problem.NewDaprStateProblem(err, s.serviceName)
+		return nil, err
 	}
 
 	orders := []string{}
@@ -207,10 +185,8 @@ func (s *OrderService) GetOrdersForUser(userName string) ([]string, error) {
 		return orders, nil
 	}
 
-	err = json.Unmarshal(data.Value, &orders)
-	if err != nil {
-		prob := problem.New("err://json-decode", "Malformed orders JSON", 500, "JSON could not be decoded", s.serviceName)
-		return nil, prob
+	if err = json.Unmarshal(data.Value, &orders); err != nil {
+		return nil, err
 	}
 
 	return orders, nil
@@ -224,12 +200,12 @@ func (s *OrderService) SetStatus(order *spec.Order, status spec.OrderStatus) err
 	// Save updated order list back, again keyed using user id
 	jsonPayload, err := json.Marshal(order)
 	if err != nil {
-		return problem.New500("err://json-marshall", "State JSON marshalling error", s.serviceName, nil, err)
+		return err
 	}
 
 	if err := s.client.SaveState(context.Background(), s.storeName, order.ID, jsonPayload, nil); err != nil {
 		log.Printf("### Error! Unable to update status of order '%s'", order.ID)
-		return problem.NewDaprStateProblem(err, s.serviceName)
+		return err
 	}
 
 	return nil
@@ -241,6 +217,7 @@ func (s *OrderService) EmailNotify(order spec.Order) error {
 		"emailTo": order.ForUser,
 		"subject": "Dapr Store, order details: " + order.Title,
 	}
+
 	emailData := "<h1>Thanks for your order!</h1>Order title: " + order.Title + "<br>Order ID: " + order.ID +
 		"<br>User: " + order.ForUser + "<br>Amount: £" + fmt.Sprintf("%.2f", order.Amount) + "<br><br>Enjoy your new dapper threads!"
 
@@ -250,10 +227,9 @@ func (s *OrderService) EmailNotify(order spec.Order) error {
 	request.Name = s.emailOutputName
 	request.Operation = "create"
 
-	err := s.client.InvokeOutputBinding(context.Background(), request)
-	if err != nil {
-		log.Printf("### Problem sending to email output: %+v", err)
-		return problem.New500("dapr://binding", "Dapr binding invocation failed", s.serviceName, nil, err)
+	if err := s.client.InvokeOutputBinding(context.Background(), request); err != nil {
+		log.Printf("### Problem sending to email output: %s", err.Error())
+		return err
 	}
 
 	return nil
@@ -275,29 +251,33 @@ func (s *OrderService) SaveReport(order spec.Order) error {
 	request.Name = s.reportOutputName
 	request.Operation = "create"
 
-	err := s.client.InvokeOutputBinding(context.Background(), request)
-	if err != nil {
-		log.Printf("### Problem sending to blob / report output: %+v", err)
-		return problem.New500("dapr://binding", "Dapr binding invocation failed", s.serviceName, nil, err)
+	if err := s.client.InvokeOutputBinding(context.Background(), request); err != nil {
+		log.Printf("### Problem sending to blob / report output: %s", err.Error())
+		return err
 	}
 
 	return nil
 }
 
-// pubSubOrderReceiver is not part of the OrderService spec
+// pubSubOrderReceiver is an adaptor of sorts, not part of the OrderService spec
 // It is registered as the receiver for new messages on the Dapr pub/sub order topic
-func (s *OrderService) pubSubOrderReceiver(ctx context.Context, e *common.TopicEvent) (bool, error) {
-	order := spec.Order{}
-
-	err := json.Unmarshal(e.RawData, &order)
+func (s *OrderService) PubSubOrderReceiver(event *pubsub.CloudEvent) error {
+	// This JSON nonsense is an "easy" way to convert
+	// The event.Data which is a map back into a real Order
+	jsonData, err := json.Marshal(event.Data)
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	err = s.ProcessOrder(order)
-	if err != nil {
-		return false, err
+	var order spec.Order
+	if err := json.Unmarshal(jsonData, &order); err != nil {
+		return err
 	}
 
-	return false, nil
+	// Now we have a real order, we can process it
+	if err := s.ProcessOrder(order); err != nil {
+		return err
+	}
+
+	return nil
 }

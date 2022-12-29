@@ -9,11 +9,10 @@ package mock
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
+	"os"
 
+	"github.com/benc-uk/dapr-store/cmd/users/impl"
 	"github.com/benc-uk/dapr-store/cmd/users/spec"
-	"github.com/benc-uk/dapr-store/pkg/problem"
 )
 
 // UserService mock
@@ -24,7 +23,7 @@ type UserService struct {
 var mockUsers []spec.User
 
 func init() {
-	mockJSON, err := ioutil.ReadFile("../../testing/mock-data/users.json")
+	mockJSON, err := os.ReadFile("../../testing/mock-data/users.json")
 	if err != nil {
 		panic(err)
 	}
@@ -43,15 +42,14 @@ func (s UserService) GetUser(username string) (*spec.User, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("user %s not found", username)
+	return nil, impl.UserNotFoundError()
 }
 
 // AddUser mock
 func (s UserService) AddUser(user spec.User) error {
 	userCheck, _ := s.GetUser(user.Username)
 	if userCheck != nil {
-		prob := problem.New("err://user-exists", user.Username+" already registered", 400, user.Username+" already registered", "users")
-		return prob
+		return impl.UserDuplicateError()
 	}
 
 	mockUsers = append(mockUsers, user)
