@@ -11,7 +11,7 @@ controller:
 
     # Static IP so DNS can remain static too
     # This is manually pre-created
-    loadBalancerIP: "20.26.193.151"
+    loadBalancerIP: "20.254.189.197"
   ingressClass: "dapr"
   ingressClassResource:
     name: "dapr"
