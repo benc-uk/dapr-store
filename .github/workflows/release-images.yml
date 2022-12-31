@@ -18,13 +18,13 @@ jobs:
 
       - name: "Run all image builds"
         run: |
-          make image-all IMAGE_TAG=$IMAGE_TAG VERSION=$IMAGE_TAG BUILD_INFO="$BUILD_INFO"
-          make image-all IMAGE_TAG=latest VERSION=$IMAGE_TAG BUILD_INFO="$BUILD_INFO"
+          make docker-build IMAGE_TAG=$IMAGE_TAG VERSION=$IMAGE_TAG BUILD_INFO="$BUILD_INFO"
+          make docker-build IMAGE_TAG=latest VERSION=$IMAGE_TAG BUILD_INFO="$BUILD_INFO"
 
       - name: "Login to registry"
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login $IMAGE_REG -u $GITHUB_ACTOR --password-stdin
 
       - name: "Push to Registry"
         run: |
-          make push-all IMAGE_TAG=$IMAGE_TAG
-          make push-all IMAGE_TAG=latest
+          make docker-build IMAGE_TAG=$IMAGE_TAG
+          make docker-build IMAGE_TAG=latest
