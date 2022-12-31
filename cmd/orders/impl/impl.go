@@ -16,9 +16,9 @@ import (
 
 // OrderService is a Dapr based implementation of OrderService interface
 type OrderService struct {
-	storeName        string
-	emailOutputName  string
-	reportOutputName string
+	storeName        string // Name of Dapr state store
+	emailOutputName  string // Name of Dapr output binding for email
+	reportOutputName string // Name of Dapr output binding for order reports
 	serviceName      string
 	client           dapr.Client
 }
@@ -26,17 +26,19 @@ type OrderService struct {
 // NewService creates a new OrderService
 func NewService(serviceName string) *OrderService {
 	storeName := env.GetEnvString("DAPR_STORE_NAME", "statestore")
+	emailOutName := env.GetEnvString("DAPR_EMAIL_NAME", "orders-email")
+	reportOutName := env.GetEnvString("DAPR_REPORT_NAME", "orders-report")
 
 	// Set up Dapr client & checks for Dapr sidecar, otherwise die
 	client, err := dapr.NewClient()
 	if err != nil {
-		log.Panicln("FATAL! Dapr process/sidecar NOT found. Terminating!")
+		log.Fatalf("FATAL! Dapr process/sidecar NOT found. Terminating!")
 	}
 
 	service := &OrderService{
 		storeName,
-		"orders-email",  // Hard coded, !TODO move to config env var\
-		"orders-report", // Hard coded, !TODO move to config env var
+		emailOutName,
+		reportOutName,
 		serviceName,
 		client,
 	}
@@ -212,6 +214,7 @@ func (s *OrderService) SetStatus(order *spec.Order, status spec.OrderStatus) err
 }
 
 // EmailNotify uses Dapr SendGrid output binding to send an email
+// See: https://docs.dapr.io/reference/components-reference/supported-bindings/sendgrid/
 func (s *OrderService) EmailNotify(order spec.Order) error {
 	emailMetadata := map[string]string{
 		"emailTo": order.ForUser,
@@ -232,10 +235,13 @@ func (s *OrderService) EmailNotify(order spec.Order) error {
 		return err
 	}
 
+	log.Printf("### Email was sent to %s", order.ForUser)
+
 	return nil
 }
 
 // SaveReport uses Dapr Azure Blob output binding to store a order report
+// See: https://docs.dapr.io/reference/components-reference/supported-bindings/blobstorage/
 func (s *OrderService) SaveReport(order spec.Order) error {
 	blobName := "order_" + order.ID + ".txt"
 	blobMetadata := map[string]string{
@@ -255,6 +261,8 @@ func (s *OrderService) SaveReport(order spec.Order) error {
 		log.Printf("### Problem sending to blob / report output: %s", err.Error())
 		return err
 	}
+
+	log.Printf("### Order report %s was saved to blob storage", blobName)
 
 	return nil
 }

@@ -8,6 +8,7 @@ kind: Component
 metadata:
   name: orders-email
 spec:
+  version: v1
   type: bindings.twilio.sendgrid
   metadata:
     - name: emailFrom

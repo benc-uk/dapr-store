@@ -11,6 +11,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/benc-uk/dapr-store/cmd/products/spec"
 )
@@ -23,10 +24,15 @@ type ProductService struct {
 
 // NewService creates a new ProductService
 func NewService(serviceName string, dbFilePath string) *ProductService {
-	// Note force rw mode here, otherwise it creates an empty DB if file not found
-	db, err := sql.Open("sqlite3", fmt.Sprintf("file:%s?mode=rw", dbFilePath))
+	_, err := os.Stat(dbFilePath)
+	if os.IsNotExist(err) {
+		log.Fatalf("### Failed to locate database %s %+v\n", dbFilePath, err)
+	}
+
+	// Note this will create the file if it doesn't exist, so we do the above check first
+	db, err := sql.Open("sqlite3", fmt.Sprintf("file:%s", dbFilePath))
 	if err != nil {
-		log.Panicf("### Failed to open database %s %+v\n", dbFilePath, err)
+		log.Fatalf("### Error when opening database %s %+v\n", dbFilePath, err)
 		return nil
 	}
 

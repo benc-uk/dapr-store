@@ -24,9 +24,9 @@ import (
 
 // CartService is a Dapr implementation of CartService interface
 type CartService struct {
-	pubSubName  string
-	topicName   string
-	storeName   string
+	pubSubName  string // Name of Papr pub/sub component for orders
+	topicName   string // Name of Dapr pub/sub topic for orders
+	storeName   string // Name of Dapr state store
 	serviceName string
 	client      dapr.Client
 }
@@ -37,13 +37,10 @@ func NewService(serviceName string) *CartService {
 	storeName := env.GetEnvString("DAPR_STORE_NAME", "statestore")
 	pubSubName := env.GetEnvString("DAPR_PUBSUB_NAME", "pubsub")
 
-	log.Printf("### Dapr pub/sub topic name: %s\n", topicName)
-	log.Printf("### Dapr state store name:   %s\n", storeName)
-
 	// Set up Dapr client & checks for Dapr sidecar, otherwise die
 	client, err := dapr.NewClient()
 	if err != nil {
-		log.Panicln("FATAL! Dapr process/sidecar NOT found. Terminating!")
+		log.Fatalf("FATAL! Dapr process/sidecar NOT found. Terminating!")
 	}
 
 	return &CartService{
@@ -74,7 +71,13 @@ func (s CartService) Get(username string) (*cartspec.Cart, error) {
 	cart := &cartspec.Cart{}
 
 	if err = json.Unmarshal(data.Value, cart); err != nil {
-		return nil, err
+		// The cart is somehow corrupt - remove it from state, or we'll get stuck
+		_ = s.client.DeleteState(context.Background(), s.storeName, username, nil)
+
+		log.Printf("### Warning: Corrupt cart for user %s was removed!!", username)
+
+		cart.ForUser = username
+		cart.Products = make(map[string]int)
 	}
 
 	return cart, nil

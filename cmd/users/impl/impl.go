@@ -20,7 +20,7 @@ import (
 
 // UserService is a Dapr based implementation of UserService interface
 type UserService struct {
-	storeName   string
+	storeName   string // Name of Dapr state store
 	serviceName string
 	client      dapr.Client
 }
@@ -32,7 +32,7 @@ func NewService(serviceName string) *UserService {
 	// Set up Dapr client & checks for Dapr sidecar, otherwise die
 	client, err := dapr.NewClient()
 	if err != nil {
-		log.Panicln("FATAL! Dapr process/sidecar NOT found. Terminating!")
+		log.Fatalf("FATAL! Dapr process/sidecar NOT found. Terminating!")
 	}
 
 	return &UserService{

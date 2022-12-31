@@ -35,12 +35,12 @@ Deployed instance: https://daprstore.kube.benco.io/
 
 The main elements and microservices that make up the Dapr Store system are described here
 
-Each service uses my [Go REST API Starter Kit & Library](https://github.com/benc-uk/go-rest-api) as a starting basis, lots of the boilerplate and 
+Each service uses the [Go REST API Starter Kit & Library](https://github.com/benc-uk/go-rest-api) as a starting basis, lots of the boilerplate and 
 repeated code is located there.
 
 ## Service Code
 
-Each Go microservice (in `cmd/`) follows a very similar layout to the code base (the exception being `frontend-host` which has no business logic)
+Each Go microservice (in `cmd/`) follows a very similar layout (the exception being `frontend-host` which has no business logic)
 
 Primary runtime code:
 
@@ -215,19 +215,21 @@ Access the store from http://localhost:9000/
 
 # Working Locally
 
-A makefile is provided to assist working with the project and building/running it, the main targets are:
+A makefile is provided to assist working with the project and building/running it, the list of targets is:
 
 ```text
 help                 💬 This help message :)
 lint                 🔎 Lint & format, check to be run in CI, sets exit code on error
 lint-fix             📝 Lint & format, fixes errors and modifies code
-test                 🎯 Unit tests for services and snapshot tests for SPA frontend
-test-reports         📜 Unit tests with coverage and test reports
-image-all            📦 Build all container images
-push-all             📤 Push all images to registry
+test                 🎯 Unit tests for services and snapshot tests for SPA frontend 
+test-reports         📜 Unit tests with coverage and test reports (deprecated)
 bundle               💻 Build and bundle the frontend Vue SPA
 clean                🧹 Clean the project, remove modules, binaries and outputs
-run                  🚀 Start & run everything locally
+run                  🚀 Start & run everything locally as processes
+docker-run           🐋 Run locally using containers and Docker compose
+docker-build         🔨 Build all containers using Docker compose
+docker-push          📤 Push all containers using Docker compose
+docker-stop          🚫 Stop and remove local containers
 stop                 ⛔ Stop & kill everything started locally from `make run`
 ```
 
@@ -253,13 +255,21 @@ Optionally Dapr store can be configured utilise the [Microsoft identity platform
 
 ## Environmental Variables
 
-The services support the following environmental variables. All settings are optional.
+The services support the following environmental variables. All settings are optional with default values.
 
 - `PORT` - Port the server will listen on. See defaults below.
 - `AUTH_CLIENT_ID` - Used to enable integration with Azure AD for identity and authentication. Default is _blank_, which runs the service with no identity backend. See the [security, identity & authentication docs](#security-identity--authentication) for more details.
 - `DAPR_STORE_NAME` - Name of the Dapr state component to use. Default is `statestore`
+
+The following vars are used only by the Cart and Orders services:
+
 - `DAPR_ORDERS_TOPIC` - Name of the Dapr pub/sub topic to use for orders. Default is `orders-queue`
 - `DAPR_PUBSUB_NAME` - Name of the Dapr pub/sub component to use for orders. Default is `pubsub`
+
+The following vars are only used by the Orders service:
+
+- `DAPR_EMAIL_NAME` - Name of the Dapr SendGrid component to use for sending order emails. Default is `orders-email`
+- `DAPR_REPORT_NAME` - Name of the Dapr Azure Blob component to use for saving order reports. Default is `orders-report`
 
 Frontend host config:
 

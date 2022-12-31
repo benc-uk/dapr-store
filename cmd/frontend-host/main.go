@@ -49,6 +49,11 @@ func main() {
 	router.HandleFunc("/config", routeConfig)
 	router.Handle("/*", spa)
 
+	// This stops Dapr from trying to subscribe to this app, which generated warnings
+	router.HandleFunc("/dapr/subscribe", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+	})
+
 	serverPort := env.GetEnvInt("PORT", defaultPort)
 
 	srv := &http.Server{

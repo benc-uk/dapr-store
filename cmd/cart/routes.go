@@ -55,15 +55,14 @@ func (api API) setProductCount(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 
-	json, _ := json.Marshal(cart)
-	log.Printf("cart %s", json)
-	_, _ = resp.Write(json)
+	api.ReturnJSON(resp, cart)
 }
 
 func (api API) getCart(resp http.ResponseWriter, req *http.Request) {
 	username := chi.URLParam(req, "username")
 
 	cart, err := api.service.Get(username)
+
 	if err != nil {
 		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
 
