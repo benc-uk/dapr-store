@@ -1,8 +1,8 @@
 SERVICE_DIR := cmd
 FRONTEND_DIR := web/frontend
 OUTPUT_DIR := ./output
-VERSION ?= 0.8.1
-BUILD_INFO ?= "Makefile build"
+VERSION ?= 0.8.2
+BUILD_INFO ?= "Local makefile build"
 DAPR_RUN_LOGLEVEL := warn
 
 # Most likely want to override these when calling `make image-all`
@@ -10,9 +10,9 @@ IMAGE_REG ?= ghcr.io
 IMAGE_REPO ?= benc-uk/daprstore
 IMAGE_TAG ?= latest
 IMAGE_PREFIX := $(IMAGE_REG)/$(IMAGE_REPO)
-IMAGE_LIST := cart orders users products frontend
 
-.PHONY: help lint lint-fix test test-reports test-snapshot image-all bundle clean run
+.EXPORT_ALL_VARIABLES:
+.PHONY: help lint lint-fix test test-reports docker-build docker-run docker-stop docker-push bundle clean run stop
 .DEFAULT_GOAL := help
 
 help:  ## 💬 This help message :)
@@ -39,57 +39,6 @@ test-reports: $(FRONTEND_DIR)/node_modules  ## 📜 Unit tests with coverage and
 	./$(FRONTEND_DIR)/node_modules/xunit-viewer/bin/xunit-viewer -r $(OUTPUT_DIR)/unit-tests-frontend.xml -o $(OUTPUT_DIR)/unit-tests-frontend.html
 	go tool cover -html=$(OUTPUT_DIR)/coverage -o $(OUTPUT_DIR)/cover.html
 	cp testing/reports.html $(OUTPUT_DIR)/index.html
-
-image-all:      ## 📦 Build all container images
-	for img in $(IMAGE_LIST); do \
-		make image-$$img ; \
-	done
-
-image-cart:
-	docker build . -f build/service.Dockerfile \
-	--build-arg VERSION=$(VERSION) \
-	--build-arg BUILD_INFO='$(BUILD_INFO)' \
-	--build-arg SERVICE_NAME=cart \
-	--build-arg SERVICE_PORT=9001 \
-	-t $(IMAGE_PREFIX)/cart:$(IMAGE_TAG)
-
-image-products:
-	docker build . -f build/service.Dockerfile \
-	--build-arg VERSION=$(VERSION) \
-	--build-arg BUILD_INFO='$(BUILD_INFO)' \
-	--build-arg SERVICE_NAME=products \
-	--build-arg SERVICE_PORT=9002 \
-	--build-arg CGO_ENABLED=1 \
-	-t $(IMAGE_PREFIX)/products:$(IMAGE_TAG)
-
-image-users:
-	docker build . -f build/service.Dockerfile \
-	--build-arg VERSION=$(VERSION) \
-	--build-arg BUILD_INFO='$(BUILD_INFO)' \
-	--build-arg SERVICE_NAME=users \
-	--build-arg SERVICE_PORT=9003 \
-	-t $(IMAGE_PREFIX)/users:$(IMAGE_TAG)
-
-image-orders:
-	docker build . -f build/service.Dockerfile \
-	--build-arg VERSION=$(VERSION) \
-	--build-arg BUILD_INFO='$(BUILD_INFO)' \
-	--build-arg SERVICE_NAME=orders \
-	--build-arg SERVICE_PORT=9004 \
-	-t $(IMAGE_PREFIX)/orders:$(IMAGE_TAG)
-
-image-frontend:
-	docker build . -f build/frontend.Dockerfile \
-	--build-arg VERSION=$(VERSION) \
-	--build-arg BUILD_INFO='$(BUILD_INFO)' \
-	-t $(IMAGE_PREFIX)/frontend-host:$(IMAGE_TAG)
-
-push-all:  ## 📤 Push all images to registry 
-	docker push $(IMAGE_PREFIX)/cart:$(IMAGE_TAG)
-	docker push $(IMAGE_PREFIX)/products:$(IMAGE_TAG)
-	docker push $(IMAGE_PREFIX)/users:$(IMAGE_TAG)
-	docker push $(IMAGE_PREFIX)/orders:$(IMAGE_TAG)
-	docker push $(IMAGE_PREFIX)/frontend-host:$(IMAGE_TAG)
 	
 bundle: $(FRONTEND_DIR)/node_modules  ## 💻 Build and bundle the frontend Vue SPA
 	cd $(FRONTEND_DIR); npm run build
@@ -106,7 +55,7 @@ clean:  ## 🧹 Clean the project, remove modules, binaries and outputs
 	rm -rf $(SERVICE_DIR)/products/products
 	rm -rf $(SERVICE_DIR)/frontend-host/frontend-host
 
-run:  ## 🚀 Start & run everything locally
+run:  ## 🚀 Start & run everything locally as processes
 	cd $(FRONTEND_DIR); npm run serve &
 	dapr run --app-id cart     --app-port 9001 --log-level $(DAPR_RUN_LOGLEVEL) go run github.com/benc-uk/dapr-store/cmd/cart &
 	dapr run --app-id products --app-port 9002 --log-level $(DAPR_RUN_LOGLEVEL) go run github.com/benc-uk/dapr-store/cmd/products ./cmd/products/sqlite.db &
@@ -116,6 +65,20 @@ run:  ## 🚀 Start & run everything locally
 	@./scripts/local-gateway/run.sh &
 	@sleep infinity
 	@echo "!!! Processes may still be running, please run `make stop` in order to shutdown everything"
+
+docker-run: ## 🐋 Run locally using containers and Docker compose
+	@./scripts/local-gateway/run.sh &
+	@docker compose -f ./build/compose.yaml up --remove-orphans
+
+docker-build: ## 🔨 Build all containers using Docker compose
+	docker compose -f ./build/compose.yaml build
+
+docker-push: ## 📤 Push all containers using Docker compose
+	docker compose -f ./build/compose.yaml push
+
+docker-stop: ## 🚫 Stop and remove local containers
+	docker rm -f api-gateway || true
+	docker compose -f ./build/compose.yaml rm -f
 
 stop: ## ⛔ Stop & kill everything started locally from `make run`
 	docker rm -f api-gateway || true

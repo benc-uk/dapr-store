@@ -1,0 +1,134 @@
+name: dapr-store
+version: "3.9"
+
+# =====================================================================
+#  Docker compose file for Dapr Store
+# =====================================================================
+# Call via the makefile, otherwise you'll need to set all the vars!
+# Use with `make docker-build`, `make docker-push` & `make docker-run`
+# =====================================================================
+
+services:
+  frontend:
+    image: ${IMAGE_PREFIX}/frontend-host:${IMAGE_TAG}
+    pull_policy: build
+    build:
+      context: ..
+      dockerfile: ./build/frontend.Dockerfile
+      args:
+        VERSION: ${VERSION}
+        BUILD_INFO: ${BUILD_INFO}
+    ports:
+      - "8000:8000"
+    environment:
+      API_ENDPOINT: /
+    network_mode: host
+
+  cart:
+    image: ${IMAGE_PREFIX}/cart:${IMAGE_TAG}
+    pull_policy: build
+    build:
+      context: ..
+      dockerfile: ./build/service.Dockerfile
+      args:
+        VERSION: ${VERSION}
+        BUILD_INFO: ${BUILD_INFO}
+        SERVICE_PORT: 9001
+        SERVICE_NAME: cart
+    ports:
+      - "9001:9001"
+    environment:
+      - DAPR_GRPC_PORT=50009
+    network_mode: host
+
+  products:
+    image: ${IMAGE_PREFIX}/products:${IMAGE_TAG}
+    pull_policy: build
+    build:
+      context: ..
+      dockerfile: ./build/service.Dockerfile
+      args:
+        VERSION: ${VERSION}
+        BUILD_INFO: ${BUILD_INFO}
+        SERVICE_PORT: 9002
+        SERVICE_NAME: products
+        CGO_ENABLED: 1
+    ports:
+      - "9002:9002"
+    environment:
+      - DAPR_GRPC_PORT=50002      
+    network_mode: host
+
+  users:
+    image: ${IMAGE_PREFIX}/users:${IMAGE_TAG}
+    pull_policy: build
+    build:
+      context: ..
+      dockerfile: ./build/service.Dockerfile
+      args:
+        VERSION: ${VERSION}
+        BUILD_INFO: ${BUILD_INFO}
+        SERVICE_PORT: 9003
+        SERVICE_NAME: users
+    ports:
+      - "9003:9003" 
+    environment:
+      - DAPR_GRPC_PORT=50003
+    network_mode: host
+
+  orders:
+    image: ${IMAGE_PREFIX}/orders:${IMAGE_TAG}
+    pull_policy: build
+    build:
+      context: ..
+      dockerfile: ./build/service.Dockerfile
+      args:
+        VERSION: ${VERSION}
+        BUILD_INFO: ${BUILD_INFO}
+        SERVICE_PORT: 9004
+        SERVICE_NAME: orders
+    ports:
+      - "9004:9004"
+    environment:
+      - DAPR_GRPC_PORT=50004      
+    network_mode: host       
+
+  # ==============================================
+  # Dapr sidecars needed for the above services
+  # ==============================================
+
+  cart-dapr:
+    image: "daprio/daprd:edge"
+    command: [ "./daprd", "--app-id", "cart", "--app-port", "9001", "--dapr-grpc-port", "50009", "--dapr-http-port", "3501", "--components-path", "/components", "--enable-metrics=false"]
+    depends_on:
+      - cart
+    network_mode: "service:cart"
+    volumes:
+    - "../components/:/components"
+
+  products-dapr:
+    image: "daprio/daprd:edge"
+    command: [ "./daprd", "--app-id", "products", "--app-port", "9002", "--dapr-grpc-port", "50002", "--dapr-http-port", "3502", "--components-path", "/components", "--enable-metrics=false"]
+    depends_on:
+      - products
+    network_mode: "service:products"
+    volumes:
+    - "../components/:/components"
+
+  users-dapr:
+    image: "daprio/daprd:edge"
+    command: [ "./daprd", "--app-id", "users", "--app-port", "9003", "--dapr-grpc-port", "50003", "--dapr-http-port", "3503", "--components-path", "/components", "--enable-metrics=false"]
+    depends_on:
+      - users
+    network_mode: "service:users"   
+    volumes:
+    - "../components/:/components"
+
+  orders-dapr:
+    image: "daprio/daprd:edge"
+    command: [ "./daprd", "--app-id", "orders", "--app-port", "9004", "--dapr-grpc-port", "50004", "--dapr-http-port", "3504", "--components-path", "/components", "--enable-metrics", "false"]
+    depends_on:
+      - orders
+    network_mode: "service:orders"  
+    volumes:
+    - "../components/:/components"    

@@ -63,9 +63,9 @@ In both cases if `AUTH_CLIENT_ID` is not found at `/config` or if `VUE_APP_AUTH_
 
 # Services & Token Validation
 
-Security is enabled server side by the bearer token scheme as part of the OpenID Connect flow, a helper in `pkg/auth/auth.go` and the `JWTValidator()` HTTP middleware function which can be used to secure any route exposed by the services.
+Security is enabled server side by the bearer token scheme as part of the OpenID Connect flow. The [go-rest-api auth package is used](https://github.com/benc-uk/go-rest-api#package-auth), and the `JWTValidator()` HTTP middleware function which can be used to secure any route exposed by the services.
 
-If the environmental var `AUTH_CLIENT_ID` is **not** set, then all checks in JWTValidator are bypassed. This is default mode of operation, i.e. all APIs on all the services are open and can be called without authentication.
+If the environmental var `AUTH_CLIENT_ID` is **not** set, then a `PassthroughValidator` is used in place of the `JWTValidator`. This is default mode of operation, i.e. all APIs on all the services are open and can be called without authentication.
 
 The JWTValidator function gets the access token from the authorization header, decodes it using JWK and the JWKS `https://login.microsoftonline.com/common/discovery/v2.0/keys` and verifies the claims as follows:
 

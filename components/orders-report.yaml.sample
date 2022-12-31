@@ -8,11 +8,12 @@ kind: Component
 metadata:
   name: orders-report
 spec:
+  version: v1
   type: bindings.azure.blobstorage
   metadata:
-    - name: storageAccount
+    - name: accountName
       value: __CHANGE_ME__
-    - name: storageAccessKey
+    - name: accountKey
       value: __CHANGE_ME__
-    - name: container
+    - name: containerName
       value: __CHANGE_ME__

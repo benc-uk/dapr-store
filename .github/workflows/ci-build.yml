@@ -12,7 +12,7 @@ on:
     branches: [main]
 
 env:
-  VERSION: 0.8.1
+  VERSION: 0.8.2
   STORAGE_ACCT_NAME: benc
   BUILD_INFO: "Build:development / Workflow:${{ github.workflow }} / RunId:${{ github.run_id }} / Ref:${{ github.ref }} / SHA:${{ github.sha }}"
   IMAGE_REG: ghcr.io
@@ -67,16 +67,16 @@ jobs:
 
       - name: "Run all builds"
         run: |
-          make image-all IMAGE_TAG=$IMAGE_TAG VERSION=$VERSION BUILD_INFO="$BUILD_INFO"
-          make image-all IMAGE_TAG=latest VERSION=$VERSION BUILD_INFO="$BUILD_INFO"
+          make docker-build IMAGE_TAG=$IMAGE_TAG VERSION=$VERSION BUILD_INFO="$BUILD_INFO"
+          make docker-build IMAGE_TAG=latest VERSION=$VERSION BUILD_INFO="$BUILD_INFO"
 
       # Steps after this are only run when merging or pushing into main
       - name: "Push to container registry"
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login $IMAGE_REG -u $GITHUB_ACTOR --password-stdin
-          make push-all IMAGE_TAG=$IMAGE_TAG
-          make push-all IMAGE_TAG=latest
+          make docker-push IMAGE_TAG=$IMAGE_TAG
+          make docker-push IMAGE_TAG=latest
 
       # Continuous deployment trigger
       - name: "Trigger deployment with workflows_dispatch"
