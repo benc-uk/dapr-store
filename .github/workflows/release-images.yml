@@ -26,5 +26,5 @@ jobs:
 
       - name: "Push to Registry"
         run: |
-          make docker-build IMAGE_TAG=$IMAGE_TAG
-          make docker-build IMAGE_TAG=latest
+          make docker-push IMAGE_TAG=$IMAGE_TAG
+          make docker-push IMAGE_TAG=latest
