@@ -35,12 +35,12 @@ Deployed instance: https://daprstore.kube.benco.io/
 
 The main elements and microservices that make up the Dapr Store system are described here
 
-Each service uses my [Go REST API Starter Kit & Library](https://github.com/benc-uk/go-rest-api) as a starting basis, lots of the boilerplate and 
+Each service uses the [Go REST API Starter Kit & Library](https://github.com/benc-uk/go-rest-api) as a starting basis, lots of the boilerplate and 
 repeated code is located there.
 
 ## Service Code
 
-Each Go microservice (in `cmd/`) follows a very similar layout to the code base (the exception being `frontend-host` which has no business logic)
+Each Go microservice (in `cmd/`) follows a very similar layout (the exception being `frontend-host` which has no business logic)
 
 Primary runtime code:
 
