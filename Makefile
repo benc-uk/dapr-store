@@ -97,3 +97,35 @@ $(FRONTEND_DIR)/node_modules: $(FRONTEND_DIR)/package.json
 
 $(FRONTEND_DIR)/package.json: 
 	@echo "package.json was modified"
+
+# ===============================================================================
+
+docker-build-cart:
+	docker compose -f ./build/compose.yaml build cart
+
+docker-build-products:
+	docker compose -f ./build/compose.yaml build products
+
+docker-build-users:
+	docker compose -f ./build/compose.yaml build users
+
+docker-build-orders:
+	docker compose -f ./build/compose.yaml build orders
+
+docker-build-frontend:
+	docker compose -f ./build/compose.yaml build frontend
+
+docker-push-cart:
+	docker compose -f ./build/compose.yaml push cart
+
+docker-push-products:
+	docker compose -f ./build/compose.yaml push products
+
+docker-push-users:
+	docker compose -f ./build/compose.yaml push users
+
+docker-push-orders:
+	docker compose -f ./build/compose.yaml push orders
+
+docker-push-frontend:
+	docker compose -f ./build/compose.yaml push frontend

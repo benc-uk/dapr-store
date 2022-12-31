@@ -6,7 +6,7 @@ on:
 
 env:
   IMAGE_REG: ghcr.io
-  BUILD_INFO: "Build:stable / Workflow:${{ github.workflow }} / RunId:${{ github.run_id }} / Ref:${{ github.ref }} / SHA:${{ github.sha }}"
+  BUILD_INFO: "Build:stable / Workflow:${{ github.workflow }} / RunId:${{ github.run_id }} / Ref:${{ github.ref }} / SHA:${{ github.sha }} / ImageTag:${{ github.event.release.tag_name }}"
   IMAGE_TAG: ${{ github.event.release.tag_name }}
 
 jobs:

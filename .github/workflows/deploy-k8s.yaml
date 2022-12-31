@@ -41,7 +41,7 @@ jobs:
           values: |
             image:
               tag: "${{ github.event.client_payload.IMAGE_TAG }}${{ github.event.inputs.IMAGE_TAG }}"
-
+    
       # =========================================================================
       # Removed deployment tests for now, two blocking issues
       #  - The IP range for GitHub actions needs to be allowed through the NSG
