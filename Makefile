@@ -1,7 +1,7 @@
 SERVICE_DIR := cmd
 FRONTEND_DIR := web/frontend
 OUTPUT_DIR := ./output
-VERSION ?= 0.8.2
+VERSION ?= 0.8.3
 BUILD_INFO ?= "Local makefile build"
 DAPR_RUN_LOGLEVEL := warn
 
