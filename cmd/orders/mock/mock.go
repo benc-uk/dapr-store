@@ -15,7 +15,7 @@ import (
 type OrderService struct {
 }
 
-// MockOrders is some fake orders
+// MockOrders is some fake orders loaded from file
 var MockOrders []orderspec.Order
 var mockUserOrders []string
 
