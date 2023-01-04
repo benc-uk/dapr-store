@@ -3,14 +3,7 @@
   "$id": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/orders/spec/schema.json",
   "type": "object",
   "title": "Order entity",
-  "required": [
-    "id",
-    "title",
-    "amount",
-    "status",
-    "forUser",
-    "lineItems"
-  ],
+  "required": ["id", "title", "amount", "status", "forUserID", "lineItems"],
   "properties": {
     "id": {
       "$id": "#/properties/id",
@@ -34,11 +27,11 @@
       "title": "The order status",
       "enum": ["new", "received", "processing", "complete"]
     },
-    "forUser": {
-      "$id": "#/properties/forUser",
+    "forUserID": {
+      "$id": "#/properties/forUserID",
       "type": "string",
       "format": "email",
-      "title": "The username of the user order is for"
+      "title": "The userID of the user order is for"
     },
     "lineItems": {
       "$id": "#/properties/lineItems",
@@ -61,7 +54,7 @@
           }
         }
       },
-      "title": "The username of the user order is for"
+      "title": "The userId of the user order is for"
     }
   }
 }

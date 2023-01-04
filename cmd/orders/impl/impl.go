@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/benc-uk/dapr-store/cmd/orders/spec"
+	userspec "github.com/benc-uk/dapr-store/cmd/users/spec"
 	"github.com/benc-uk/go-rest-api/pkg/dapr/pubsub"
 	"github.com/benc-uk/go-rest-api/pkg/env"
 
@@ -59,8 +60,8 @@ func (s *OrderService) AddOrder(order spec.Order) error {
 
 	// This is a list of orderIDs for the user
 	userOrders := []string{}
-	// NOTE We use the username as a key in the orders state set, to hold an index of orders
-	data, err := s.client.GetState(context.Background(), s.storeName, order.ForUser, nil)
+	// NOTE We use the userID as a key in the orders state set, to hold an index of orders
+	data, err := s.client.GetState(context.Background(), s.storeName, order.ForUserID, nil)
 	if err != nil {
 		return err
 	}
@@ -79,7 +80,7 @@ func (s *OrderService) AddOrder(order spec.Order) error {
 	if !alreadyExists {
 		userOrders = append(userOrders, order.ID)
 	} else {
-		log.Printf("### Warning, duplicate order '%s' for user '%s' detected", order.ID, order.ForUser)
+		log.Printf("### Warning, duplicate order '%s' for user '%s' detected", order.ID, order.ForUserID)
 	}
 
 	// Save updated order list back, again keyed using user id
@@ -88,8 +89,8 @@ func (s *OrderService) AddOrder(order spec.Order) error {
 		return err
 	}
 
-	if err := s.client.SaveState(context.Background(), s.storeName, order.ForUser, jsonPayload, nil); err != nil {
-		log.Printf("### Error!, unable to save order list for user '%s'", order.ForUser)
+	if err := s.client.SaveState(context.Background(), s.storeName, order.ForUserID, jsonPayload, nil); err != nil {
+		log.Printf("### Error!, unable to save order list for user '%s'", order.ForUserID)
 		return err
 	}
 
@@ -172,10 +173,10 @@ func (s *OrderService) ProcessOrder(order spec.Order) error {
 	return nil
 }
 
-// GetOrdersForUser fetches a list of order ids for a given username
-func (s *OrderService) GetOrdersForUser(userName string) ([]string, error) {
+// GetOrdersForUser fetches a list of order ids for a given user
+func (s *OrderService) GetOrdersForUser(userID string) ([]string, error) {
 	// NOTE We use the username as a key in the orders state set, to hold an index of orders
-	data, err := s.client.GetState(context.Background(), s.storeName, userName, nil)
+	data, err := s.client.GetState(context.Background(), s.storeName, userID, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -216,13 +217,27 @@ func (s *OrderService) SetStatus(order *spec.Order, status spec.OrderStatus) err
 // EmailNotify uses Dapr SendGrid output binding to send an email
 // See: https://docs.dapr.io/reference/components-reference/supported-bindings/sendgrid/
 func (s *OrderService) EmailNotify(order spec.Order) error {
+	// Call the PRIVATE endpoint of the user service to get the user's email address
+	// This is not protected so no auth token is required
+	resp, err := s.client.InvokeMethod(context.Background(), "users", "private/get/"+order.ForUserID, "GET")
+	if err != nil {
+		return fmt.Errorf("error calling user service: %s", err)
+	}
+
+	user := &userspec.User{}
+
+	err = json.Unmarshal(resp, user)
+	if err != nil {
+		return err
+	}
+
 	emailMetadata := map[string]string{
-		"emailTo": order.ForUser,
+		"emailTo": user.Email,
 		"subject": "Dapr Store, order details: " + order.Title,
 	}
 
 	emailData := "<h1>Thanks for your order!</h1>Order title: " + order.Title + "<br>Order ID: " + order.ID +
-		"<br>User: " + order.ForUser + "<br>Amount: £" + fmt.Sprintf("%.2f", order.Amount) + "<br><br>Enjoy your new dapper threads!"
+		"<br>User: " + order.ForUserID + "<br>Amount: £" + fmt.Sprintf("%.2f", order.Amount) + "<br><br>Enjoy your new dapper threads!"
 
 	request := &dapr.InvokeBindingRequest{}
 	request.Metadata = emailMetadata
@@ -235,7 +250,7 @@ func (s *OrderService) EmailNotify(order spec.Order) error {
 		return err
 	}
 
-	log.Printf("### Email was sent to %s", order.ForUser)
+	log.Printf("### Email was sent to %s", user.Email)
 
 	return nil
 }
@@ -249,7 +264,7 @@ func (s *OrderService) SaveReport(order spec.Order) error {
 		"blobName":    blobName,
 	}
 	blobData := "----------\nTitle: " + order.Title + "\nOrder ID: " + order.ID +
-		"\nUser: " + order.ForUser + "\nAmount: " + fmt.Sprintf("%f", order.Amount) + "\n----------"
+		"\nUser: " + order.ForUserID + "\nAmount: " + fmt.Sprintf("%f", order.Amount) + "\n----------"
 
 	request := &dapr.InvokeBindingRequest{}
 	request.Metadata = blobMetadata

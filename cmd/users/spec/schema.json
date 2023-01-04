@@ -2,17 +2,18 @@
   "id": "https://raw.githubusercontent.com/benc-uk/dapr-store/master/cmd/user/spec/schema.json",
   "type": "object",
   "title": "User entity",
-  "required": [
-    "username",
-    "displayName",
-    "profileImage"
-  ],
+  "required": ["email", "userId", "displayName", "profileImage"],
   "properties": {
-    "username": {
-      "$id": "#/properties/username",
+    "email": {
+      "$id": "#/properties/email",
       "type": "string",
       "format": "email",
-      "title": "The user's username"
+      "title": "The user's email"
+    },
+    "userId": {
+      "$id": "#/properties/userId",
+      "type": "string",
+      "title": "The user's id"
     },
     "displayName": {
       "$id": "#/properties/displayName",

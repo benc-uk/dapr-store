@@ -19,7 +19,7 @@ import (
 // All routes we need should be registered here
 func (api API) addRoutes(router chi.Router, v auth.Validator) {
 	router.Get("/get/{id}", v.Protect(api.getOrder))
-	router.Get("/getForUser/{username}", v.Protect(api.getOrdersForUser))
+	router.Get("/getForUser/{userid}", v.Protect(api.getOrdersForUser))
 }
 
 // Fetch existing order by id
@@ -44,11 +44,11 @@ func (api API) getOrder(resp http.ResponseWriter, req *http.Request) {
 
 // Fetch all orders for a given user
 func (api API) getOrdersForUser(resp http.ResponseWriter, req *http.Request) {
-	username := chi.URLParam(req, "username")
+	userID := chi.URLParam(req, "userid")
 
-	orders, err := api.service.GetOrdersForUser(username)
+	orders, err := api.service.GetOrdersForUser(userID)
 	if err != nil {
-		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
+		problem.Wrap(500, req.RequestURI, userID, err).Send(resp)
 
 		return
 	}

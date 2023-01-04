@@ -105,7 +105,7 @@ export default {
         return
       }
 
-      let resp = await api.cartGet(this.user.username)
+      let resp = await api.cartGet(this.user.localAccountId)
       if (resp) {
         this.cart = resp
         this.cartProducts = []
@@ -124,8 +124,8 @@ export default {
   methods: {
     async submitOrder() {
       try {
-        this.newOrder = await api.cartSubmit(this.user.username)
-        this.cart = await api.cartClear(this.user.username)
+        this.newOrder = await api.cartSubmit(this.user.localAccountId)
+        this.cart = await api.cartClear(this.user.localAccountId)
         this.cartProducts = []
       } catch (err) {
         this.error = err
@@ -134,7 +134,7 @@ export default {
 
     async clearCart() {
       try {
-        let resp = await api.cartClear(this.user.username)
+        let resp = await api.cartClear(this.user.localAccountId)
         this.cart = resp
         this.cartProducts = []
       } catch (err) {
@@ -144,7 +144,7 @@ export default {
 
     async modifyProductAmmount(productId, amount) {
       try {
-        this.cart = await api.cartAddAmount(this.user.username, productId, amount)
+        this.cart = await api.cartAddAmount(this.user.localAccountId, productId, amount)
 
         // Fiddly nonsense to remove from cartProducts if removed from products.cart
         // Check if productId is removed from cart object, then recreate cartProducts array

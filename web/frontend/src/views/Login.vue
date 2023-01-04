@@ -96,13 +96,14 @@ export default {
         const user = auth.user()
 
         let resp = await api.userRegister({
-          username: user.username,
+          userId: user.localAccountId,
+          email: user.username,
           displayName: user.name || 'Unknown Name',
           profileImage: 'img/placeholder-profile.jpg'
         })
 
         if (resp && resp.registrationStatus == 'success') {
-          console.log(`## Registered user ${user.username}`)
+          console.log(`## Registered user ${user.localAccountId}`)
         } else {
           throw new Error('Something went wrong while registering user')
         }
@@ -123,9 +124,9 @@ export default {
       try {
         await auth.login()
         const user = auth.user()
-        if (user && user.username) {
+        if (user && user.localAccountId) {
           try {
-            await api.userCheckReg(user.username)
+            await api.userCheckReg(user.localAccountId)
           } catch (err) {
             auth.clearLocal()
             throw new Error("Sorry, you aren't a registered user, please use the registration option below")

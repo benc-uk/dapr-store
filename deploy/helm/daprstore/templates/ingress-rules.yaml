@@ -34,11 +34,12 @@ spec:
     {{ end }}
         paths:
           # This blocks calls to the private API from outside the cluster
+          # It's kinda hacky (you get a 503 rather than 403), but it works
           - path: /v1.0/invoke/users/method/private
             pathType: Prefix
             backend:
               service:
-                name: sink-hole
+                name: sink-hole # Non-existent service, for request to die
                 port: 
                   number: 80             
           # Only expose the Dapr invoke API, lets us call our services and nothing more

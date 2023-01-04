@@ -100,7 +100,7 @@ export default {
           return
         }
 
-        await api.cartAddAmount(auth.user().username, product.id, +1)
+        await api.cartAddAmount(auth.user().localAccountId, product.id, +1)
         this.name = product.name
         toast.show()
       } catch (err) {

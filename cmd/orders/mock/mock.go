@@ -51,7 +51,7 @@ func (s OrderService) GetOrder(orderID string) (*orderspec.Order, error) {
 }
 
 // GetOrdersForUser mock
-func (s OrderService) GetOrdersForUser(username string) ([]string, error) {
+func (s OrderService) GetOrdersForUser(userID string) ([]string, error) {
 	return nil, nil
 }
 

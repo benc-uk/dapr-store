@@ -13,7 +13,8 @@ type Order struct {
 	Amount    float32     `json:"amount"`
 	LineItems []LineItem  `json:"lineItems"`
 	Status    OrderStatus `json:"status"`
-	ForUser   string      `json:"forUser"` // Ref to User.Username
+	ForUserID string      `json:"forUser"` // Ref to User.UserID
+	Email     string      `json:"email"`
 }
 
 // LineItem is a simple line on an order, a tuple of count and a Product struct
@@ -36,7 +37,7 @@ const (
 // OrderService defines core CRUD methods a orders service should have
 type OrderService interface {
 	GetOrder(orderID string) (*Order, error)
-	GetOrdersForUser(username string) ([]string, error)
+	GetOrdersForUser(userID string) ([]string, error)
 	ProcessOrder(order Order) error
 	AddOrder(Order) error
 	SetStatus(order *Order, status OrderStatus) error
@@ -46,7 +47,7 @@ type OrderService interface {
 
 // Validate checks an order is correct
 func Validate(o Order) error {
-	if o.Amount <= 0 || len(o.LineItems) == 0 || o.Title == "" || o.ForUser == "" {
+	if o.Amount <= 0 || len(o.LineItems) == 0 || o.Title == "" || o.ForUserID == "" {
 		return errors.New("order failed validation")
 	}
 

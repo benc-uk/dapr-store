@@ -45,7 +45,7 @@ func NewService(serviceName string) *UserService {
 // AddUser registers a new user and stores in Dapr state
 func (s *UserService) AddUser(user spec.User) error {
 	// Check is user already registered
-	data, err := s.client.GetState(context.Background(), s.storeName, user.Username, nil)
+	data, err := s.client.GetState(context.Background(), s.storeName, user.UserID, nil)
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func (s *UserService) AddUser(user spec.User) error {
 		return err
 	}
 
-	if err := s.client.SaveState(context.Background(), s.storeName, user.Username, jsonPayload, nil); err != nil {
+	if err := s.client.SaveState(context.Background(), s.storeName, user.UserID, jsonPayload, nil); err != nil {
 		return err
 	}
 
@@ -69,8 +69,8 @@ func (s *UserService) AddUser(user spec.User) error {
 }
 
 // GetUser fetches a user from Dapr state
-func (s *UserService) GetUser(username string) (*spec.User, error) {
-	data, err := s.client.GetState(context.Background(), s.storeName, username, nil)
+func (s *UserService) GetUser(userID string) (*spec.User, error) {
+	data, err := s.client.GetState(context.Background(), s.storeName, userID, nil)
 	if err != nil {
 		return nil, err
 	}

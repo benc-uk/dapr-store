@@ -53,8 +53,8 @@ func NewService(serviceName string) *CartService {
 }
 
 // Get fetches saved cart for a given user, if none exists an empty cart is always returned
-func (s CartService) Get(username string) (*cartspec.Cart, error) {
-	data, err := s.client.GetState(context.Background(), s.storeName, username, nil)
+func (s CartService) Get(userID string) (*cartspec.Cart, error) {
+	data, err := s.client.GetState(context.Background(), s.storeName, userID, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (s CartService) Get(username string) (*cartspec.Cart, error) {
 	// Create an empty cart
 	if data.Value == nil {
 		cart := &cartspec.Cart{}
-		cart.ForUser = username
+		cart.ForUserID = userID
 		cart.Products = make(map[string]int)
 
 		return cart, nil
@@ -72,11 +72,11 @@ func (s CartService) Get(username string) (*cartspec.Cart, error) {
 
 	if err = json.Unmarshal(data.Value, cart); err != nil {
 		// The cart is somehow corrupt - remove it from state, or we'll get stuck
-		_ = s.client.DeleteState(context.Background(), s.storeName, username, nil)
+		_ = s.client.DeleteState(context.Background(), s.storeName, userID, nil)
 
-		log.Printf("### Warning: Corrupt cart for user %s was removed!!", username)
+		log.Printf("### Warning: Corrupt cart for user %s was removed!!", userID)
 
-		cart.ForUser = username
+		cart.ForUserID = userID
 		cart.Products = make(map[string]int)
 	}
 
@@ -122,7 +122,7 @@ func (s CartService) Submit(cart cartspec.Cart) (*orderspec.Order, error) {
 	order := &orderspec.Order{
 		Title:     "Order " + time.Now().Format("15:04 Jan 2 2006"),
 		Amount:    orderAmount,
-		ForUser:   cart.ForUser,
+		ForUserID: cart.ForUserID,
 		ID:        makeID(5),
 		Status:    orderspec.OrderNew,
 		LineItems: lineItems,
@@ -160,7 +160,7 @@ func (s CartService) SetProductCount(cart *cartspec.Cart, productID string, coun
 		return err
 	}
 
-	if err = s.client.SaveState(context.Background(), s.storeName, cart.ForUser, jsonPayload, nil); err != nil {
+	if err = s.client.SaveState(context.Background(), s.storeName, cart.ForUserID, jsonPayload, nil); err != nil {
 		return err
 	}
 
@@ -176,7 +176,7 @@ func (s CartService) Clear(cart *cartspec.Cart) error {
 		return err
 	}
 
-	if err = s.client.SaveState(context.Background(), s.storeName, cart.ForUser, jsonPayload, nil); err != nil {
+	if err = s.client.SaveState(context.Background(), s.storeName, cart.ForUserID, jsonPayload, nil); err != nil {
 		return err
 	}
 

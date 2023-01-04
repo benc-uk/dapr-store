@@ -115,6 +115,8 @@ docker-build-orders:
 docker-build-frontend:
 	docker compose -f ./build/compose.yaml build frontend
 
+# ===============================================================================
+
 docker-push-cart:
 	docker compose -f ./build/compose.yaml push cart
 
@@ -129,3 +131,4 @@ docker-push-orders:
 
 docker-push-frontend:
 	docker compose -f ./build/compose.yaml push frontend
+
