@@ -1,7 +1,8 @@
 [
   {
     "displayName": "Mock User",
-    "username": "mock@example.net",
+    "email": "test@example.net",
+    "userId": "12345",
     "profileImage": "face.jpg"
   }
 ]

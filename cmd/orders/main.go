@@ -10,6 +10,7 @@ package main
 import (
 	"log"
 	"os"
+	"regexp"
 	"time"
 
 	"github.com/benc-uk/dapr-store/cmd/orders/impl"
@@ -18,6 +19,7 @@ import (
 	"github.com/benc-uk/go-rest-api/pkg/auth"
 	"github.com/benc-uk/go-rest-api/pkg/dapr/pubsub"
 	"github.com/benc-uk/go-rest-api/pkg/env"
+	"github.com/benc-uk/go-rest-api/pkg/logging"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 
@@ -74,7 +76,7 @@ func main() {
 
 	// Some basic middleware
 	router.Use(middleware.RealIP)
-	router.Use(middleware.Logger)
+	router.Use(logging.NewFilteredRequestLogger(regexp.MustCompile(`(^/metrics)|(^/health)`)))
 	router.Use(middleware.Recoverer)
 	// Some custom middleware for CORS
 	router.Use(api.SimpleCORSMiddleware)

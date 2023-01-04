@@ -24,6 +24,9 @@ import (
 func (api API) addRoutes(router chi.Router, v auth.Validator) {
 	router.Post("/register", v.Protect(api.registerUser))
 	router.Get("/get/{username}", v.Protect(api.getUser))
+	// Unprotected version for internal (service to service) use
+	// This not exposed through the API gateway to public
+	router.Get("/private/get/{username}", api.getUser)
 	router.Get("/isregistered/{username}", api.checkRegistered)
 }
 
@@ -37,7 +40,7 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if len(user.DisplayName) == 0 || len(user.Username) == 0 {
+	if len(user.DisplayName) == 0 || len(user.UserID) == 0 {
 		problem.Wrap(400, req.RequestURI, "new-user", errors.New("failed validation, check spec")).Send(resp)
 		return
 	}
@@ -46,11 +49,11 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 
 	if err := api.service.AddUser(user); err != nil {
 		if userError, isError := err.(impl.UserError); isError && userError.Error() == impl.DuplicateError {
-			problem.Wrap(409, req.RequestURI, user.Username, err).Send(resp)
+			problem.Wrap(409, req.RequestURI, user.Email, err).Send(resp)
 			return
 		}
 
-		problem.Wrap(500, req.RequestURI, user.Username, err).Send(resp)
+		problem.Wrap(500, req.RequestURI, user.Email, err).Send(resp)
 
 		return
 	}
@@ -58,7 +61,8 @@ func (api API) registerUser(resp http.ResponseWriter, req *http.Request) {
 	// Send success message back
 	api.ReturnJSON(resp, map[string]string{
 		"registrationStatus": "success",
-		"username":           user.Username,
+		"email":              user.Email,
+		"userId":             user.UserID,
 	})
 }
 

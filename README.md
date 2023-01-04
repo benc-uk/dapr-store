@@ -61,7 +61,7 @@ It is written in Go, source is in `cmd/orders` and it exposes the following API 
 
 ```text
 /get/{id}                GET a single order by orderID
-/getForUser/{username}   GET all orders for a given username
+/getForUser/{userId}   GET all orders for a given user
 ```
 
 See `cmd/orders/spec` for details of the **Order** entity.
@@ -82,14 +82,15 @@ This provides a simple user profile service to the Dapr Store. Only registered u
 It is written in Go, source is in `cmd/users` and it exposes the following API routes:
 
 ```
-/register                 POST a new user to register them
-/get/{username}           GET the user profile for given username
-/isregistered/{username}  GET the registration status for a given username
+/register               POST a new user to register them
+/get/{userId}           GET the user profile for given user
+/private/get/{userId}   GET the user profile for given user. Private endpoints are NOT exposed through the gateway
+/isregistered/{userId}  GET the registration status for a given user
 ```
 
 See `cmd/users/spec` for details of the **User** entity.
 
-The service is notable as it consists of a mixture of secured API routes and one anonymous/open API `/isregistered`
+The service is notable as it consists of a mix of both secured API routes, and two that are anonymous/open `/isregistered` and `/private/get`
 
 ### Users - Dapr Interaction
 
@@ -121,10 +122,10 @@ This provides a cart service to the Dapr Store. The currently implementation is 
 It is written in Go, source is in `cmd/cart` and it exposes the following API routes:
 
 ```text
-/setProduct/{username}/{productId}/{count}    PUT a number of products in the cart of given user
-/get/{username}                               GET cart for user
+/setProduct/{userId}/{productId}/{count}    PUT a number of products in the cart of given user
+/get/{userId}                               GET cart for user
 /submit                                       POST submit a cart, and turn it into an 'Order'
-/clear/{username}                             PUT clear a user's cart
+/clear/{userId}                             PUT clear a user's cart
 ```
 
 The service is responsible for maintaining shopping carts for each user and persisting them. Submitting a cart will validate the contents and turn it into a order, which is sent to the Orders service for processing
@@ -154,6 +155,7 @@ In addition it exposes a simple `/config` endpoint, this is to allow dynamic con
 This component is critical but consists of no code. It's a NGINX reverse proxy configured to do two things:
 
 - Forward specific calls to the relevant services via Dapr
+- Block requests to private APIs
 - Direct requests to the _frontend host_
 
 > Note. This is not to be confused with Azure API Management, Azure App Gateway or AWS API Gateway 😀
@@ -161,6 +163,12 @@ This component is critical but consists of no code. It's a NGINX reverse proxy c
 This is done with path based routing, it aggregates the various APIs and frontend SPA into a single endpoint or host, making configuration much easier (and the reason the API endpoint for the SPA can simply be `/`)
 
 NGINX is run with the Dapr sidecar alongside it, so that it can proxy requests to the `/v1.0/invoke` Dapr API, via this the downstream services are invoked, through Dapr.
+
+Routing logic (in order of priority):
+
+1. Routes that match `/v1.0/invoke/.*/method/private/.*` are blocked with 403
+2. Routes that match `/v1.0/invoke/` are proxied to the Dapr sidecar
+3. Routes that match `/` are proxied to the frontend host
 
 ### Within Kubernetes
 

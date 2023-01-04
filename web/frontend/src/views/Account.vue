@@ -30,7 +30,11 @@
             </tr>
             <tr>
               <td>Username</td>
-              <td>{{ registeredUser.username }}</td>
+              <td>{{ user.username }}</td>
+            </tr>
+            <tr>
+              <td>Environment</td>
+              <td>{{ user.environment }}</td>
             </tr>
           </table>
           <img class="profile d-md-block" :src="photo" />
@@ -71,6 +75,7 @@ export default {
   data() {
     return {
       registeredUser: auth.user(),
+      user: auth.user(),
       photo: 'img/placeholder-profile.jpg',
       error: null,
       orders: null,
@@ -81,7 +86,8 @@ export default {
   async created() {
     try {
       if (auth.user()) {
-        let resp = await api.userGet(auth.user().username)
+        this.user = auth.user()
+        let resp = await api.userGet(auth.user().localAccountId)
         if (resp) {
           this.registeredUser = resp
         }
@@ -111,7 +117,7 @@ export default {
       let orderList = []
 
       try {
-        orderList = await api.ordersForUser(auth.user().username)
+        orderList = await api.ordersForUser(auth.user().localAccountId)
       } catch (err) {
         this.error = err
       }

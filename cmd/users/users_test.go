@@ -44,7 +44,7 @@ var testCases = []httptester.TestCase{
 		URL:    "/register",
 		Method: "POST",
 		Body: `{
-			"username": "test@example.net",
+			"userId": "88888",
 			"displayName": "Mr Test"
 		}`,
 		CheckBody:      "",
@@ -56,7 +56,7 @@ var testCases = []httptester.TestCase{
 		URL:    "/register",
 		Method: "POST",
 		Body: `{
-			"username": "test@example.net",
+			"userId": "88888",
 			"displayName": "Mr Test"
 		}`,
 		CheckBody:      "already",
@@ -68,7 +68,7 @@ var testCases = []httptester.TestCase{
 		URL:    "/register",
 		Method: "POST",
 		Body: `{
-			"username": "mock@example.net",
+			"userId": "12345",
 			"displayName": "Mock user"
 		}`,
 		CheckBody:      "already",
@@ -97,16 +97,16 @@ var testCases = []httptester.TestCase{
 	},
 	{
 		Name:           "get existing user",
-		URL:            "/get/test@example.net",
+		URL:            "/get/12345",
 		Method:         "GET",
 		Body:           ``,
-		CheckBody:      "Mr Test",
+		CheckBody:      "Mock User",
 		CheckBodyCount: 1,
 		CheckStatus:    200,
 	},
 	{
 		Name:           "get non-registered user",
-		URL:            "/get/idontexist@example.net",
+		URL:            "/get/00000001",
 		Method:         "GET",
 		Body:           ``,
 		CheckBody:      "",

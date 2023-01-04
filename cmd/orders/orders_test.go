@@ -51,7 +51,7 @@ func TestOrders(t *testing.T) {
 	t.Run("process invalid order", func(t *testing.T) {
 		badOrder := spec.Order{
 			LineItems: []spec.LineItem{},
-			ForUser:   "",
+			ForUserID: "",
 		}
 		err := mockOrdersSvc.ProcessOrder(badOrder)
 		if err != nil && strings.Contains(err.Error(), "validation") {

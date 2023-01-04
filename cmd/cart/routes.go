@@ -22,20 +22,20 @@ import (
 
 // All routes we need should be registered here
 func (api API) addRoutes(router chi.Router, v auth.Validator) {
-	router.Put("/setProduct/{username}/{productId}/{count}", v.Protect(api.setProductCount))
-	router.Get("/get/{username}", v.Protect(api.getCart))
+	router.Put("/setProduct/{userId}/{productId}/{count}", v.Protect(api.setProductCount))
+	router.Get("/get/{userId}", v.Protect(api.getCart))
 	router.Post("/submit", v.Protect(api.submitCart))
-	router.Put("/clear/{username}", v.Protect(api.clearCart))
+	router.Put("/clear/{userId}", v.Protect(api.clearCart))
 }
 
 func (api API) setProductCount(resp http.ResponseWriter, req *http.Request) {
-	username := chi.URLParam(req, "username")
+	userID := chi.URLParam(req, "userId")
 	productID := chi.URLParam(req, "productId")
 	countString := chi.URLParam(req, "count")
 
-	cart, err := api.service.Get(username)
+	cart, err := api.service.Get(userID)
 	if err != nil {
-		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
+		problem.Wrap(500, req.RequestURI, userID, err).Send(resp)
 
 		return
 	}
@@ -59,12 +59,12 @@ func (api API) setProductCount(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (api API) getCart(resp http.ResponseWriter, req *http.Request) {
-	username := chi.URLParam(req, "username")
+	userID := chi.URLParam(req, "userId")
 
-	cart, err := api.service.Get(username)
+	cart, err := api.service.Get(userID)
 
 	if err != nil {
-		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
+		problem.Wrap(500, req.RequestURI, userID, err).Send(resp)
 
 		return
 	}
@@ -73,11 +73,11 @@ func (api API) getCart(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (api API) clearCart(resp http.ResponseWriter, req *http.Request) {
-	username := chi.URLParam(req, "username")
+	userID := chi.URLParam(req, "userId")
 
-	cart, err := api.service.Get(username)
+	cart, err := api.service.Get(userID)
 	if err != nil {
-		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
+		problem.Wrap(500, req.RequestURI, userID, err).Send(resp)
 
 		return
 	}
@@ -91,22 +91,22 @@ func (api API) clearCart(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (api API) submitCart(resp http.ResponseWriter, req *http.Request) {
-	username := ""
+	userID := ""
 
-	err := json.NewDecoder(req.Body).Decode(&username)
+	err := json.NewDecoder(req.Body).Decode(&userID)
 	if err != nil {
 		problem.Wrap(400, req.RequestURI, "none", err).Send(resp)
 		return
 	}
 
-	if username == "" {
-		problem.Wrap(400, req.RequestURI, "none", errors.New("username missing from request")).Send(resp)
+	if userID == "" {
+		problem.Wrap(400, req.RequestURI, "none", errors.New("userId missing from request")).Send(resp)
 		return
 	}
 
-	cart, err := api.service.Get(username)
+	cart, err := api.service.Get(userID)
 	if err != nil {
-		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
+		problem.Wrap(500, req.RequestURI, userID, err).Send(resp)
 
 		return
 	}
@@ -114,11 +114,11 @@ func (api API) submitCart(resp http.ResponseWriter, req *http.Request) {
 	order, err := api.service.Submit(*cart)
 	if err != nil {
 		if cartErr, ok := err.(impl.CartError); ok && cartErr.Error() == impl.EmptyError {
-			problem.Wrap(400, req.RequestURI, username, cartErr).Send(resp)
+			problem.Wrap(400, req.RequestURI, userID, cartErr).Send(resp)
 			return
 		}
 
-		problem.Wrap(500, req.RequestURI, username, err).Send(resp)
+		problem.Wrap(500, req.RequestURI, userID, err).Send(resp)
 
 		return
 	}

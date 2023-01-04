@@ -1,7 +1,7 @@
 SERVICE_DIR := cmd
 FRONTEND_DIR := web/frontend
 OUTPUT_DIR := ./output
-VERSION ?= 0.8.2
+VERSION ?= 0.8.3
 BUILD_INFO ?= "Local makefile build"
 DAPR_RUN_LOGLEVEL := warn
 
@@ -27,7 +27,7 @@ lint-fix: $(FRONTEND_DIR)/node_modules  ## 📝 Lint & format, fixes errors and 
 	cd $(FRONTEND_DIR); npm run lint-fix
 
 test:  ## 🎯 Unit tests for services and snapshot tests for SPA frontend 
-	go test -v ./$(SERVICE_DIR)/...
+	go test -v -count=1 ./$(SERVICE_DIR)/...
 	@cd $(FRONTEND_DIR); NODE_ENV=test npm run test -- --ci
 
 test-reports: $(FRONTEND_DIR)/node_modules  ## 📜 Unit tests with coverage and test reports (deprecated)
@@ -115,6 +115,8 @@ docker-build-orders:
 docker-build-frontend:
 	docker compose -f ./build/compose.yaml build frontend
 
+# ===============================================================================
+
 docker-push-cart:
 	docker compose -f ./build/compose.yaml push cart
 
@@ -129,3 +131,4 @@ docker-push-orders:
 
 docker-push-frontend:
 	docker compose -f ./build/compose.yaml push frontend
+

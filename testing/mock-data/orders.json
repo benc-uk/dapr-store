@@ -2,14 +2,14 @@
   {
     "id": "ord-mock",
     "title": "Mock order",
-    "amount": 22.40,
+    "amount": 22.4,
     "lineItems": [
       {
         "count": 2,
         "product": {
           "id": "prd3",
           "name": "Paisley Cravat Ascot Tie",
-          "cost": 11.20,
+          "cost": 11.2,
           "description": "Black & Red Paisley Cravat",
           "image": "/img/catalog/3.jpg",
           "onOffer": false

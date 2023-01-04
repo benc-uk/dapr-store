@@ -4,6 +4,6 @@
       "prd1": 2,
       "prd3": 1
     },
-    "forUser": "mock@example.net"
+    "forUserId": "mock@example.net"
   }
 ]

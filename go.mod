@@ -3,7 +3,7 @@ module github.com/benc-uk/dapr-store
 go 1.19
 
 require (
-	github.com/benc-uk/go-rest-api v1.0.3
+	github.com/benc-uk/go-rest-api v1.0.4
 	github.com/dapr/go-sdk v1.6.0
 	github.com/go-chi/chi v4.1.1+incompatible
 	github.com/go-chi/chi/v5 v5.0.8
@@ -29,7 +29,7 @@ require (
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
 	golang.org/x/net v0.0.0-20220621193019-9d032be2e588 // indirect
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20220622171453-ea41d75dfa0f // indirect
 	google.golang.org/grpc v1.47.0 // indirect

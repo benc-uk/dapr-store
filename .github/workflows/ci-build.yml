@@ -12,7 +12,7 @@ on:
     branches: [main]
 
 env:
-  VERSION: 0.8.2
+  VERSION: 0.8.3
   STORAGE_ACCT_NAME: benc
   BUILD_INFO: "Build:development / Workflow:${{ github.workflow }} / RunId:${{ github.run_id }} / Ref:${{ github.ref }} / SHA:${{ github.sha }} / ImageTag:${{ github.run_id }}"
   IMAGE_REG: ghcr.io

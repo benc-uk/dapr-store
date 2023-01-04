@@ -28,13 +28,12 @@ export default {
       console.log('### Azure AD sign-in: disabled. Will run in demo mode with dummy demo@example.net account')
 
       const dummyUser = {
-        accountIdentifier: 'e11d4d0c-1c70-430d-a644-aed03a60e059',
-        homeAccountIdentifier: '',
+        localAccountId: '00000000-1111-2222-3333-abcdef123456',
+        homeAccountId: '',
         username: 'demo@example.net',
         name: 'Demo User',
         idToken: null,
-        sid: '',
-        environment: '',
+        environment: 'Fake Auth',
         idTokenClaims: {
           tid: 'fake-tenant'
         }

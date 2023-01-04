@@ -10,7 +10,7 @@ controller:
       purpose: "daprstore-api-gateway"
 
     # Static IP so DNS can remain static too
-    # This is manually pre-created
+    # This is manually pre-created, you'll need to edit this!
     loadBalancerIP: "20.254.189.197"
   ingressClass: "dapr"
   ingressClassResource:

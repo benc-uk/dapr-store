@@ -27,19 +27,19 @@ GET http://{{host}}/v1.0/invoke/products/method/search/Paisley
 # ===================================================================
 
 ### Add products to cart
-PUT http://{{host}}/v1.0/invoke/cart/method/setProduct/demo@example.net/prd001/6
+PUT http://{{host}}/v1.0/invoke/cart/method/setProduct/00000000-1111-2222-3333-abcdef123456/prd001/6
 
 ### Get cart
-GET http://{{host}}/v1.0/invoke/cart/method/get/demo@example.net
+GET http://{{host}}/v1.0/invoke/cart/method/get/00000000-1111-2222-3333-abcdef123456
 
 ### Clear cart
-PUT http://{{host}}/v1.0/invoke/cart/method/clear/demo@example.net
+PUT http://{{host}}/v1.0/invoke/cart/method/clear/00000000-1111-2222-3333-abcdef123456
 
 ### Submit cart
 POST http://{{host}}/v1.0/invoke/cart/method/submit
 content-type: application/json
 
-"demo@example.net"
+"00000000-1111-2222-3333-abcdef123456"
 
 
 
@@ -48,10 +48,10 @@ content-type: application/json
 # ===================================================================
 
 ### Get existing order
-GET http://{{host}}/v1.0/invoke/orders/method/get/yCK1e 
+GET http://{{host}}/v1.0/invoke/orders/method/get/u3E8i 
 
 ### Get orders for user
-GET http://{{host}}/v1.0/invoke/orders/method/getForUser/demo@example.net
+GET http://{{host}}/v1.0/invoke/orders/method/getForUser/00000000-1111-2222-3333-abcdef123456
 
 
 
@@ -60,16 +60,20 @@ GET http://{{host}}/v1.0/invoke/orders/method/getForUser/demo@example.net
 # ===================================================================
 
 ### Check a user
-GET http://{{host}}/v1.0/invoke/users/method/isregistered/demo@example.net
+GET http://{{host}}/v1.0/invoke/users/method/isregistered/00000000-1111-2222-3333-abcdef123456
 
 ### Get a user
-GET http://{{host}}/v1.0/invoke/users/method/get/demo@example.net
+GET http://{{host}}/v1.0/invoke/users/method/get/00000000-1111-2222-3333-abcdef123456
+
+### Get a user from private endpoint
+GET http://{{host}}/v1.0/invoke/users/method/private/get/00000000-1111-2222-3333-abcdef123456
 
 ### Register new user
 POST http://{{host}}/v1.0/invoke/users/method/register
 content-type: application/json
 
 {
-  "username": "demo@example.net",
+  "userId": "00000000-1111-2222-3333-abcdef123456",
+  "email": "demo@example.net",
   "displayName": "API TEST"
 }

@@ -41,15 +41,15 @@ func init() {
 }
 
 // Get fetches saved cart for a given user, if not exists an empty cart is returned
-func (s CartService) Get(username string) (*cartspec.Cart, error) {
+func (s CartService) Get(userID string) (*cartspec.Cart, error) {
 	for _, cart := range mockCarts {
-		if cart.ForUser == username {
+		if cart.ForUserID == userID {
 			return &cart, nil
 		}
 	}
 
 	cart := &cartspec.Cart{}
-	cart.ForUser = username
+	cart.ForUserID = userID
 	cart.Products = make(map[string]int)
 
 	return cart, nil
@@ -87,7 +87,7 @@ func (s CartService) Clear(cart *cartspec.Cart) error {
 	cart.Products = map[string]int{}
 
 	for i, c := range mockCarts {
-		if c.ForUser == cart.ForUser {
+		if c.ForUserID == cart.ForUserID {
 			mockCarts[i] = *cart
 		}
 	}

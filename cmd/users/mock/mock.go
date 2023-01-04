@@ -35,9 +35,9 @@ func init() {
 }
 
 // GetUser mock
-func (s UserService) GetUser(username string) (*spec.User, error) {
+func (s UserService) GetUser(userID string) (*spec.User, error) {
 	for _, user := range mockUsers {
-		if user.Username == username {
+		if user.UserID == userID {
 			return &user, nil
 		}
 	}
@@ -47,7 +47,7 @@ func (s UserService) GetUser(username string) (*spec.User, error) {
 
 // AddUser mock
 func (s UserService) AddUser(user spec.User) error {
-	userCheck, _ := s.GetUser(user.Username)
+	userCheck, _ := s.GetUser(user.UserID)
 	if userCheck != nil {
 		return impl.UserDuplicateError()
 	}

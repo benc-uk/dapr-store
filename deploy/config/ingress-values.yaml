@@ -8,6 +8,7 @@ controller:
   service:
     labels:
       purpose: "daprstore-api-gateway"
+
   # Use a special class to not clash with any other controllers installed
   ingressClass: "dapr"
   ingressClassResource:
@@ -18,7 +19,7 @@ controller:
     dapr.io/enabled: "true"
     dapr.io/app-id: "api-gateway"
     dapr.io/app-port: "80"
-    # REALLY important! This is required since a change in Dapr 1.4,
+    # REALLY important! This is required since a change in Dapr 1.4
     dapr.io/sidecar-listen-addresses: "0.0.0.0"
 
   # This means this ingress controller only works inside this namespace
