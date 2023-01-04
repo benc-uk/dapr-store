@@ -27,7 +27,7 @@ lint-fix: $(FRONTEND_DIR)/node_modules  ## 📝 Lint & format, fixes errors and 
 	cd $(FRONTEND_DIR); npm run lint-fix
 
 test:  ## 🎯 Unit tests for services and snapshot tests for SPA frontend 
-	go test -v ./$(SERVICE_DIR)/...
+	go test -v -count=1 ./$(SERVICE_DIR)/...
 	@cd $(FRONTEND_DIR); NODE_ENV=test npm run test -- --ci
 
 test-reports: $(FRONTEND_DIR)/node_modules  ## 📜 Unit tests with coverage and test reports (deprecated)

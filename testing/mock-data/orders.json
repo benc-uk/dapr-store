@@ -17,6 +17,6 @@
       }
     ],
     "status": "new",
-    "forUserId": "mock@example.net"
+    "forUser": "mock@example.net"
   }
 ]
