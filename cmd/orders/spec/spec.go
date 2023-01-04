@@ -14,7 +14,6 @@ type Order struct {
 	LineItems []LineItem  `json:"lineItems"`
 	Status    OrderStatus `json:"status"`
 	ForUserID string      `json:"forUser"` // Ref to User.UserID
-	Email     string      `json:"email"`
 }
 
 // LineItem is a simple line on an order, a tuple of count and a Product struct
