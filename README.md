@@ -1,3 +1,7 @@
+# 🗺️ MOVED!
+
+This repo is no longer maintained, and has been [moved to Azure-Samples](https://github.com/Azure-Samples/dapr-store)
+
 # Dapr Store
 
 Dapr Store is a sample/reference application showcasing the use of [Dapr](https://dapr.io/) to build microservices based applications. It is a simple online store with all the core components that make up such system, e.g. a frontend for users, authentication, product catalog, and order processing etc.
